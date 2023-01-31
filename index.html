@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    
+    <link rel="stylesheet" href="/src/css/theme.css" />
+    <link rel="stylesheet" href="/src/style.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri App</title>
+    <script type="module" src="/src/side_navigation_panel.js" defer></script>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/installer_app_main.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  </head>
+
+  <div id="left-panel" class="background body-large">
+    <md-outlined-icon-button id="dark-light-mode-toggle" icon="light_mode"
+    style="display:flex; justify-content: flex-start; padding: 10px; padding-bottom: 20px;"> 
+    </md-outlined-icon-button>
+    <side-navigation-panel id="left-panel-navigation">
+      <div data-name="install">1. Source</div>
+      <div data-name="details">2. Details</div>
+      <div data-name="settings">3. Settings</div>
+      <div data-name="progress">4. Copying files</div>
+      <div data-name="bootloader">5. Bootloader</div>
+    </side-navigation-panel>
+  </div>
+  
+  <body class="background body-large">
+    <installer-app id="installer_app">
+      <hr style="width: 1px; height: 30px; border: none; position: fixed; margin-left: 290px; background-color: gray;">
+      <input id="text-filename" placeholder="Select ISO file..." />
+    </installer-app>
+  </body>
+</html>
