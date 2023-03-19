@@ -3,7 +3,6 @@ const { invoke } = window.__TAURI__.tauri;
 import '@material/web/iconbutton/outlined-icon-button.js';
 
 let darkModeToggleEl;
-let installEl;
 let textFieldEl;
 let isDarkMode;
 
@@ -23,16 +22,16 @@ function toggleDarkMode() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  installEl = document.getElementById('installer_app');
   textFieldEl = document.getElementById("text-filename"); 
   
   darkModeToggleEl = document.getElementById("dark-light-mode-toggle");
   darkModeToggleEl.addEventListener("click", () => toggleDarkMode());
-
-  let sidePanelEl = document.getElementById('left-panel-navigation');
+  
+  const sidePanelEl = document.getElementById('left-panel-navigation');
   sidePanelEl.addEventListener("category-change", (e) => installEl.onCategoryChange_(e));
-
-  installEl.addEventListener('next', () => sidePanelEl.activateCategory('details'));
+  
+  const installEl = document.getElementById('installer_app');
+  installEl.addEventListener('next', () => sidePanelEl.activateNextCategory());
   installEl.addEventListener('back', () => sidePanelEl.activatePreviousCategory());
 
   installEl.addEventListener('pick-file', () => pickFile());

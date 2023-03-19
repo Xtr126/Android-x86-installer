@@ -78,18 +78,25 @@ export class SideNavigationElement extends LitElement {
     }));
   }
 
-  activateCategory(name) {
+  activateNextCategory() {
+    let element = null;
     for (const option of this.children) {
-      if (option.getAttribute('data-name') == name)
-        this.activate_(option)
+      if (element != null)
+      if (element.getAttribute('active') != null) {
+        this.activate_(option);
+        return;
+      }
+      element = option;
     }
   }
 
   activatePreviousCategory() {
-    let element;
+    let element = null;
     for (const option of this.children) {
-      if (option.getAttribute('active')) 
-        this.activate_(element)
+      if (option.getAttribute('active') != null) {
+        this.activate_(element);
+        return;
+      }
       element = option;
     }
   }
