@@ -112,7 +112,7 @@ export class InstallerApp extends LitElement {
           <div class="row label">
             <div>
               <slot></slot>
-              <md-standard-icon-button @click="${this.onFileButtonClicked}" icon="folder_open" id="file-button" style="margin-left: -65px; position: fixed;"></md-standard-icon-button>
+              <md-standard-icon-button @click="${this.onFileButtonClicked}" id="file-button" style="margin-left: -65px; position: fixed;"> folder_open </md-standard-icon-button>
               <md-tonal-button @click="${this.onNextButtonClicked}" label="Start" id="start-button" ></md-tonal-button>
             </div>
           </div>
@@ -122,14 +122,19 @@ export class InstallerApp extends LitElement {
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'details'}">
       <div class="row" style="justify-content: start;">
-        <md-filled-text-field label="Title" style="margin-left: 60px;"></md-filled-text-field>
+        <md-filled-text-field label="OS Title" style="margin-left: 60px;"></md-filled-text-field>
       </div>
       <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
       <md-filled-button class="button-next" label="Next" @click="${this.onNextButtonClicked}"> </md-filled-button>
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'settings'}">
+      <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
+      <md-filled-button class="button-next" label="Next" @click="${this.onNextButtonClicked}"> </md-filled-button>
+    </section>
 
+    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
+      <md-filled-button class="button-next" label="Done" @click="${this.onNextButtonClicked}"> </md-filled-button>
     </section>
     `;
   }

@@ -1,24 +1,20 @@
 const { invoke } = window.__TAURI__.tauri;
 
-import '@material/web/iconbutton/outlined-icon-button.js';
+import '@material/web/iconbutton/standard-icon-button-toggle';
 
 let darkModeToggleEl;
 let textFieldEl;
-let isDarkMode;
 
 async function pickFile() {
   textFieldEl.value = await invoke("pick_file");
 }
 
 function toggleDarkMode() {
-  if (isDarkMode) {
+  if (!darkModeToggleEl.selected) {
     document.documentElement.setAttribute("light_mode", true);
-    darkModeToggleEl.icon = "dark_mode";
   } else {
     document.documentElement.removeAttribute("light_mode", false);
-    darkModeToggleEl.icon = "light_mode";
   }
-  isDarkMode = !isDarkMode;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -37,8 +33,9 @@ window.addEventListener("DOMContentLoaded", () => {
   installEl.addEventListener('pick-file', () => pickFile());
 
   if(window.matchMedia('(prefers-color-scheme: dark)').matches){
-    isDarkMode = true;
+    darkModeToggleEl.selected = true;
   } else {
-    isDarkMode = false;
+    darkModeToggleEl.selected = false;
   }
+  toggleDarkMode();
 });

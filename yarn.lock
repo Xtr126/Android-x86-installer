@@ -124,10 +124,10 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
-"@material/web@1.0.0-pre.1":
-  version "1.0.0-pre.1"
-  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.1.tgz#efe6b521ddc9b133dcd76c60fa68385f21f7062a"
-  integrity sha512-wDeQvRPBO/JY5l8K8Fgvkdfnj42uhCJbxn7a3IlQadqoBFoignMogfDrwfTxtV6HHOELktYlHkXgCN8RxgtrIQ==
+"@material/web@1.0.0-pre.4":
+  version "1.0.0-pre.4"
+  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.4.tgz#7d05895442fec9fe626fcff44df8827ec062acce"
+  integrity sha512-zafEDXi376L8jdeQX57NF8IbEeVQTOdYrWR3bfDl8JhhOT+mOU1XWhwslqbN0QANvDYrjH5k0/RwiSjBjIBpeA==
   dependencies:
     lit "^2.3.0"
     tslib "^2.4.0"

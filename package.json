@@ -10,7 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@material/web": "1.0.0-pre.1",
+    "@material/web": "1.0.0-pre.4",
     "@tauri-apps/api": "^1.2.0"
   },
   "devDependencies": {
