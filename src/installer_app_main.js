@@ -139,7 +139,6 @@ export class InstallerApp extends LitElement {
     `;
   }
 
-  
   /**
    * @param {!Event} e
    * @private

@@ -4,9 +4,17 @@ import '@material/web/iconbutton/standard-icon-button-toggle';
 
 let darkModeToggleEl;
 let textFieldEl;
+let fileIsValid;
 
 async function pickFile() {
-  textFieldEl.value = await invoke("pick_file");
+  invoke("pick_file").then((res) => {
+    fileIsValid = res.is_valid;
+    if (fileIsValid) {
+      textFieldEl.value = res.file_path;
+    } else {
+      textFieldEl.value = 'Invalid ISO File'
+    }
+  })
 }
 
 function toggleDarkMode() {
@@ -27,7 +35,7 @@ window.addEventListener("DOMContentLoaded", () => {
   sidePanelEl.addEventListener("category-change", (e) => installEl.onCategoryChange_(e));
   
   const installEl = document.getElementById('installer_app');
-  installEl.addEventListener('next', () => sidePanelEl.activateNextCategory());
+  installEl.addEventListener('next', () => { if (fileIsValid) sidePanelEl.activateNextCategory() });
   installEl.addEventListener('back', () => sidePanelEl.activatePreviousCategory());
 
   installEl.addEventListener('pick-file', () => pickFile());
