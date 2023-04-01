@@ -29,11 +29,24 @@ async fn pick_file() -> Result<CustomResponse, String> {
         file_path: file_path.display().to_string(),
         is_valid: is_file_found,
       })
-}   
+} 
+
+#[tauri::command]
+async fn pick_folder() -> Result<CustomResponse, String> {
+    let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap();
+        
+    let mut test_file = file_path.clone();
+    test_file.push("kernel");
+
+    Ok(CustomResponse {
+        file_path: file_path.display().to_string(),
+        is_valid: File::create(test_file).is_ok(),
+      })
+}
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![pick_file])
+        .invoke_handler(tauri::generate_handler![pick_file, pick_folder])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

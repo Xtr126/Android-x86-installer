@@ -2,7 +2,6 @@ import {LitElement, css, html} from 'lit';
 
 import '@material/web/button/tonal-button.js';
 import '@material/web/iconbutton/standard-icon-button.js';
-import '@material/web/textfield/filled-text-field'
 import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
 
@@ -12,6 +11,10 @@ export class InstallerApp extends LitElement {
   
   onFileButtonClicked() {
     this.dispatchEvent(new CustomEvent('pick-file'));
+  }
+
+  onFolderButtonClicked() {
+    this.dispatchEvent(new CustomEvent('pick-folder'));
   }
 
   onBackButtonClicked() {
@@ -111,7 +114,7 @@ export class InstallerApp extends LitElement {
           <div class="row label">
             <div>
               <slot name="file_name"></slot>
-              <md-standard-icon-button @click="${this.onFileButtonClicked}" id="file-button" style="margin-left: -65px; position: fixed;"> folder_open </md-standard-icon-button>
+              <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -65px; position: fixed;"> folder_open </md-standard-icon-button>
               <md-tonal-button @click="${this.onNextButtonClicked}" label="Start" id="start-button" ></md-tonal-button>
             </div>
           </div>
@@ -128,6 +131,12 @@ export class InstallerApp extends LitElement {
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'settings'}">
+      <div class="row" style="justify-content: start;">
+        <div>
+          <slot name="install_dir"></slot>
+          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> folder_open </md-standard-icon-button>
+        </div>
+      </div>
       <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
       <md-filled-button class="button-next" label="Next" @click="${this.onNextButtonClicked}"> </md-filled-button>
     </section>
