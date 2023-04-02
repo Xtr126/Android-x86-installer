@@ -10,11 +10,11 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@material/web": "1.0.0-pre.4",
+    "@material/web": "1.0.0-pre.5",
     "@tauri-apps/api": "^1.2.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.2",
-    "vite": "4.2.0"
+    "vite": "4.2.1"
   }
 }

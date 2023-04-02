@@ -35,7 +35,7 @@ function toggleDarkMode() {
   }
 }
 
-async function onNextEvent() {
+async function onNextEvent(sidePanelEl) {
   if (fileIsValid) {
     let title = await path.basename(fileNameTextFieldEl.value);
     osTitleTextFieldEl.value = title.slice(0, 15);
@@ -57,7 +57,7 @@ window.addEventListener("DOMContentLoaded", () => {
   darkModeToggleEl.addEventListener("click", () => toggleDarkMode());
   
   installEl.addEventListener('back', () => sidePanelEl.activatePreviousCategory());
-  installEl.addEventListener('next', () => onNextEvent());
+  installEl.addEventListener('next', () => onNextEvent(sidePanelEl));
   installEl.addEventListener('pick-file', () => pickFile());
   installEl.addEventListener('pick-folder', () => pickFolder());
 
