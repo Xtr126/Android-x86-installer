@@ -4,26 +4,12 @@ import '@material/web/button/tonal-button.js';
 import '@material/web/iconbutton/standard-icon-button.js';
 import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
+import '@material/web/button/text-button';
+import '@material/web/dialog/dialog';
 
 import androidLogo from './assets/android.svg'
 
 export class InstallerApp extends LitElement {
-  
-  onFileButtonClicked() {
-    this.dispatchEvent(new CustomEvent('pick-file'));
-  }
-
-  onFolderButtonClicked() {
-    this.dispatchEvent(new CustomEvent('pick-folder'));
-  }
-
-  onBackButtonClicked() {
-    this.dispatchEvent(new CustomEvent('back'));
-  }
-
-  onNextButtonClicked() {
-    this.dispatchEvent(new CustomEvent('next'));
-  }
 
   /** @override */
   static get properties() {
@@ -142,6 +128,13 @@ export class InstallerApp extends LitElement {
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
       <md-filled-button class="button-next" label="Done" @click="${this.onNextButtonClicked}"> </md-filled-button>
     </section>
+
+    <md-dialog id="dialog">
+        <div>
+          Please select a valid ISO file to continue.
+        </div>
+      <md-text-button @click="${this.closeDialog}" label="OK" slot="footer"></md-text-button>
+    </md-dialog>
     `;
   }
 
@@ -152,6 +145,34 @@ export class InstallerApp extends LitElement {
   onCategoryChange_(e) {
     this.activeCategory_ = e.detail.category;
   }
+
+  onFileButtonClicked() {
+    this.dispatchEvent(new CustomEvent('pick-file'));
+  }
+
+  onFolderButtonClicked() {
+    this.dispatchEvent(new CustomEvent('pick-folder'));
+  }
+
+  onBackButtonClicked() {
+    this.dispatchEvent(new CustomEvent('back'));
+  }
+
+  onNextButtonClicked() {
+    this.dispatchEvent(new CustomEvent('next'));
+  }
+
+  showDialog() {
+    this.dialog.show();
+  }
+
+  closeDialog() {
+    this.dialog.close();
+  }
+  
+  firstUpdated() {
+    this.dialog = this.renderRoot.querySelector('#dialog');
+  }  
 }
 
 customElements.define('installer-app', InstallerApp);
