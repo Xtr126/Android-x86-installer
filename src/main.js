@@ -27,6 +27,10 @@ async function pickFolder() {
   })
 }
 
+function startInstall(){
+
+}
+
 function toggleDarkMode() {
   if (!darkModeToggleEl.selected) {
     document.documentElement.setAttribute("light_mode", true);
@@ -42,7 +46,7 @@ async function onNextEvent(sidePanelEl, installEL) {
     sidePanelEl.activateNextCategory();
   } else {
     fileNameTextFieldEl.value = 'Invalid ISO File'
-    installEL.showDialog();
+    installEL.showDialog('Please select a valid ISO file to continue');
   } 
 }
 
@@ -63,6 +67,7 @@ window.addEventListener("DOMContentLoaded", () => {
   installEl.addEventListener('next', () => onNextEvent(sidePanelEl, installEl));
   installEl.addEventListener('pick-file', () => pickFile());
   installEl.addEventListener('pick-folder', () => pickFolder());
+  installEl.addEventListener('install', () => startInstall());
 
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     darkModeToggleEl.selected = true;

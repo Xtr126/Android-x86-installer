@@ -15,7 +15,7 @@ export class InstallerApp extends LitElement {
   static get properties() {
     return {
       activeCategory_: {type: String},
-      fileName_: {type: String},
+      dialogMsg_: {type: String},
     };
   }
 
@@ -117,12 +117,7 @@ export class InstallerApp extends LitElement {
         </div>
       </div>
       <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
-      <md-filled-button class="button-next" label="Next" @click="${this.onNextButtonClicked}"> </md-filled-button>
-    </section>
-
-    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'details'}">
-      <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
-      <md-filled-button class="button-next" label="Next" @click="${this.onNextButtonClicked}"> </md-filled-button>
+      <md-filled-button class="button-next" label="Install" @click="${this.onInstallButtonClicked}"> </md-filled-button>
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
@@ -131,7 +126,7 @@ export class InstallerApp extends LitElement {
 
     <md-dialog id="dialog">
         <div>
-          Please select a valid ISO file to continue.
+          ${this.dialogMsg_}
         </div>
       <md-text-button @click="${this.closeDialog}" label="OK" slot="footer"></md-text-button>
     </md-dialog>
@@ -162,7 +157,12 @@ export class InstallerApp extends LitElement {
     this.dispatchEvent(new CustomEvent('next'));
   }
 
-  showDialog() {
+  onInstallButtonClicked() {
+    this.dispatchEvent(new CustomEvent('install'));
+  }
+
+  showDialog(dialogMsg) {
+    this.dialogMsg_ = dialogMsg;
     this.dialog.show();
   }
 
