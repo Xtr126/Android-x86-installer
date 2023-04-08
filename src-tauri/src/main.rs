@@ -4,8 +4,8 @@
 )]
 
 use tauri::api::dialog;
-use compress_tools::list_archive_files;
-use std::{fs::File, path::PathBuf};
+use std::{fs::File, path::{PathBuf, Path}, time, thread};
+use compress_tools::{uncompress_archive, Ownership};
 
 #[derive(serde::Serialize)]
 struct CustomResponse {
@@ -17,36 +17,86 @@ struct CustomResponse {
 #[tauri::command]
 async fn pick_file() -> Result<CustomResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap();
-    
-    let mut source  = File::open(file_path.as_path()).map_err(|err| err.to_string())?;
-    let file_list: Vec<String> = list_archive_files(&mut source).unwrap();
-    
-    let required_files = &["kernel", "initrd.img", "system.sfs"];
 
-    let is_file_found = required_files.iter().all(|file| file_list.contains(&(file).to_string()));
+    let is_file_found = check_iso_file(file_path.clone()).map_err(|err| err.to_string())?;
 
     Ok(CustomResponse {
         file_path: file_path.display().to_string(),
         is_valid: is_file_found,
-      })
+    })
 } 
 
 #[tauri::command]
 async fn pick_folder() -> Result<CustomResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap();
-        
-    let mut test_file = file_path.clone();
-    test_file.push("kernel");
+
+    let install_dir_rw = check_install_dir(file_path.clone()).map_err(|err| err.to_string())?;
 
     Ok(CustomResponse {
         file_path: file_path.display().to_string(),
-        is_valid: File::create(test_file).is_ok(),
-      })
+        is_valid: install_dir_rw,
+    })
+}
+
+fn check_iso_file(file_path: PathBuf) -> Result<bool, String> {
+  let mut source  = File::open(file_path).map_err(|err| err.to_string())?;
+  let file_list: Vec<String> = compress_tools::list_archive_files(&mut source).unwrap();
+  
+  let required_files = &["kernel", "initrd.img", "system.sfs"];
+
+  let is_file_found = required_files.iter().all(|file| file_list.contains(&(file).to_string()));
+  Ok(is_file_found)
+}
+
+fn check_install_dir(mut install_dir: PathBuf) -> Result<bool, String> {
+  install_dir.push("kernel");
+  Ok(File::create(install_dir).is_ok())
+}
+
+#[tauri::command]
+fn start_install(
+  window: tauri::Window,
+  iso_file: String, 
+  install_dir: String, 
+  os_title: String,
+) -> Result<String, String> {
+  let iso_file_valid = check_iso_file(iso_file.clone().into()).map_err(|err| err.to_string())?;
+  let install_dir_valid = check_install_dir(install_dir.clone().into()).map_err(|err| err.to_string())?;
+  
+  if iso_file_valid && install_dir_valid {
+    let source  = File::open(iso_file).map_err(|err| err.to_string())?;
+    let filesize = source.metadata().unwrap().len();
+
+    let install_dir1 = install_dir.clone();  
+    thread::spawn(move || {
+      let file_path = Path::new(&install_dir1);
+      let init_size = fs_extra::dir::get_size(file_path).unwrap();
+
+      let mut progress = 0;
+      loop {
+        thread::sleep(time::Duration::from_secs(1));
+        let size = fs_extra::dir::get_size(file_path).unwrap();
+        if size > init_size {
+          let new_progress = (size - init_size) * 100 / filesize;
+          match progress == new_progress { true => break, false => () }
+          progress = new_progress;
+          window.emit("new-dir-size", progress).unwrap();
+        }
+      }
+    });
+
+    thread::spawn(move || {
+      uncompress_archive(source, Path::new(&install_dir), Ownership::Preserve).unwrap();
+    });  
+  } else {
+    return Err("Select installation directory/ ISO file to continue".to_string())
+  }
+  Ok("Success".to_string()) 
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![pick_file, pick_folder])
+        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

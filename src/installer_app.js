@@ -15,6 +15,7 @@ export class InstallerApp extends LitElement {
   static get properties() {
     return {
       activeCategory_: {type: String},
+      dialogTitle_: {type: String},
       dialogMsg_: {type: String},
     };
   }
@@ -125,9 +126,10 @@ export class InstallerApp extends LitElement {
     </section>
 
     <md-dialog id="dialog">
-        <div>
-          ${this.dialogMsg_}
-        </div>
+      <span slot="header">${this.dialogTitle_}</span>
+      <div>
+        ${this.dialogMsg_}
+      </div>
       <md-text-button @click="${this.closeDialog}" label="OK" slot="footer"></md-text-button>
     </md-dialog>
     `;
@@ -161,13 +163,18 @@ export class InstallerApp extends LitElement {
     this.dispatchEvent(new CustomEvent('install'));
   }
 
-  showDialog(dialogMsg) {
+  showDialog(dialogTitle, dialogMsg) {
+    this.dialogTitle_ = dialogTitle;
     this.dialogMsg_ = dialogMsg;
     this.dialog.show();
   }
 
   closeDialog() {
     this.dialog.close();
+  }
+
+  updateProgress(progress) {
+    
   }
   
   firstUpdated() {
