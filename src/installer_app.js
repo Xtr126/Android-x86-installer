@@ -6,6 +6,7 @@ import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
 import '@material/web/button/text-button';
 import '@material/web/dialog/dialog';
+import '@material/web/circularprogress/circular-progress';
 
 import androidLogo from './assets/android.svg'
 
@@ -120,6 +121,10 @@ export class InstallerApp extends LitElement {
       <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
       <md-filled-button class="button-next" label="Install" @click="${this.onInstallButtonClicked}"> </md-filled-button>
     </section>
+    
+    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
+      <md-circular-progress progress=1> </md-circular-progress>
+    </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
       <md-filled-button class="button-next" label="Done" @click="${this.onNextButtonClicked}"> </md-filled-button>
@@ -174,11 +179,13 @@ export class InstallerApp extends LitElement {
   }
 
   updateProgress(progress) {
-    
+    this.circularProgress.progress = progress / 100;
+    this.progress = progress;
   }
   
   firstUpdated() {
     this.dialog = this.renderRoot.querySelector('#dialog');
+    this.circularProgress = this.renderRoot.querySelector('#circular-progress');
   }  
 }
 

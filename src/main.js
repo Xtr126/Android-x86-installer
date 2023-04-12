@@ -1,6 +1,6 @@
 const { invoke } = window.__TAURI__.tauri;
 
-import '@material/web/iconbutton/standard-icon-button-toggle';
+import '@material/web/iconbutton/standard-icon-button';
 import '@material/web/textfield/filled-text-field'
 import '@material/web/textfield/outlined-text-field'
 import { path } from '@tauri-apps/api';
