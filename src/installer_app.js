@@ -18,12 +18,14 @@ export class InstallerApp extends LitElement {
       activeCategory_: {type: String},
       dialogTitle_: {type: String},
       dialogMsg_: {type: String},
+      progressPercent_: {type: Number},
     };
   }
 
   constructor() {
     super();
-    this.activeCategory_ = 'install'; 
+    this.activeCategory_ = 'install';
+    this.progressPercent_ = 0;
   }
 
   /** @override */
@@ -80,6 +82,17 @@ export class InstallerApp extends LitElement {
       margin-right: 20px;
       margin-bottom: 20px;
     }
+
+    .c-progress {
+      margin: auto;
+      --md-circular-progress-size: 40vh;
+      --md-circular-progress-active-indicator-width: 4.33;
+    }
+
+    .c-progress.container {
+      height: 80vh;
+      width: 60vh;
+    }
     `  
   }
 
@@ -123,8 +136,11 @@ export class InstallerApp extends LitElement {
     </section>
     
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
-      <md-circular-progress progress=1> </md-circular-progress>
-    </section>
+      <div class="container c-progress">
+        <md-circular-progress class="c-progress" id="circular-progress"> </md-circular-progress>
+        <p style="margin: auto;"> Extracting ISO ${this.progressPercent_}% </p>
+      </div>
+    </section>  
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
       <md-filled-button class="button-next" label="Done" @click="${this.onNextButtonClicked}"> </md-filled-button>
@@ -179,8 +195,8 @@ export class InstallerApp extends LitElement {
   }
 
   updateProgress(progress) {
+    this.progressPercent_ = progress;
     this.circularProgress.progress = progress / 100;
-    this.progress = progress;
   }
   
   firstUpdated() {

@@ -70,18 +70,25 @@ fn start_install(
     let install_dir1 = install_dir.clone();  
     thread::spawn(move || {
       let file_path = Path::new(&install_dir1);
-      let init_size = fs_extra::dir::get_size(file_path).unwrap();
-
+      let mut init_size = fs_extra::dir::get_size(file_path).unwrap();
+      let mut progress_eq = false;
       let mut progress = 0;
       loop {
-        thread::sleep(time::Duration::from_secs(1));
         let size = fs_extra::dir::get_size(file_path).unwrap();
         if size > init_size {
           let new_progress = (size - init_size) * 100 / filesize;
-          match progress == new_progress { true => break, false => () }
-          progress = new_progress;
+          
+          if progress == new_progress { 
+            if progress_eq { window.emit("new-dir-size", 100).unwrap(); break; }
+            progress_eq = true; 
+          }
+
+          progress = new_progress;  
           window.emit("new-dir-size", progress).unwrap();
+        } else {
+          init_size = size;
         }
+        thread::sleep(time::Duration::from_secs(2));
       }
     });
 

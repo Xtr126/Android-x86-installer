@@ -35,13 +35,19 @@ async function startInstall() {
     isoFile: fileNameTextFieldEl.value,
     installDir: installDirTextFieldEl.value,
     osTitle: osTitleTextFieldEl.value,
-  }).then(() => installEl.activateNextCategory())
+  }).then(() => {
+    sidePanelEl.activateNextCategory();
+    updateProgress();
+  })
   .catch((error) => installEl.showDialog('Installation failed', error))
+}
 
+async function updateProgress() {
   while(true) {
     await listen('new-dir-size', (event) => {
       installEl.updateProgress(event.payload)
-    })
+    });
+    if (installEl.progressPercent_ >= 100) break;
   }
 }
 
@@ -79,9 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
   installEl.addEventListener('next', () => onNextEvent());
   installEl.addEventListener('pick-file', () => pickFile());
   installEl.addEventListener('pick-folder', () => pickFolder());
-  installEl.addEventListener('install', () => startInstall());
-
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  installEl.addEventListener('install', () => startInstall());  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     darkModeToggleEl.selected = true;
   } else {
     darkModeToggleEl.selected = false;
