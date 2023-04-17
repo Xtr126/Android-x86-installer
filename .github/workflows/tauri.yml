@@ -30,7 +30,7 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev libarchive-dev patchelf
       
       - name: Set VCPKG_ROOT
-        run: echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        run: echo "VCPKG_ROOT=$Env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
         
       - name: Cache vcpkg  
         uses: actions/cache@v3
@@ -42,7 +42,7 @@ jobs:
         
       - name: Install Vcpkg
         if: matrix.platform == 'windows-latest'
-        run: C:/vcpkg/vcpkg install libarchive:x64-windows-static-md
+        run: C:/vcpkg/vcpkg install libarchive:x64-windows
             
       - name: Cache Rust / Cargo
         uses: actions/cache@v3
