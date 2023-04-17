@@ -32,13 +32,32 @@ jobs:
       - name: Set VCPKG_ROOT
         run: echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         
+      - name: Cache vcpkg  
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.VCPKG_ROOT }}/installed
+            ${{ env.VCPKG_ROOT }}/packages
+          key: vcpkg-libarchive
+        
       - name: Install Vcpkg
         if: matrix.platform == 'windows-latest'
-        run: C:/vcpkg/vcpkg install libarchive
-
+        run: C:/vcpkg/vcpkg install libarchive:x64-windows-static-md
+            
+      - name: Cache Rust / Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-${{runner.arch}}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{runner.arch}}-cargo-
+            
       - name: install frontend dependencies
         run: yarn install
-
+      
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,3 +67,6 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+          
+      - name: Remove bundles for cache
+        run: rm -rf src-tauri/target/release/bundle/
