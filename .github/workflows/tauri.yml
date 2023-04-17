@@ -4,9 +4,12 @@ on:
     branches:
       - master
   workflow_dispatch:
-  
+
 jobs:
   publish-tauri:
+    defaults:
+        run:
+          shell: bash -el {0}
     permissions:
       contents: write
     strategy:
@@ -23,27 +26,28 @@ jobs:
           node-version: 16
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev libarchive-dev patchelf
-      
-      - name: Set VCPKG_ROOT
-        run: echo "VCPKG_ROOT=$Env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-        
-      - name: Cache vcpkg  
+
+      - name: Cache vcpkg
         uses: actions/cache@v3
         with:
           path: |
             ${{ env.VCPKG_ROOT }}/installed
             ${{ env.VCPKG_ROOT }}/packages
           key: vcpkg-libarchive
-        
+
+      - name: Set VCPKG_ROOT
+        run: echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
       - name: Install Vcpkg
         if: matrix.platform == 'windows-latest'
-        run: C:/vcpkg/vcpkg install libarchive:x64-windows
-            
+        run:  "'${{env.VCPKG_ROOT}}/vcpkg' install libarchive:x64-windows"
+
       - name: Cache Rust / Cargo
         uses: actions/cache@v3
         with:
@@ -54,10 +58,10 @@ jobs:
           key: ${{ runner.os }}-${{runner.arch}}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{runner.arch}}-cargo-
-            
+
       - name: install frontend dependencies
         run: yarn install
-      
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -67,6 +71,6 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          
+
       - name: Remove bundles for cache
         run: rm -rf src-tauri/target/release/bundle/
