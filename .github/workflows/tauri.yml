@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Vcpkg
         if: matrix.platform == 'windows-latest'
-        run:  "'${{env.VCPKG_ROOT}}/vcpkg' install libarchive:x64-windows"
+        run:  "'${{env.VCPKG_ROOT}}/vcpkg' install libarchive:x64-windows-static-md"
 
       - name: Cache Rust / Cargo
         uses: actions/cache@v3
