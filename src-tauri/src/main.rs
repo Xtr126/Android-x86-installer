@@ -93,8 +93,20 @@ fn start_install(
     });
 
     thread::spawn(move || {
-      uncompress_archive(source, Path::new(&install_dir), Ownership::Preserve).unwrap();
-    });  
+      let dest_dir = Path::new(&install_dir);
+      uncompress_archive(source, dest_dir, Ownership::Preserve).unwrap();
+
+      let contents = format!(r#"
+          set timeout=5
+          set debug_mode="(DEBUG mode)"
+          set kdir={install_dir}
+          set autoload_old="(Old Modprobe mode)"
+          search --no-floppy --set=root --file $kdir/kernel
+          source {install_dir}/efi/boot/android.cfg
+      "#);
+      std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
+    }); 
+     
   } else {
     return Err("Select installation directory/ ISO file to continue".to_string())
   }
