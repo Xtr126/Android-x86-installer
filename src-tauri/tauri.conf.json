@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "android-x86-installer",
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "tauri": {
     "allowlist": {
@@ -24,6 +24,9 @@
         "message": false,
         "open": true,
         "save": false
+      },
+      "process": {
+        "exit": true
       },
       "path": {
         "all": true

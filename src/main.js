@@ -47,7 +47,16 @@ async function updateProgress() {
     await listen('new-dir-size', (event) => {
       installEl.updateProgress(event.payload)
     });
-    if (installEl.progressPercent_ >= 100) break;
+    if (installEl.progressPercent_ >= 100) {
+      sidePanelEl.activateNextCategory();
+      installEl.bootloaderMsg_ =  
+`  menuentry "${osTitleTextFieldEl.value}" --class android-x86 {
+    savedefault
+    search --no-floppy --set=root --file ${installDirTextFieldEl.value}/boot/grub/grub.cfg
+    configfile ${installDirTextFieldEl.value}/boot/grub/grub.cfg
+  }`;
+      break;
+    }
   }
 }
 
