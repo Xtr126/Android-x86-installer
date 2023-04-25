@@ -124,10 +124,10 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
-"@material/web@1.0.0-pre.6":
-  version "1.0.0-pre.6"
-  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.6.tgz#191d94edbdcaeadb95a674f785be95e2896cea34"
-  integrity sha512-85tAr793HCp9ObwcZ7TPoAblOjSSAYov5Fx7RLE/uzq9eSsBrZI4L8BX4oobJOikp3hV47acOsK5+STgnHi3yw==
+"@material/web@1.0.0-pre.7":
+  version "1.0.0-pre.7"
+  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.7.tgz#7e5cc0eb0f6003e73396870bd883fc5907113a71"
+  integrity sha512-/gHoUq+7Iose64BGyBurSXkAwVv4PNdAawX4SJkeDUObUPgvLH5vZBD8/fVGWu7TEq0xSgh10uqwV81P5r5BAw==
   dependencies:
     lit "^2.3.0"
     safevalues "^0.4.3"
