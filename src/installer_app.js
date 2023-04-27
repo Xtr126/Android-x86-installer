@@ -151,7 +151,7 @@ export class InstallerApp extends LitElement {
             <div>
               <slot name="file_name"></slot>
               <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> folder_open </md-standard-icon-button>
-              <md-tonal-button @click="${this.onNextButtonClicked}" label="Start" id="start-button" ></md-tonal-button>
+              <md-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >Start</md-tonal-button>
             </div>
           </div>
     
@@ -166,8 +166,8 @@ export class InstallerApp extends LitElement {
           <md-standard-icon-button @click="${this.onFolderButtonClicked}"> folder_open </md-standard-icon-button>
         </div>
       </div>
-      <md-outlined-button class="button-back" label="Back" @click="${this.onBackButtonClicked}"> </md-outlined-button>
-      <md-filled-button class="button-next" label="Install" @click="${this.onInstallButtonClicked}"> </md-filled-button>
+      <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
+      <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>
     </section>
     
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
@@ -191,7 +191,7 @@ export class InstallerApp extends LitElement {
         <p> If it is desired to edit /etc/grub.d/40_custom then 
           re-generate grub config after saving file to apply changes </p>
       </div>
-      <md-filled-button class="button-next" label="Done" @click="${this.onFinishButtonClicked}"> </md-filled-button>
+      <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">Done</md-filled-button>
     </section>
 
     <md-dialog id="dialog">
@@ -199,7 +199,7 @@ export class InstallerApp extends LitElement {
       <div>
         ${this.dialogMsg_}  
       </div>
-      <md-text-button @click="${this.closeDialog}" label="OK" slot="footer"></md-text-button>
+      <md-text-button @click="${this.closeDialog}" slot="footer">OK</md-text-button>
     </md-dialog>
     `;
   }
