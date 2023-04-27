@@ -58,7 +58,6 @@ fn start_install(
   window: tauri::Window,
   iso_file: String, 
   install_dir: String, 
-  os_title: String,
 ) -> Result<String, String> {
   let iso_file_valid = check_iso_file(iso_file.clone().into()).map_err(|err| err.to_string())?;
   let install_dir_valid = check_install_dir(install_dir.clone().into()).map_err(|err| err.to_string())?;
@@ -105,6 +104,7 @@ fn start_install(
           source {install_dir}/efi/boot/android.cfg
       "#);
       std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
+      std::fs::create_dir(dest_dir.join("data")).unwrap();
     }); 
      
   } else {

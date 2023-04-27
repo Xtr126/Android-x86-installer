@@ -34,7 +34,6 @@ async function startInstall() {
   invoke("start_install", {  
     isoFile: fileNameTextFieldEl.value,
     installDir: installDirTextFieldEl.value,
-    osTitle: osTitleTextFieldEl.value,
   }).then(() => {
     sidePanelEl.activateNextCategory();
     updateProgress();
