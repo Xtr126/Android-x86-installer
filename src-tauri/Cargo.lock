@@ -330,9 +330,9 @@ dependencies = [
 
 [[package]]
 name = "compress-tools"
-version = "0.14.1"
+version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "537b7d54356f29ce8e3fc8fdf89ab1ad752ac22987ff4cb9841e2bcf55785134"
+checksum = "4628f42faeeea2e34a182e6d290fc94980cf2478eb4b205570cc2ce1dc7fe0b2"
 dependencies = [
  "derive_more",
  "libc",
