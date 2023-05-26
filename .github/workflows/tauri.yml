@@ -43,6 +43,7 @@ jobs:
         with:
           path: |
             ${{ env.VCPKG_ROOT }}/installed
+            ${{ env.VCPKG_ROOT }}/downloads
             ${{ env.VCPKG_ROOT }}/packages
           key: ${{ runner.os }}-vcpkg-libarchive
 
