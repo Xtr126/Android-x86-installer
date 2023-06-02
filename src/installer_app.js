@@ -150,7 +150,7 @@ export class InstallerApp extends LitElement {
           <div class="row label">
             <div>
               <slot name="file_name"></slot>
-              <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> folder_open </md-standard-icon-button>
+              <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> <md-icon>folder_open</md-icon> </md-standard-icon-button>
               <md-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >Start</md-tonal-button>
             </div>
           </div>
@@ -163,7 +163,7 @@ export class InstallerApp extends LitElement {
         <slot name="os_title"></slot>
         <div>
           <slot name="install_dir"></slot>
-          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> folder_open </md-standard-icon-button>
+          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> <md-icon>folder_open</md-icon> </md-standard-icon-button>
         </div>
       </div>
       <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
@@ -184,7 +184,11 @@ export class InstallerApp extends LitElement {
         <div class="codeblock-surface">
         <md-elevation></md-elevation>
         <div style="position: relative" title="Copy">
-        <md-standard-icon-button class="copy-button" @click="${this.copyCode}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="-3 -4 30 30" role="presentation"><g fill="currentColor"><g><path d="M20 8h-9c-1.65 0-3 1.35-3 3v9c0 1.65 1.35 3 3 3h9c1.65 0 3-1.35 3-3v-9c0-1.65-1.35-3-3-3zm1 12c0 .55-.45 1-1 1h-9c-.55 0-1-.45-1-1v-9c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v9z"></path><path d="M5 14H4c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v1c0 .55.45 1 1 1s1-.45 1-1V4c0-1.65-1.35-3-3-3H4C2.35 1 1 2.35 1 4v9c0 1.65 1.35 3 3 3h1c.55 0 1-.45 1-1s-.45-1-1-1z"></path></g></g></svg></md-standard-icon-button>
+        <md-standard-icon-button class="copy-button" @click="${this.copyCode}">
+          <md-icon>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="-3 -4 30 30" role="presentation"><g fill="currentColor"><g><path d="M20 8h-9c-1.65 0-3 1.35-3 3v9c0 1.65 1.35 3 3 3h9c1.65 0 3-1.35 3-3v-9c0-1.65-1.35-3-3-3zm1 12c0 .55-.45 1-1 1h-9c-.55 0-1-.45-1-1v-9c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v9z"></path><path d="M5 14H4c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v1c0 .55.45 1 1 1s1-.45 1-1V4c0-1.65-1.35-3-3-3H4C2.35 1 1 2.35 1 4v9c0 1.65 1.35 3 3 3h1c.55 0 1-.45 1-1s-.45-1-1-1z"></path></g></g></svg>
+          </md-icon>
+        </md-standard-icon-button>
         </div>
         <pre><code>${this.bootloaderMsg_}</code></pre>
         </div>
