@@ -42,9 +42,14 @@ fn check_iso_file(file_path: PathBuf) -> Result<bool, String> {
   let mut source  = File::open(file_path).map_err(|err| err.to_string())?;
   let file_list: Vec<String> = compress_tools::list_archive_files(&mut source).unwrap();
   
-  let required_files = &["kernel", "initrd.img", "system.sfs"];
+  let required_files = &["kernel", "initrd.img"];
 
-  let is_file_found = required_files.iter().all(|file| file_list.contains(&(file).to_string()));
+  let mut is_file_found = required_files.iter().all(|file| file_list.contains(&(file).to_string()));
+  
+  if ! ( file_list.contains(&"system.sfs".to_string()) || file_list.contains(&"system.efs".to_string()) ) {
+    is_file_found = false;
+  }
+
   Ok(is_file_found)
 }
 
