@@ -42,6 +42,15 @@ async function startInstall() {
   .catch((error) => installEl.showDialog('Installation failed', error))
 }
 
+async function createDataImg() {
+  if (installEl.useDataImg) {
+    invoke("create_data_img", {  
+      installDir: installDirTextFieldEl.value,
+      size: installEl.dataImgSize,
+    }).catch((error) => installEl.showDialog('Create data.img failed', error))
+  }
+}
+
 async function updateProgress() {
   while(true) {
     await listen('new-dir-size', (event) => {
@@ -50,11 +59,12 @@ async function updateProgress() {
     if (installEl.progressPercent_ >= 100) {
       sidePanelEl.activateNextCategory();
       installEl.bootloaderMsg_ =  
-`  menuentry "${osTitleTextFieldEl.value}" --class android-x86 {
-    savedefault
-    search --no-floppy --set=root --file ${installDirTextFieldEl.value}/boot/grub/grub.cfg
-    configfile ${installDirTextFieldEl.value}/boot/grub/grub.cfg
-  }`;
+        `menuentry "${osTitleTextFieldEl.value}" --class android-x86 {
+          savedefault
+          search --no-floppy --set=root --file ${installDirTextFieldEl.value}/boot/grub/grub.cfg
+          configfile ${installDirTextFieldEl.value}/boot/grub/grub.cfg
+        }`;
+      createDataImg()
       break;
     }
   }

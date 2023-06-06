@@ -8,6 +8,9 @@ import '@material/web/button/text-button';
 import '@material/web/dialog/dialog';
 import '@material/web/circularprogress/circular-progress';
 import '@material/web/elevation/elevation'
+import '@material/web/switch/switch'
+import '@material/web/slider/slider'
+
 import { exit } from '@tauri-apps/api/process';
 
 import androidLogo from './assets/android.svg'
@@ -22,6 +25,8 @@ export class InstallerApp extends LitElement {
       dialogMsg_: {type: String},
       progressPercent_: {type: Number},
       bootloaderMsg_: {type: String},
+      useDataImg: {type: Boolean},
+      dataImgSize: {type: Number},
     };
   }
 
@@ -29,6 +34,7 @@ export class InstallerApp extends LitElement {
     super();
     this.activeCategory_ = 'install';
     this.progressPercent_ = 0;
+    this.dataImgSize = 8;
     this.bootloaderMsg_ = 
 `  menuentry "Android" --class android-x86 {
     savedefault
@@ -128,6 +134,15 @@ export class InstallerApp extends LitElement {
       top: 0;
       right: 0;
     }
+
+    .settings-form {
+      justify-content: start; 
+      margin-left: 60px;
+    }
+
+    .settings-form > *:not(:last-child) {
+      margin-bottom: 30px;
+    } 
     `  
   }
 
@@ -159,12 +174,27 @@ export class InstallerApp extends LitElement {
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'settings'}">
-      <div class="column" style="justify-content: start;">
+      <div class="column settings-form">
         <slot name="os_title"></slot>
+        
         <div>
           <slot name="install_dir"></slot>
-          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> <md-icon>folder_open</md-icon> </md-standard-icon-button>
+          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> 
+            <md-icon>folder_open</md-icon> 
+          </md-standard-icon-button>
         </div>
+
+        <div>
+          <label>Create data.img</label> 
+          <md-switch @click="${this.dataImgSwitch}" id="data-img-switch" style="margin-left: 10px; margin-top: -5px; margin-right: 10px;"></md-switch>
+          <label>/data directory is created by default</label>
+        </div>
+
+        <div style="margin-top: -20px; display: none;" id="c-data-img"> 
+          <label>Size: ${this.dataImgSize} GB</label> 
+          <md-slider @change=${this.handleDataImgSizeChange} step=2 min=4 max=32 value=8 withTickMarks withLabel style="width: 300px;"></md-slider> 
+        </div>
+
       </div>
       <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
       <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>
@@ -257,12 +287,28 @@ export class InstallerApp extends LitElement {
 
   async copyCode() {
     await navigator.clipboard.writeText(this.bootloaderMsg_);
+    this.circularProgress = this.renderRoot.querySelector('#circular-progress');
     this.showDialog('Copied to clipboard', this.bootloaderMsg_);
   }
   
+  dataImgSwitch() {
+    let dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
+    this.useDataImg = dataImgSwitchEl.selected;    
+    if (this.useDataImg) {
+      this.dataImg.style.display = "block";
+    } else {
+      this.dataImg.style.display = "none";
+    }
+  }
+
+  handleDataImgSizeChange(event) {
+    this.dataImgSize = event.target.value;
+  }
+
   firstUpdated() {
     this.dialog = this.renderRoot.querySelector('#dialog');
     this.circularProgress = this.renderRoot.querySelector('#circular-progress');
+    this.dataImg = this.renderRoot.querySelector('#c-data-img');
   }  
 }
 

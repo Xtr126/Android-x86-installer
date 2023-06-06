@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::File, path::{PathBuf, Path}, time, thread};
+use std::{fs::{File, remove_dir_all}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command};
 use compress_tools::{uncompress_archive, Ownership};
 
 #[derive(serde::Serialize)]
@@ -56,6 +56,21 @@ fn check_iso_file(file_path: PathBuf) -> Result<bool, String> {
 fn check_install_dir(mut install_dir: PathBuf) -> Result<bool, String> {
   install_dir.push("kernel");
   Ok(File::create(install_dir).is_ok())
+}
+
+#[tauri::command]
+fn create_data_img(install_dir: String,  size: u64) {
+  let file_path = Path::new(&install_dir);
+  remove_dir_all(file_path.join("data")).unwrap();
+
+  let data_img_path = file_path.join("data.img");
+  let mut data_img_file = File::create(file_path.join("data.img")).unwrap();
+  data_img_file.seek(SeekFrom::Start(size * 1073741824)).unwrap();
+  data_img_file.write(&[0]).unwrap();
+
+  Command::new("mkfs.ext4")
+          .args(["-F", "-b", "4096", "-L", "/data", &data_img_path.display().to_string()])
+          .spawn().unwrap();
 }
 
 #[tauri::command]
@@ -120,7 +135,7 @@ fn start_install(
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install])
+        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install, create_data_img])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
