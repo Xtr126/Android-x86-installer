@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "android-x86-installer",
-    "version": "0.1.2"
+    "productName": "Android-x86-installer",
+    "version": "0.1.3"
   },
   "tauri": {
     "allowlist": {
