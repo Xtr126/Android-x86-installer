@@ -115,7 +115,12 @@ export class InstallerApp extends LitElement {
       border-width: 1px;
       margin-bottom: 1.5rem;
       overflow: hidden;
-      width: 100%;
+      color: var(--md-sys-color-on-surface-variant);
+      text-shadow: 0 1px 1px var(--md-sys-color-surface);
+      font-family: 'Google Sans Mono', 'Droid Sans Mono', 'Roboto Mono', Menlo, Monaco, 'Courier New', monospace;
+      font-size: 14px;
+      tab-size: 2;
+      line-height: 1.5;
       --md-elevation-level: 5;
     }
 
@@ -213,8 +218,12 @@ export class InstallerApp extends LitElement {
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
       <div class="display-small" style="margin-left: 50px;">
-        <p> Open /etc/grub.d/40_custom or /boot/grub/grub.cfg in a text editor </p>
-        <p> Create a new grub entry with the following code: </p>
+        <li>Open /etc/grub.d/40_custom or /boot/grub/grub.cfg in a text editor</li><br>
+        <div>Example:</div>
+        <div class="codeblock-surface" > 
+        <pre><code>  sudo nano /etc/grub.d/40_custom</code></pre>
+        </div>
+        <li> Create a new grub entry with the following code: </li>
         <div class="codeblock-surface">
         <md-elevation></md-elevation>
         <div style="position: relative" title="Copy">
@@ -226,8 +235,11 @@ export class InstallerApp extends LitElement {
         </div>
         <pre><code>${this.bootloaderMsg_}</code></pre>
         </div>
-        <p> If it is desired to edit /etc/grub.d/40_custom then 
-          re-generate grub config after saving file to apply changes </p>
+        <li> After editing /etc/grub.d/40_custom, re-generate grub config with command:</li>
+        <div class="codeblock-surface" > 
+        <pre><code>  sudo grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
+        </div>
+        <p>The exact command to use may vary depending on your distro.</p>
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">Done</md-filled-button>
     </section>
