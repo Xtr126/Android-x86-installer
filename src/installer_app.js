@@ -185,9 +185,13 @@ export class InstallerApp extends LitElement {
         </div>
 
         <div>
-          <label>Create data.img</label> 
-          <md-switch @click="${this.dataImgSwitch}" id="data-img-switch" style="margin-left: 10px; margin-top: -5px; margin-right: 10px;"></md-switch>
-          <label>/data directory is created by default</label>
+          <label style="margin-right: 40px;">Create /data directory</label> 
+          <md-switch selected @click="${this.dataDirSwitchClicked}" id="data-dir-switch"></md-switch>
+        </div>
+
+        <div style="margin-top: -10px;">
+          <label style="margin-right: 80px;">Create data.img </label> 
+          <md-switch @click="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
         <div style="margin-top: -20px; display: none;" id="c-data-img"> 
@@ -291,9 +295,18 @@ export class InstallerApp extends LitElement {
     this.showDialog('Copied to clipboard', this.bootloaderMsg_);
   }
   
-  dataImgSwitch() {
-    let dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
-    this.useDataImg = dataImgSwitchEl.selected;    
+  dataImgSwitchClicked() {
+    this.dataDirSwitchEl.selected = !this.dataImgSwitchEl.selected;  
+    this.dataImgSwitchState();
+  }
+
+  dataDirSwitchClicked() {
+    this.dataImgSwitchEl.selected = !this.dataDirSwitchEl.selected;  
+    this.dataImgSwitchState();
+  }
+
+  dataImgSwitchState() {
+    this.useDataImg = this.dataImgSwitchEl.selected;  
     if (this.useDataImg) {
       this.dataImg.style.display = "block";
     } else {
@@ -309,6 +322,8 @@ export class InstallerApp extends LitElement {
     this.dialog = this.renderRoot.querySelector('#dialog');
     this.circularProgress = this.renderRoot.querySelector('#circular-progress');
     this.dataImg = this.renderRoot.querySelector('#c-data-img');
+    this.dataDirSwitchEl = this.renderRoot.querySelector('#data-dir-switch'); 
+    this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
   }  
 }
 
