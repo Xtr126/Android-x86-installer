@@ -157,7 +157,7 @@ export class InstallerApp extends LitElement {
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'install'}">
       
         <div class="container on-background-text">
-          <h1>Install Android on your PC</h1>
+          <h1>Install Android™ on your PC</h1>
     
           <div class="row">
             <a target="_blank">
@@ -336,6 +336,7 @@ export class InstallerApp extends LitElement {
     this.dataImg = this.renderRoot.querySelector('#c-data-img');
     this.dataDirSwitchEl = this.renderRoot.querySelector('#data-dir-switch'); 
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
+    this.showDialog('', '"The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."');
   }  
 }
 
