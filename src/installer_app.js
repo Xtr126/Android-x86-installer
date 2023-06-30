@@ -201,7 +201,7 @@ export class InstallerApp extends LitElement {
 
         <div style="margin-top: -20px; display: none;" id="c-data-img"> 
           <label>Size: ${this.dataImgSize} GB</label> 
-          <md-slider @change=${this.handleDataImgSizeChange} step=2 min=4 max=32 value=8 tickmarks labeled style="width: 300px;"></md-slider> 
+          <md-slider @change=${this.handleDataImgSizeChange} step=2 min=4 max=32 value=8 ticks labeled style="width: 300px;"></md-slider> 
         </div>
 
       </div>
