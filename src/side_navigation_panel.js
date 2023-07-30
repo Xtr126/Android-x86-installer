@@ -48,17 +48,7 @@ export class SideNavigationElement extends LitElement {
   /** @override */
   firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-
-    for (const option of this.children) {
-      option.addEventListener('click', () => this.activate_(option));
-      option.addEventListener('keydown', (e) => {
-        if (e.code == 'Enter' || e.code == 'Space') {
-          this.activate_(option);
-        }
-      });
-      option.setAttribute('tabindex', 0);  // Make option focusable.
-      option.setAttribute('role', 'link');
-    }
+    
     if (this.firstElementChild) {
       this.activate_(this.firstElementChild);
     }

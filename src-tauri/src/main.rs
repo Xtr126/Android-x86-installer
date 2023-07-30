@@ -13,7 +13,6 @@ struct CustomResponse {
   is_valid: bool,
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 async fn pick_file() -> Result<CustomResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap();
@@ -59,7 +58,7 @@ fn check_install_dir(mut install_dir: PathBuf) -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn create_data_img(install_dir: String,  size: u64) {
+fn create_data_img(install_dir: String, size: u64) -> String {
   let file_path = Path::new(&install_dir);
   remove_dir_all(file_path.join("data")).unwrap();
 
@@ -68,9 +67,29 @@ fn create_data_img(install_dir: String,  size: u64) {
   data_img_file.seek(SeekFrom::Start(size * 1073741824)).unwrap();
   data_img_file.write(&[0]).unwrap();
 
-  Command::new("mkfs.ext4")
+  let output = Command::new("mkfs.ext4")
           .args(["-F", "-b", "4096", "-L", "/data", &data_img_path.display().to_string()])
-          .spawn().unwrap();
+          .output().unwrap();
+  String::from_utf8_lossy(&output.stdout).into()
+}
+
+#[tauri::command]
+fn create_grub_entry(install_dir: String, os_title: String) -> String {  
+  let fs_install_dir = get_fs_install_dir(install_dir);
+
+  format!(r#"menuentry "{os_title}" --class android-x86 {{
+    savedefault
+    search --no-floppy --set=root --file /{fs_install_dir}/boot/grub/grub.cfg
+    configfile /{fs_install_dir}/boot/grub/grub.cfg
+  }}"#).into()
+}
+
+fn get_fs_install_dir(install_dir: String) -> String {
+  let output = Command::new("stat")
+          .args(["-c", r#"%m"#, &install_dir.to_string()])
+          .output().unwrap();
+  let mountpoint = String::from_utf8_lossy(&output.stdout).strip_suffix("\n").unwrap().to_string();
+  install_dir.strip_prefix(&mountpoint).unwrap().into()
 }
 
 #[tauri::command]
@@ -114,14 +133,16 @@ fn start_install(
     thread::spawn(move || {
       let dest_dir = Path::new(&install_dir);
       uncompress_archive(source, dest_dir, Ownership::Preserve).unwrap();
+      
+      let fs_install_dir = get_fs_install_dir(install_dir.clone());
 
       let contents = format!(r#"
           set timeout=5
           set debug_mode="(DEBUG mode)"
-          set kdir={install_dir}
+          set kdir="/{fs_install_dir}"
           set autoload_old="(Old Modprobe mode)"
-          search --no-floppy --set=root --file $kdir/kernel
-          source {install_dir}/efi/boot/android.cfg
+          search --no-floppy --set=root --file "$kdir"/kernel
+          source "$kdir"/efi/boot/android.cfg
       "#);
       std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
       std::fs::create_dir(dest_dir.join("data")).unwrap();
@@ -135,7 +156,7 @@ fn start_install(
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install, create_data_img])
+        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install, create_data_img, create_grub_entry])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
