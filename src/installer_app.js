@@ -6,7 +6,7 @@ import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
 import '@material/web/button/text-button';
 import '@material/web/dialog/dialog';
-import '@material/web/circularprogress/circular-progress';
+import '@material/web/progress/circular-progress';
 import '@material/web/elevation/elevation'
 import '@material/web/switch/switch'
 import '@material/web/slider/slider'
