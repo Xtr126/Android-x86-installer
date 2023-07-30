@@ -298,7 +298,7 @@ export class InstallerApp extends LitElement {
 
   updateProgress(progress) {
     this.progressPercent_ = progress;
-    this.circularProgress.progress = progress / 100;
+    this.circularProgress.value = progress / 100;
   }
 
   async copyCode() {
