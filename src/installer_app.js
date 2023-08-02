@@ -18,23 +18,23 @@ import androidLogo from './assets/android.svg'
 export class InstallerApp extends LitElement {
 
   /** @override */
-  static get properties() {
-    return {
-      activeCategory_: {type: String},
-      dialogTitle_: {type: String},
-      dialogMsg_: {type: String},
-      progressPercent_: {type: Number},
-      bootloaderMsg_: {type: String},
-      useDataImg: {type: Boolean},
-      dataImgSize: {type: Number},
-    };
-  }
+  static properties = {
+    activeCategory_: {type: String},
+    dialogTitle_: {type: String},
+    dialogMsg_: {type: String},
+    progressPercent_: {type: Number},
+    bootloaderMsg_: {type: String},
+    useDataImg: {type: Boolean},
+    dataImgSize: {type: Number},
+    installForQemu: {type: Boolean},
+  };
 
   constructor() {
     super();
-    this.activeCategory_ = 'install';
+    this.activeCategory_ = 'bootloader';
     this.progressPercent_ = 0;
     this.dataImgSize = 8;
+    this.installForQemu = false;
     this.bootloaderMsg_ = 
 `  menuentry "Android" --class android-x86 {
     savedefault
@@ -44,8 +44,7 @@ export class InstallerApp extends LitElement {
   }
 
   /** @override */
-  static get styles() {
-    return css`
+  static styles = css`
     .container {
       margin: 0;
       display: flex;
@@ -110,7 +109,7 @@ export class InstallerApp extends LitElement {
     }
 
     .codeblock-surface {
-      background-color: var( --md-sys-color-surface-container-high);
+      background-color: var(--md-sys-color-surface-container-high);
       border-radius: 1em;
       border-width: 1px;
       margin-bottom: 1.5rem;
@@ -127,8 +126,7 @@ export class InstallerApp extends LitElement {
     .copy-button {
       display: flex;
       border-radius: 9999px;
-      background-color: rgb(34 34 34);
-      color: rgb(158 158 158);
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
       position: absolute;
       justify-content: center;
       align-items: center;
@@ -147,9 +145,7 @@ export class InstallerApp extends LitElement {
 
     .settings-form > *:not(:last-child) {
       margin-bottom: 30px;
-    } 
-    `  
-  }
+    }`  
 
   /** @override */
   render() {
@@ -199,9 +195,14 @@ export class InstallerApp extends LitElement {
           <md-switch @click="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
+        <div style="margin-top: -10px;">
+          <label style="margin-right: 80px;">Install for QEMU </label> 
+          <md-switch @click="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
+        </div>
+
         <div style="margin-top: -20px; display: none;" id="c-data-img"> 
           <label>Size: ${this.dataImgSize} GB</label> 
-          <md-slider @change=${this.handleDataImgSizeChange} step=2 min=4 max=32 value=8 ticks labeled style="width: 300px;"></md-slider> 
+          <md-slider @change=${this.handleDataImgSize_Change} step=2 min=4 max=32 value=8 ticks labeled style="width: 300px;"></md-slider> 
         </div>
 
       </div>
@@ -227,11 +228,11 @@ export class InstallerApp extends LitElement {
         <div class="codeblock-surface">
         <md-elevation></md-elevation>
         <div style="position: relative" title="Copy">
-        <md-standard-icon-button class="copy-button" @click="${this.copyCode}">
+        <md-icon-button class="copy-button" @click="${this.copyCode}">
           <md-icon>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="-3 -4 30 30" role="presentation"><g fill="currentColor"><g><path d="M20 8h-9c-1.65 0-3 1.35-3 3v9c0 1.65 1.35 3 3 3h9c1.65 0 3-1.35 3-3v-9c0-1.65-1.35-3-3-3zm1 12c0 .55-.45 1-1 1h-9c-.55 0-1-.45-1-1v-9c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v9z"></path><path d="M5 14H4c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v1c0 .55.45 1 1 1s1-.45 1-1V4c0-1.65-1.35-3-3-3H4C2.35 1 1 2.35 1 4v9c0 1.65 1.35 3 3 3h1c.55 0 1-.45 1-1s-.45-1-1-1z"></path></g></g></svg>
           </md-icon>
-        </md-standard-icon-button>
+        </md-icon-button>
         </div>
         <pre><code>${this.bootloaderMsg_}</code></pre>
         </div>
@@ -316,17 +317,32 @@ export class InstallerApp extends LitElement {
     this.dataImgSwitchEl.selected = !this.dataDirSwitchEl.selected;  
     this.dataImgSwitchState();
   }
+  
+  qemuInstallSwitchCickd() {
+    this.installForQemu = this.qemuInstallSwitchEl.selected;
+    if (this.installForQemu) {
+      this.dataImgSwitchEl.selected = true;  
+      this.dataDirSwitchEl.selected = false;  
+      this.dataImgSwitchState();
+
+      this.dataDirSwitchEl.disabled = true;
+      this.dataImgSwitchEl.disabled = true;
+    } else {
+      this.dataDirSwitchEl.disabled = false;
+      this.dataImgSwitchEl.disabled = false;
+    }
+  }
 
   dataImgSwitchState() {
-    this.useDataImg = this.dataImgSwitchEl.selected;  
-    if (this.useDataImg) {
+    this.useDataImg_ = this.dataImgSwitchEl.selected;  
+    if (this.useDataImg_) {
       this.dataImg.style.display = "block";
     } else {
       this.dataImg.style.display = "none";
     }
   }
 
-  handleDataImgSizeChange(event) {
+  handleDataImgSize_Change(event) {
     this.dataImgSize = event.target.value;
   }
 
@@ -336,6 +352,7 @@ export class InstallerApp extends LitElement {
     this.dataImg = this.renderRoot.querySelector('#c-data-img');
     this.dataDirSwitchEl = this.renderRoot.querySelector('#data-dir-switch'); 
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
+    this.qemuInstallSwitchEl = this.renderRoot.querySelector('#qemu-install-switch'); 
     this.showDialog('', '"The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."');
   }  
 }

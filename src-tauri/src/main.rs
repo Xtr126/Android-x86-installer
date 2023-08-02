@@ -7,6 +7,8 @@ use tauri::api::dialog;
 use std::{fs::{File, remove_dir_all}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command};
 use compress_tools::{uncompress_archive, Ownership};
 
+mod qemu_install;
+
 #[derive(serde::Serialize)]
 struct CustomResponse {
   file_path: String,
@@ -101,7 +103,7 @@ fn start_install(
   let iso_file_valid = check_iso_file(iso_file.clone().into()).map_err(|err| err.to_string())?;
   let install_dir_valid = check_install_dir(install_dir.clone().into()).map_err(|err| err.to_string())?;
   
-  if iso_file_valid && install_dir_valid {
+  if iso_file_valid && install_dir_valid && !(install_dir.trim().is_empty()) {
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
     let filesize = source.metadata().unwrap().len();
 
@@ -149,14 +151,22 @@ fn start_install(
     }); 
      
   } else {
-    return Err("Select installation directory/ ISO file to continue".to_string())
+    return Err("Select installation directory to continue".to_string())
   }
   Ok("Success".to_string()) 
 }
 
+#[tauri::command]
+fn install_qemu(install_dir: String) -> Result<String, String> {  
+  
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![pick_file, pick_folder, start_install, create_data_img, create_grub_entry])
+        .invoke_handler(tauri::generate_handler![
+          pick_file, pick_folder, 
+          start_install, install_qemu, 
+          create_data_img, create_grub_entry])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -36,7 +36,13 @@ async function startInstall() {
     installDir: installDirTextFieldEl.value,
   }).then(() => {
     sidePanelEl.activateNextCategory();
-    updateProgress();
+    updateProgress().then(() => {
+      if (installEl.installForQemu)
+      invoke("install_qemu", { installDir: installDirTextFieldEl.value })
+      .then(() => {
+        // qemu
+      }).catch((error) => installEl.showDialog('Qemu install failed', error))
+    });
   })
   .catch((error) => installEl.showDialog('Installation failed', error))
 }
@@ -57,13 +63,7 @@ async function updateProgress() {
       installEl.updateProgress(event.payload)
     });
     if (installEl.progressPercent_ >= 100) {
-      createDataImg()
-      installEl.bootloaderMsg_ =  
-      `menuentry "${osTitleTextFieldEl.value}" --class android-x86 {
-        savedefault
-        search --no-floppy --set=root --file ${installDirTextFieldEl.value}/boot/grub/grub.cfg
-        configfile ${installDirTextFieldEl.value}/boot/grub/grub.cfg
-      }`;
+      createDataImg();
       
       installEl.bootloaderMsg_ = await invoke("create_grub_entry", {  
         installDir: installDirTextFieldEl.value,

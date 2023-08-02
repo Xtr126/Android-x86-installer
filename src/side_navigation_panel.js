@@ -3,8 +3,7 @@ import {css, LitElement, html} from 'lit';
 export class SideNavigationElement extends LitElement {
 
   /** @override */
-  static get styles() {
-    return css`
+  static styles = css`
       ::slotted(div) {
         border: 1px solid rgba(0, 0, 0, 0);
         border-radius: 0 16px 16px 0;
@@ -31,7 +30,6 @@ export class SideNavigationElement extends LitElement {
         border-color: rgb(26, 115, 232);
       }
     `;
-  }
 
   constructor() {
     super();
