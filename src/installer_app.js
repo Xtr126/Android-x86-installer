@@ -31,7 +31,7 @@ export class InstallerApp extends LitElement {
 
   constructor() {
     super();
-    this.activeCategory_ = 'bootloader';
+    this.activeCategory_ = 'qemu_settings';
     this.progressPercent_ = 0;
     this.dataImgSize = 8;
     this.installForQemu = false;
@@ -244,6 +244,13 @@ export class InstallerApp extends LitElement {
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">Done</md-filled-button>
     </section>
+
+    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'qemu_settings'}">
+    <div class="display-small" style="margin-left: 50px;">
+      <qemu-config></qemu-config>
+      </div>
+    </section>
+
 
     <md-dialog id="dialog">
       <span slot="header">${this.dialogTitle_}</span>
