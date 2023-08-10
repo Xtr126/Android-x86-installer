@@ -246,9 +246,12 @@ export class InstallerApp extends LitElement {
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'qemu_settings'}">
-    <div class="display-small" style="margin-left: 50px;">
+    <div class="column settings-form">
       <qemu-config></qemu-config>
       </div>
+      <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
+      <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>
+
     </section>
 
 

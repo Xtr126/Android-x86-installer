@@ -156,16 +156,11 @@ fn start_install(
   Ok("Success".to_string()) 
 }
 
-#[tauri::command]
-fn install_qemu(install_dir: String) -> Result<String, String> {  
-  
-}
-
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
           pick_file, pick_folder, 
-          start_install, install_qemu, 
+          start_install,  qemu_install::install_qemu, 
           create_data_img, create_grub_entry])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
