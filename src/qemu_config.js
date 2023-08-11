@@ -3,6 +3,7 @@ import '@material/web/select/outlined-select.js';
 import '@material/web/select/select-option.js';
 import '@material/web/menu/menu.js';
 import '@material/web/menu/menu-item.js';
+import { invoke } from '@tauri-apps/api/tauri'
 
 export class QemuConfigElement extends LitElement {
   static styles = css`
@@ -72,21 +73,21 @@ export class QemuConfigElement extends LitElement {
   }
 
   onCloseMemMenu(event){
-    this.memMB = event.initiator.id;
+    this.memMB = parseInt(event.initiator.id);
   }
 
 
   onCloseCpuMenu(event){
-    this.cores = event.initiator.headline;
+    this.cores = parseInt(event.initiator.headline);
   }
 
   invokeInstall(installEl, _installDir){
-    invoke("create_data_img", {  
+    invoke("install_qemu", {  
       installDir: _installDir,
       memsizeMb: this.memMB,
       cpus: this.cores,
-      xRes: this.xresTextField.value,
-      yRes: this.yresTextField.value,
+      xRes: this.xresTextField.valueAsNumber,
+      yRes: this.yresTextField.valueAsNumber,
 
       displayType: this.displayTypeSelect.value,
       useGl: this.useGlSelect.value,
@@ -98,7 +99,7 @@ export class QemuConfigElement extends LitElement {
       performE2fsck: this.e2fsckSwitch.selected,
 
       forwardPort: this.fwdPortSwitch.selected,
-      forwardPortNo: this.fwdPortTextField.value,
+      forwardPortNo: this.fwdPortTextField.valueAsNumber,
 
       overrideSdlVideodriver: this.sdlSwitch.selected,
       sdlVideodriver: this.sdlSelect.value,
@@ -147,8 +148,8 @@ export class QemuConfigElement extends LitElement {
         </li>
 
           <li class="setting-container textfield">
-          <md-outlined-text-field id="xres" label="Xres"></md-outlined-text-field>
-          <md-outlined-text-field id="yres" label="Yres"></md-outlined-text-field>
+          <md-outlined-text-field id="xres" label="Xres" type="number"></md-outlined-text-field>
+          <md-outlined-text-field id="yres" label="Yres" type="number"></md-outlined-text-field>
           <div style="flex-grow: 1; display: flex; width:100px"></div></li>
 
         <li class="setting-container textfield">
@@ -163,21 +164,21 @@ export class QemuConfigElement extends LitElement {
 
         <li class="setting-container textfield">
         <md-outlined-select id="device_type" label="Device type">
-    <md-select-option value="virtio" headline="VirtIO"></md-select-option>
-    <md-select-option selected value="usb" headline="USB"></md-select-option>
+    <md-select-option selected value="virtio" headline="VirtIO"></md-select-option>
+    <md-select-option value="usb" headline="USB"></md-select-option>
   </md-outlined-select>
   <md-outlined-select id="pointer_device" label="Pointer device">
-    <md-select-option value="tablet" headline="Tablet"></md-select-option>
-    <md-select-option selected value="mouse" headline="Mouse"></md-select-option>
+    <md-select-option selected value="tablet" headline="Tablet"></md-select-option>
+    <md-select-option value="mouse" headline="Mouse"></md-select-option>
   </md-outlined-select></li>
 
   <li class="setting-container textfield">
-      <md-outlined-text-field id="fwd_port_no" label="Forward port:"></md-outlined-text-field>
+      <md-outlined-text-field id="fwd_port_no" label="Forward port:" type="number"></md-outlined-text-field>
       <md-switch id="fwd_port"></md-switch>
       <div style="flex-grow: 1; display: flex; width: 50px"></div>
       <md-outlined-select id="sdl_videodriver" label="Override SDL_VIDEODRIVER">
-    <md-select-option headline="x11"></md-select-option>
-    <md-select-option selected headline="wayland"></md-select-option>
+    <md-select-option headline="x11" value="x11"></md-select-option>
+    <md-select-option selected headline="wayland" value="wayland"></md-select-option>
   </md-outlined-select>
   <md-switch id="sdl_videodriver_override"></md-switch>
 

@@ -37,11 +37,9 @@ async function startInstall() {
   }).then(() => {
     sidePanelEl.activateNextCategory();
     updateProgress().then(() => {
-      if (installEl.installForQemu)
-      invoke("install_qemu", { installDir: installDirTextFieldEl.value })
-      .then(() => {
-        // qemu
-      }).catch((error) => installEl.showDialog('Qemu install failed', error))
+      if (installEl.installForQemu){
+        const qemuConfigEl = installEl.renderRoot.querySelector("qemu-config"); 
+      }
     });
   })
   .catch((error) => installEl.showDialog('Installation failed', error))

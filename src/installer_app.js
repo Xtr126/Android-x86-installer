@@ -249,9 +249,7 @@ export class InstallerApp extends LitElement {
     <div class="column settings-form">
       <qemu-config></qemu-config>
       </div>
-      <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
-      <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>
-
+      <md-filled-button class="button-next" @click="${this.onQemuInstallButtonClicked}">Done</md-filled-button>
     </section>
 
 
@@ -341,6 +339,11 @@ export class InstallerApp extends LitElement {
       this.dataDirSwitchEl.disabled = false;
       this.dataImgSwitchEl.disabled = false;
     }
+  }
+
+  onQemuInstallButtonClicked() {
+    const qemuConfigEl = this.renderRoot.querySelector("qemu-config"); 
+    qemuConfigEl.invokeInstall(this, "/tmp");
   }
 
   dataImgSwitchState() {
