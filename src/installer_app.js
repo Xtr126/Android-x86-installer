@@ -26,15 +26,15 @@ export class InstallerApp extends LitElement {
     bootloaderMsg_: {type: String},
     useDataImg: {type: Boolean},
     dataImgSize: {type: Number},
-    installForQemu: {type: Boolean},
+    qemuConfigDone: {type: Boolean},
   };
 
   constructor() {
     super();
-    this.activeCategory_ = 'qemu_settings';
+    this.activeCategory_ = 'install';
     this.progressPercent_ = 0;
     this.dataImgSize = 8;
-    this.installForQemu = false;
+    this.qemuConfigDone = false;
     this.bootloaderMsg_ = 
 `  menuentry "Android" --class android-x86 {
     savedefault
@@ -249,7 +249,7 @@ export class InstallerApp extends LitElement {
     <div class="column settings-form">
       <qemu-config></qemu-config>
       </div>
-      <md-filled-button class="button-next" @click="${this.onQemuInstallButtonClicked}">Done</md-filled-button>
+      <md-filled-button class="button-next" @click="${this.onQemuConfigDoneButtonClicked}">Done</md-filled-button>
     </section>
 
 
@@ -288,6 +288,7 @@ export class InstallerApp extends LitElement {
   }
 
   onInstallButtonClicked() {
+    if (!this.qemuInstallSwitchEl.selected) this.qemuConfigDone = true;
     this.dispatchEvent(new CustomEvent('install'));
   }
 
@@ -326,24 +327,25 @@ export class InstallerApp extends LitElement {
     this.dataImgSwitchState();
   }
   
-  qemuInstallSwitchCickd() {
-    this.installForQemu = this.qemuInstallSwitchEl.selected;
-    if (this.installForQemu) {
+  qemuInstallSwitchClicked() {
+    const installForQemu = this.qemuInstallSwitchEl.selected;
+    if (installForQemu) {
       this.dataImgSwitchEl.selected = true;  
       this.dataDirSwitchEl.selected = false;  
       this.dataImgSwitchState();
-
-      this.dataDirSwitchEl.disabled = true;
-      this.dataImgSwitchEl.disabled = true;
-    } else {
-      this.dataDirSwitchEl.disabled = false;
-      this.dataImgSwitchEl.disabled = false;
     }
+    this.dataDirSwitchEl.disabled = this.dataImgSwitchEl.disabled = installForQemu;
   }
 
-  onQemuInstallButtonClicked() {
+  onQemuConfigDoneButtonClicked() {
+    this.qemuConfigDone = true;
+    onInstallButtonClicked();
+  }
+
+  showQemuConfigEl(installDir) {
+    this.activeCategory_ = 'qemu_settings';
     const qemuConfigEl = this.renderRoot.querySelector("qemu-config"); 
-    qemuConfigEl.invokeInstall(this, "/tmp");
+    qemuConfigEl.invokeInstall(this, installDir);
   }
 
   dataImgSwitchState() {

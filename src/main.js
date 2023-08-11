@@ -31,16 +31,16 @@ function pickFolder() {
 }
 
 async function startInstall() {
+  if (!installEl.qemuConfigDone) {
+    installEl.showQemuConfigEl(installDirTextFieldEl.value);
+    return;
+  }
   invoke("start_install", {  
     isoFile: fileNameTextFieldEl.value,
     installDir: installDirTextFieldEl.value,
   }).then(() => {
     sidePanelEl.activateNextCategory();
-    updateProgress().then(() => {
-      if (installEl.installForQemu){
-        const qemuConfigEl = installEl.renderRoot.querySelector("qemu-config"); 
-      }
-    });
+    updateProgress();
   })
   .catch((error) => installEl.showDialog('Installation failed', error))
 }
@@ -107,7 +107,8 @@ window.addEventListener("DOMContentLoaded", () => {
   installEl.addEventListener('next', () => onNextEvent());
   installEl.addEventListener('pick-file', () => pickFile());
   installEl.addEventListener('pick-folder', () => pickFolder());
-  installEl.addEventListener('install', () => startInstall());  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  installEl.addEventListener('install', () => startInstall());  
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     darkModeToggleEl.selected = true;
   } else {
     darkModeToggleEl.selected = false;
