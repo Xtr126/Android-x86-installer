@@ -103,8 +103,8 @@ export class QemuConfigElement extends LitElement {
 
       overrideSdlVideodriver: this.sdlSwitch.selected,
       sdlVideodriver: this.sdlSelect.value,
-    }).then((res) => installEl.showDialog('Create data.img success', res))
-    .catch((error) => installEl.showDialog('Create data.img failed', error))
+    }).then((res) => installEl.showDialog('Qemu install success', res))
+    .catch((error) => installEl.showDialog('Qemu install failed', error))
   }
 
   render() {

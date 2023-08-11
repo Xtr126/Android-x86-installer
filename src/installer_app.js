@@ -339,13 +339,14 @@ export class InstallerApp extends LitElement {
 
   onQemuConfigDoneButtonClicked() {
     this.qemuConfigDone = true;
-    onInstallButtonClicked();
+    const qemuConfigEl = this.renderRoot.querySelector("qemu-config"); 
+    qemuConfigEl.invokeInstall(this, this.installDir);
+    this.onInstallButtonClicked();
   }
 
   showQemuConfigEl(installDir) {
     this.activeCategory_ = 'qemu_settings';
-    const qemuConfigEl = this.renderRoot.querySelector("qemu-config"); 
-    qemuConfigEl.invokeInstall(this, installDir);
+    this.installDir = installDir;
   }
 
   dataImgSwitchState() {
