@@ -355,8 +355,8 @@ export class InstallerApp extends LitElement {
   }
 
   dataImgSwitchState() {
-    this.useDataImg_ = this.dataImgSwitchEl.selected;  
-    if (this.useDataImg_) {
+    this.useDataImg = this.dataImgSwitchEl.selected;  
+    if (this.useDataImg) {
       this.dataImg.style.display = "block";
     } else {
       this.dataImg.style.display = "none";
