@@ -1,3 +1,5 @@
+use std::path::Path;
+
 #[tauri::command]
 pub fn install_qemu(
     install_dir: String,
@@ -21,5 +23,49 @@ pub fn install_qemu(
     override_sdl_videodriver: bool,
     sdl_videodriver: String,
 ) -> Result<String, String> {  
-  Ok(format!("{install_dir} {memsize_mb} {cpus} {x_res} x {y_res} .. {display_type} {use_gl} .. {device_type} {input_type} .. {enable_serial_console} {perform_e2fsck} .. {forward_port} {forward_port_no} ..{override_sdl_videodriver}.. {sdl_videodriver} ")) 
+  
+  let net_user_hostfwd: String = if forward_port { 
+    format!("-net user,hostfwd=tcp::{forward_port_no}-:{forward_port_no}") 
+  } else { "-net user".to_string() };
+  
+  let console = if enable_serial_console { "console=ttyS0" } else { "" };
+  let serial_console = if enable_serial_console { "-serial mon:stdio \\" } else { "" };
+
+  let env_vars = if override_sdl_videodriver {
+    format!("SDL_VIDEODRIVER={sdl_videodriver}")
+  } else { "".to_string() };
+
+  let e2fsck_cmd = if perform_e2fsck {
+    format!(r#"e2fsck -fy "{install_dir}/data.img""#)
+  } else { "".to_string() };
+
+  let input_devices = if device_type == "usb" { 
+    format!("-usb -device usb-{input_type} -device usb-kbd \\") 
+  } else {
+    format!("-device virtio-{input_type} -device virtio-keyboard \\") 
+  }; 
+
+  let contents = format!(r#"#!/bin/bash
+{e2fsck_cmd}
+
+if [ -f "{install_dir}"/system.efs ]; then
+  system_img=system.efs
+else 
+  system_img=system.sfs
+fi
+
+exec {env_vars} qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize_mb}M \
+      -drive index=0,if=virtio,id=system,file="{install_dir}"/$system_img,format=raw,cache=none,readonly=on \
+      -drive index=1,if=virtio,id=system,file="{install_dir}/data.img",format=raw,cache=none \
+      -display {display_type},gl={use_gl} \
+      -device virtio-vga-gl,xres={x_res},yres={y_res} \
+      -net nic,model=virtio-net-pci {net_user_hostfwd} \
+      -machine vmport=off -machine q35 \
+      {input_devices}
+      {serial_console}
+      -kernel "{install_dir}/kernel" -append "root=/dev/ram0 quiet SRC=/ DATA=/dev/vdb video={x_res}x{y_res} {console} VIRT_WIFI=1" \
+      -initrd "{install_dir}/initrd.img"
+      "#);
+      std::fs::write(Path::new(&install_dir).join("start_android.sh"), contents).map_err(|err| err.to_string())?;
+  Ok(format!("Installed on {install_dir} -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
 }

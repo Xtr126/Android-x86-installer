@@ -50,7 +50,7 @@ export class QemuConfigElement extends LitElement {
       const menuId = el.dataset.menu;
       el.addEventListener('click', () => {
         const menu = this.renderRoot.querySelector(`#${menuId}`);
-        menu.anchor = this.renderRoot.querySelector('#console');
+        menu.anchor = this.renderRoot.querySelector('#anchor');
         menu.show();
       });
     });
@@ -143,7 +143,7 @@ export class QemuConfigElement extends LitElement {
 
         <li class="setting-container">
         <md-icon>build</md-icon>
-              <h4>Run e2fsck -fy android.img</h4>
+              <h4>Run e2fsck -fy data.img</h4>
               <md-switch id="e2fsck"></md-switch>
         </li>
 
