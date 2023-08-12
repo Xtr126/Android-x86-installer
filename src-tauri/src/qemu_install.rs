@@ -54,7 +54,7 @@ else
   system_img=system.sfs
 fi
 
-exec {env_vars} qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize_mb}M \
+{env_vars} exec qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize_mb}M \
       -drive index=0,if=virtio,id=system,file="{install_dir}"/$system_img,format=raw,cache=none,readonly=on \
       -drive index=1,if=virtio,id=system,file="{install_dir}/data.img",format=raw,cache=none \
       -display {display_type},gl={use_gl} \
@@ -67,5 +67,6 @@ exec {env_vars} qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize
       -initrd "{install_dir}/initrd.img"
       "#);
       std::fs::write(Path::new(&install_dir).join("start_android.sh"), contents).map_err(|err| err.to_string())?;
-  Ok(format!("Installed on {install_dir} -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
+  Ok(format!("qemu script written to {install_dir}/start_android.sh
+  -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
 }
