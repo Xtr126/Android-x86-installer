@@ -31,7 +31,7 @@ async fn pick_file() -> Result<CustomResponse, String> {
 async fn pick_folder() -> Result<CustomResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap();
 
-    let install_dir_rw = check_install_dir(file_path.clone()).map_err(|err| err.to_string())?;
+    let install_dir_rw = check_install_dir(file_path.clone().to_str().unwrap());
 
     Ok(CustomResponse {
         file_path: file_path.display().to_string(),
@@ -54,9 +54,10 @@ fn check_iso_file(file_path: PathBuf) -> Result<bool, String> {
   Ok(is_file_found)
 }
 
-fn check_install_dir(mut install_dir: PathBuf) -> Result<bool, String> {
-  install_dir.push("kernel");
-  Ok(File::create(install_dir).is_ok())
+#[tauri::command]
+fn check_install_dir(install_dir: &str) -> bool {
+  let install_dir_path = Path::new(install_dir).join("kernel");
+  return !install_dir.trim().is_empty() && File::create(install_dir_path).is_ok()
 }
 
 #[tauri::command]
@@ -100,10 +101,6 @@ fn start_install(
   iso_file: String, 
   install_dir: String, 
 ) -> Result<String, String> {
-  let iso_file_valid = check_iso_file(iso_file.clone().into()).map_err(|err| err.to_string())?;
-  let install_dir_valid = check_install_dir(install_dir.clone().into()).map_err(|err| err.to_string())?;
-  
-  if iso_file_valid && install_dir_valid && !(install_dir.trim().is_empty()) {
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
     let filesize = source.metadata().unwrap().len();
 
@@ -148,18 +145,14 @@ fn start_install(
       "#);
       std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
       std::fs::create_dir(dest_dir.join("data")).unwrap();
-    }); 
-     
-  } else {
-    return Err("Select installation directory to continue".to_string())
-  }
+    });
   Ok("Success".to_string()) 
 }
 
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-          pick_file, pick_folder, 
+          pick_file, pick_folder, check_install_dir,
           start_install,  qemu_install::install_qemu, 
           create_data_img, create_grub_entry])
         .run(tauri::generate_context!())

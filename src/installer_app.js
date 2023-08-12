@@ -249,6 +249,7 @@ export class InstallerApp extends LitElement {
     <div class="column settings-form">
       <qemu-config></qemu-config>
       </div>
+      <md-outlined-button class="button-back" @click="${this.onQemuConfigCancel}">Back</md-outlined-button>
       <md-filled-button class="button-next" @click="${this.onQemuConfigDoneButtonClicked}">Done</md-filled-button>
     </section>
 
@@ -342,6 +343,10 @@ export class InstallerApp extends LitElement {
     const qemuConfigEl = this.renderRoot.querySelector("qemu-config"); 
     qemuConfigEl.invokeInstall(this, this.installDir);
     this.onInstallButtonClicked();
+  }
+
+  onQemuConfigCancel() {
+    this.activeCategory_ = 'settings';
   }
 
   showQemuConfigEl(installDir) {

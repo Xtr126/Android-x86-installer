@@ -31,18 +31,25 @@ function pickFolder() {
 }
 
 async function startInstall() {
-  if (!installEl.qemuConfigDone) {
-    installEl.showQemuConfigEl(installDirTextFieldEl.value);
-    return;
-  }
-  invoke("start_install", {  
-    isoFile: fileNameTextFieldEl.value,
-    installDir: installDirTextFieldEl.value,
-  }).then(() => {
-    sidePanelEl.activateNextCategory();
-    updateProgress();
-  })
-  .catch((error) => installEl.showDialog('Installation failed', error))
+  const _installDir = installDirTextFieldEl.value;
+  invoke("check_install_dir", { installDir: _installDir, }).then((is_valid) => {
+    if (!is_valid) {
+      installEl.showDialog('Installation failed', 'Select installation directory to continue');
+      return;
+    }
+    if (!installEl.qemuConfigDone) {
+      installEl.showQemuConfigEl(_installDir);
+      return;
+    }
+    invoke("start_install", {  
+      isoFile: fileNameTextFieldEl.value,
+      installDir: _installDir,
+    }).then(() => {
+      sidePanelEl.activateNextCategory();
+      updateProgress();
+    })
+    .catch((error) => installEl.showDialog('Installation failed', error))
+  });
 }
 
 async function createDataImg() {
