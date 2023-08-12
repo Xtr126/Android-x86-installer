@@ -173,15 +173,14 @@ export class QemuConfigElement extends LitElement {
   </md-outlined-select></li>
 
   <li class="setting-container textfield">
+    <md-switch id="fwd_port"></md-switch>
       <md-outlined-text-field id="fwd_port_no" label="Forward port:" type="number"></md-outlined-text-field>
-      <md-switch id="fwd_port"></md-switch>
       <div style="flex-grow: 1; display: flex; width: 50px"></div>
+      <md-switch id="sdl_videodriver_override"></md-switch>
       <md-outlined-select id="sdl_videodriver" label="Override SDL_VIDEODRIVER">
     <md-select-option headline="x11" value="x11"></md-select-option>
     <md-select-option selected headline="wayland" value="wayland"></md-select-option>
   </md-outlined-select>
-  <md-switch id="sdl_videodriver_override"></md-switch>
-
         </li>
        
       `;
