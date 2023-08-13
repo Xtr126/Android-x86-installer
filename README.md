@@ -17,4 +17,6 @@ cd Android-x86-installer
 yarn install 
 yarn tauri dev
 ```
-![](Screenshot.png)
+![](Screenshot.png)  
+
+The installer also supports generating a script to boot the same physical Android install in qemu: ![](https://cdn.discordapp.com/attachments/642035838305435698/1139920587792322630/image.png)
