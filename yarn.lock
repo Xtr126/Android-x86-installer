@@ -139,13 +139,12 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
-"@material/web@1.0.0-pre.14":
-  version "1.0.0-pre.14"
-  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.14.tgz#f16fed0aa47f5512675bced243a95dc6a60b10e1"
-  integrity sha512-nR5argPpzkGNaIoPARgo23uVAmwYRHjZdnlZQJkIe+H8jA4AVdjcEAAgMOHnaT/ByhDShob8mwdf4+bgmA9mgw==
+"@material/web@1.0.0-pre.17":
+  version "1.0.0-pre.17"
+  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.17.tgz#d2c62211901d2c72d483e4ad4b5b5d01bff9cd99"
+  integrity sha512-8iqrMudWxAUTXfnkf3GraxgLv/3cLbvRBkp6Al9/sxgwO+aTEzKC2BP6sDTqINAubsgOOOuIul/1emyjvq2ipg==
   dependencies:
-    lit "^2.7.4"
-    safevalues "^0.4.3"
+    lit "^2.7.4 || ^3.0.0"
     tslib "^2.4.0"
 
 "@tauri-apps/api@^1.4.0":
@@ -280,7 +279,7 @@ lit-html@^2.8.0:
   dependencies:
     "@types/trusted-types" "^2.0.2"
 
-lit@^2.3.0:
+lit@^2.3.0, "lit@^2.7.4 || ^3.0.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/lit/-/lit-2.8.0.tgz#4d838ae03059bf9cafa06e5c61d8acc0081e974e"
   integrity sha512-4Sc3OFX9QHOJaHbmTMk28SYgVxLN3ePDjg7hofEft2zWlehFL3LiAuapWc4U/kYwMYJSh2hTCPZ6/LIC7ii0MA==
@@ -288,15 +287,6 @@ lit@^2.3.0:
     "@lit/reactive-element" "^1.6.0"
     lit-element "^3.3.0"
     lit-html "^2.8.0"
-
-lit@^2.7.4:
-  version "2.7.6"
-  resolved "https://registry.yarnpkg.com/lit/-/lit-2.7.6.tgz#810007b876ed43e0c70124de91831921598b1665"
-  integrity sha512-1amFHA7t4VaaDe+vdQejSVBklwtH9svGoG6/dZi9JhxtJBBlqY5D1RV7iLUYY0trCqQc4NfhYYZilZiVHt7Hxg==
-  dependencies:
-    "@lit/reactive-element" "^1.6.0"
-    lit-element "^3.3.0"
-    lit-html "^2.7.0"
 
 nanoid@^3.3.6:
   version "3.3.6"
@@ -323,11 +313,6 @@ rollup@^3.25.2:
   integrity sha512-aOltLCrYZ0FhJDm7fCqwTjIUEVjWjcydKBV/Zeid6Mn8BWgDCUBBWT5beM5ieForYNo/1ZHuGJdka26kvQ3Gzg==
   optionalDependencies:
     fsevents "~2.3.2"
-
-safevalues@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/safevalues/-/safevalues-0.4.3.tgz#b1969cd3199c01a0295dadac54b6162da3944d22"
-  integrity sha512-pNCNTkx3xs7G5YJ/9CoeZZVUSPRjH0SEPM0QI5Z1FZRlLBviTFWlNKPs8PTvZvERV0gO7ie/t/Zc0S96JS4Xew==
 
 source-map-js@^1.0.2:
   version "1.0.2"
