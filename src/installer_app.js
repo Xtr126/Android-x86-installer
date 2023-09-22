@@ -10,6 +10,7 @@ import '@material/web/progress/circular-progress';
 import '@material/web/elevation/elevation'
 import '@material/web/switch/switch'
 import '@material/web/slider/slider'
+import { msg } from '@lit/localize'
 
 import { exit } from '@tauri-apps/api/process';
 
@@ -161,13 +162,13 @@ export class InstallerApp extends LitElement {
             </a>
           </div>
     
-          <p class="label-large" style="margin-bottom: 15px;">Select your Android x86 Installation media or .ISO file to continue</p>
+          <p class="label-large" style="margin-bottom: 15px;">${msg('Select your Android x86 Installation media or .ISO file to continue')}</p>
     
           <div class="row label">
             <div>
               <slot name="file_name"></slot>
               <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> <md-icon>folder_open</md-icon> </md-standard-icon-button>
-              <md-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >Start</md-tonal-button>
+              <md-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >${msg('Start')}</md-tonal-button>
             </div>
           </div>
     
@@ -186,17 +187,17 @@ export class InstallerApp extends LitElement {
         </div>
 
         <div>
-          <label style="margin-right: 40px;">Create /data directory</label> 
+          <label style="margin-right: 40px;">${msg('Create /data directory')}</label> 
           <md-switch selected @click="${this.dataDirSwitchClicked}" id="data-dir-switch"></md-switch>
         </div>
 
         <div style="margin-top: -10px;">
-          <label style="margin-right: 80px;">Create data.img </label> 
+          <label style="margin-right: 80px;">${msg('Create data.img')}</label> 
           <md-switch @click="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
         <div style="margin-top: -10px;">
-          <label style="margin-right: 80px;">Install for QEMU </label> 
+          <label style="margin-right: 80px;">${msg('Install for QEMU')} </label> 
           <md-switch @click="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
         </div>
 
@@ -206,25 +207,25 @@ export class InstallerApp extends LitElement {
         </div>
 
       </div>
-      <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">Back</md-outlined-button>
+      <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">${msg('Back')}</md-outlined-button>
       <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>
     </section>
     
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
       <div class="container c-progress">
         <md-circular-progress class="c-progress" id="circular-progress"> </md-circular-progress>
-        <p style="margin: auto;"> Extracting ISO ${this.progressPercent_}% </p>
+        <p style="margin: auto;"> ${msg('Extracting ISO')} ${this.progressPercent_}% </p>
       </div>
     </section>  
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
       <div class="display-small" style="margin-left: 50px;">
-        <li>Open /etc/grub.d/40_custom or /boot/grub/grub.cfg in a text editor</li><br>
-        <div>Example:</div>
+        <li>${msg('Open /etc/grub.d/40_custom or /boot/grub/grub.cfg in a text editor')}</li><br>
+        <div>${msg('Example:')}</div>
         <div class="codeblock-surface" > 
         <pre><code>  sudo nano /etc/grub.d/40_custom</code></pre>
         </div>
-        <li> Create a new grub entry with the following code: </li>
+        <li>${msg('Create a new grub entry with the following code: ')}</li>
         <div class="codeblock-surface">
         <md-elevation></md-elevation>
         <div style="position: relative" title="Copy">
@@ -236,21 +237,21 @@ export class InstallerApp extends LitElement {
         </div>
         <pre><code>${this.bootloaderMsg_}</code></pre>
         </div>
-        <li> After editing /etc/grub.d/40_custom, re-generate grub config with command:</li>
+        <li>${msg(' After editing /etc/grub.d/40_custom, re-generate grub config with command:')}</li>
         <div class="codeblock-surface" > 
         <pre><code>  sudo grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
         </div>
-        <p>The exact command to use may vary depending on your distro.</p>
+        <p>${msg('The exact command to use may vary depending on your distro.')}</p>
       </div>
-      <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">Done</md-filled-button>
+      <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'qemu_settings'}">
     <div class="column settings-form">
       <qemu-config></qemu-config>
       </div>
-      <md-outlined-button class="button-back" @click="${this.onQemuConfigCancel}">Back</md-outlined-button>
-      <md-filled-button class="button-next" @click="${this.onQemuConfigDoneButtonClicked}">Done</md-filled-button>
+      <md-outlined-button class="button-back" @click="${this.onQemuConfigCancel}">${msg('Back')}</md-outlined-button>
+      <md-filled-button class="button-next" @click="${this.onQemuConfigDoneButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
 
 
