@@ -132,10 +132,10 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
-"@material/web@1.0.0-pre.17":
-  version "1.0.0-pre.17"
-  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0-pre.17.tgz#d2c62211901d2c72d483e4ad4b5b5d01bff9cd99"
-  integrity sha512-8iqrMudWxAUTXfnkf3GraxgLv/3cLbvRBkp6Al9/sxgwO+aTEzKC2BP6sDTqINAubsgOOOuIul/1emyjvq2ipg==
+"@material/web@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@material/web/-/web-1.0.0.tgz#81c4cef04e6168bed6e3c8897f910172b82dfd9a"
+  integrity sha512-mNn2qzHvzJLty93NTtnkrSup+Wnte5yAtcZIx0N+WbIZPVlixA2v6wXkqHN1/SJVl0EV2tNT1qz4k0jfTQ+0lw==
   dependencies:
     lit "^2.7.4 || ^3.0.0"
     tslib "^2.4.0"
