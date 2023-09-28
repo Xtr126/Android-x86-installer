@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@lit/localize": "^0.11.4",
-    "@material/web": "1.0.0-pre.17",
+    "@material/web": "1.0.0",
     "@tauri-apps/api": "^1.4.0"
   },
   "devDependencies": {
