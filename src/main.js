@@ -1,5 +1,5 @@
 import '@material/web/icon/icon.js';
-import '@material/web/iconbutton/standard-icon-button';
+import '@material/web/iconbutton/icon-button.js';
 import '@material/web/textfield/filled-text-field'
 import '@material/web/textfield/outlined-text-field'
 import { path } from '@tauri-apps/api';

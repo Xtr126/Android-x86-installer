@@ -1,7 +1,7 @@
 import {LitElement, css, html} from 'lit';
 
-import '@material/web/button/tonal-button.js';
-import '@material/web/iconbutton/standard-icon-button.js';
+import '@material/web/button/filled-tonal-button.js';
+import '@material/web/iconbutton/icon-button.js';
 import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
 import '@material/web/button/text-button';
