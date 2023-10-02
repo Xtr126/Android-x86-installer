@@ -1,7 +1,6 @@
 import {LitElement, css, html} from 'lit';
 
 import '@material/web/button/filled-tonal-button.js';
-import '@material/web/iconbutton/icon-button.js';
 import '@material/web/button/filled-button';
 import '@material/web/button/outlined-button';
 import '@material/web/button/text-button';
@@ -167,8 +166,8 @@ export class InstallerApp extends LitElement {
           <div class="row label">
             <div>
               <slot name="file_name"></slot>
-              <md-standard-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> <md-icon>folder_open</md-icon> </md-standard-icon-button>
-              <md-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >${msg('Start')}</md-tonal-button>
+              <md-icon-button @click="${this.onFileButtonClicked}" style="margin-left: -62px; margin-top: 3px; position: fixed;"> <md-icon>folder_open</md-icon> </md-icon-button>
+              <md-filled-tonal-button @click="${this.onNextButtonClicked}" id="start-button" >${msg('Start')}</md-filled-tonal-button>
             </div>
           </div>
     
@@ -181,9 +180,9 @@ export class InstallerApp extends LitElement {
         
         <div>
           <slot name="install_dir"></slot>
-          <md-standard-icon-button @click="${this.onFolderButtonClicked}"> 
+          <md-icon-button @click="${this.onFolderButtonClicked}"> 
             <md-icon>folder_open</md-icon> 
-          </md-standard-icon-button>
+          </md-icon-button>
         </div>
 
         <div>
@@ -256,11 +255,15 @@ export class InstallerApp extends LitElement {
 
 
     <md-dialog id="dialog">
-      <span slot="header">${this.dialogTitle_}</span>
-      <div>
+      <div slot="headline">
+        ${this.dialogTitle_}
+      </div>
+      <div slot="content">
         ${this.dialogMsg_}  
       </div>
-      <md-text-button @click="${this.closeDialog}" slot="footer">OK</md-text-button>
+      <div slot="actions">
+        <md-text-button @click="${this.closeDialog}" slot="footer">OK</md-text-button>
+      </div>
     </md-dialog>
     `;
   }
