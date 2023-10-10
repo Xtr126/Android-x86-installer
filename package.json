@@ -10,7 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@lit/localize": "^0.11.4",
+    "@lit/localize": "^0.12.0",
     "@material/web": "1.0.0",
     "@tauri-apps/api": "^1.5.0"
   },
