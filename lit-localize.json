@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lit/lit/main/packages/localize-tools/config.schema.json",
+    "sourceLocale": "en",
+    "targetLocales": ["ar"],
+    "inputFiles": [
+      "src/**/*.js"
+    ],
+    "output": {
+      "mode": "runtime",
+      "outputDir": "./src/generated/locales"
+    },
+    "interchange": {
+      "format": "xliff",
+      "xliffDir": "./xliff/"
+    }
+  }
