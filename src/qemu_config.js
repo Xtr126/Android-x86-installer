@@ -45,15 +45,6 @@ export class QemuConfigElement extends LitElement {
   }
 
   firstUpdated() {
-    const menuListeners = this.renderRoot.querySelectorAll('[data-menu]');
-    menuListeners.forEach((el) => {
-      const menuId = el.dataset.menu;
-      el.addEventListener('click', () => {
-        const menu = this.renderRoot.querySelector(`#${menuId}`);
-        menu.anchor = this.renderRoot.querySelector('#anchor');
-        menu.show();
-      });
-    });
     this.consoleSwitch = this.renderRoot.querySelector('#console');
     this.e2fsckSwitch = this.renderRoot.querySelector('#e2fsck');
     this.displayTypeSelect = this.renderRoot.querySelector('#display_type'); 
@@ -73,12 +64,12 @@ export class QemuConfigElement extends LitElement {
   }
 
   onCloseMemMenu(event){
-    this.memMB = parseInt(event.initiator.id);
+    this.memMB = parseInt(event.detail.initiator.id);
   }
 
 
   onCloseCpuMenu(event){
-    this.cores = parseInt(event.initiator.headline);
+    this.cores = event.detail.initiator.typeaheadText;
   }
 
   invokeInstall(installEl, _installDir){
@@ -113,26 +104,46 @@ export class QemuConfigElement extends LitElement {
           
 <li class="setting-container">
             <div style="position:relative;">
-          <md-menu id="cores" @close-menu=${this.onCloseCpuMenu}>
-    <md-menu-item headline="1"></md-menu-item>
-    <md-menu-item headline="2"></md-menu-item>
-    <md-menu-item headline="4"></md-menu-item>
+          <md-menu id="cores" @close-menu=${this.onCloseCpuMenu} anchor="cpu_expand">
+    <md-menu-item headline="1">
+      <div slot="headline">1</div>
+    </md-menu-item>
+    <md-menu-item headline="2">
+      <div slot="headline">2</div>
+    </md-menu-item>
+    <md-menu-item headline="4">
+      <div slot="headline">4</div>
+    </md-menu-item>
   </md-menu>
 
 </div>
 <div style="position:relative; ">
-  <md-menu id="mem" @close-menu=${this.onCloseMemMenu}>
-    <md-menu-item id="2096" headline="2 GB"></md-menu-item>
-    <md-menu-item id="3072" headline="3 GB"></md-menu-item>
-    <md-menu-item id="4096" headline="4 GB"></md-menu-item>
+  <md-menu id="mem" @close-menu=${this.onCloseMemMenu} anchor="mem_expand">
+    <md-menu-item id="2096">
+         <div slot="headline">2 GB</div>
+    </md-menu-item>
+    <md-menu-item id="3072" >
+    <div slot="headline">3 GB</div>
+    </md-menu-item>
+    <md-menu-item id="4096">
+    <div slot="headline">4 GB</div>
+    </md-menu-item>
   </md-menu></div>
           <md-icon>memory</md-icon>
           <h4 style="flex-grow: 0;">CPU: ${this.cores}-core</h4>
-          <md-standard-icon-button data-menu="cores"><md-icon>expand_more</md-icon></md-standard-icon-button>
+          <md-standard-icon-button id="cpu_expand" @click=${() => {
+              const menuEl = this.renderRoot.querySelector('#cores');
+              menuEl.open = !menuEl.open;
+          }}><md-icon>expand_more</md-icon></md-standard-icon-button>
+          
           <div style="flex-grow: 0.5; display: flex;"></div>
+
           <md-icon>memory_alt</md-icon>
           <h4 style="flex-grow: 0;">Memory: ${this.memMB} MB</h4>
-          <md-standard-icon-button data-menu="mem"><md-icon>expand_more</md-icon></md-standard-icon-button>
+          <md-standard-icon-button id="mem_expand" @click=${() => {
+              const menuEl = this.renderRoot.querySelector('#mem');
+              menuEl.open = !menuEl.open;
+          }}><md-icon>expand_more</md-icon></md-standard-icon-button>
         </li>
 
          <li class="setting-container" >
@@ -154,22 +165,38 @@ export class QemuConfigElement extends LitElement {
 
         <li class="setting-container textfield">
         <md-outlined-select id="display_type" label="Display type">
-    <md-select-option value="sdl" headline="SDL"></md-select-option>
-    <md-select-option selected value="gtk" headline="GTK"></md-select-option>
+    <md-select-option value="sdl">
+      <div slot="headline">SDL</div>
+    </md-select-option>
+    <md-select-option selected value="gtk">
+      <div slot="headline">GTK</div>
+    </md-select-option>
   </md-outlined-select>
   <md-outlined-select id="use_gl" label="Use OpenGL">
-    <md-select-option selected value="on" headline="OpenGL"></md-select-option>
-    <md-select-option value="es" headline="OpenGL ES"></md-select-option>
+    <md-select-option selected value="on">
+      <div slot="headline">OpenGL</div>
+    </md-select-option>
+    <md-select-option value="es">
+      <div slot="headline">OpenGL ES</div>
+    </md-select-option>
   </md-outlined-select></li>
 
         <li class="setting-container textfield">
         <md-outlined-select id="device_type" label="Device type">
-    <md-select-option selected value="virtio" headline="VirtIO"></md-select-option>
-    <md-select-option value="usb" headline="USB"></md-select-option>
+    <md-select-option selected value="virtio">
+      <div slot="headline">VirtIO</div>
+    </md-select-option>
+    <md-select-option value="usb">
+      <div slot="headline">USB</div>
+    </md-select-option>
   </md-outlined-select>
   <md-outlined-select id="pointer_device" label="Pointer device">
-    <md-select-option selected value="tablet" headline="Tablet"></md-select-option>
-    <md-select-option value="mouse" headline="Mouse"></md-select-option>
+    <md-select-option selected value="tablet">
+      <div slot="headline">Tablet</div>
+    </md-select-option>
+    <md-select-option value="mouse">
+      <div slot="headline">Mouse</div>
+    </md-select-option>
   </md-outlined-select></li>
 
   <li class="setting-container textfield">
@@ -178,8 +205,12 @@ export class QemuConfigElement extends LitElement {
       <div style="flex-grow: 1; display: flex; width: 50px"></div>
       <md-switch id="sdl_videodriver_override"></md-switch>
       <md-outlined-select id="sdl_videodriver" label="Override SDL_VIDEODRIVER">
-    <md-select-option headline="x11" value="x11"></md-select-option>
-    <md-select-option selected headline="wayland" value="wayland"></md-select-option>
+    <md-select-option value="x11">
+      <div slot="headline">x11</div>
+    </md-select-option>
+    <md-select-option selected value="wayland">
+      <div slot="headline">wayland</div>
+    </md-select-option>
   </md-outlined-select>
         </li>
        
