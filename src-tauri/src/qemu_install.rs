@@ -57,8 +57,8 @@ else
 fi
 
 {env_vars} exec qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize_mb}M \
-      -drive index=0,if=virtio,id=system,file="{install_dir}"/$system_img,format=raw,cache=none,readonly=on \
-      -drive index=1,if=virtio,id=data,file="{install_dir}/data.img",format=raw,cache=none \
+      -drive index=0,if=virtio,id=system,file="{install_dir}"/$system_img,format=raw,readonly=on \
+      -drive index=1,if=virtio,id=data,file="{install_dir}/data.img",format=raw \
       -display {display_type},gl={use_gl} \
       -device virtio-vga-gl,xres={x_res},yres={y_res} \
       -net nic,model=virtio-net-pci {net_user_hostfwd} \
