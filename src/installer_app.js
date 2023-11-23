@@ -187,17 +187,17 @@ export class InstallerApp extends LitElement {
 
         <div>
           <label style="margin-right: 40px;">${msg('Create /data directory')}</label> 
-          <md-switch selected @click="${this.dataDirSwitchClicked}" id="data-dir-switch"></md-switch>
+          <md-switch selected @change="${this.dataDirSwitchClicked}" id="data-dir-switch"></md-switch>
         </div>
 
         <div style="margin-top: -10px;">
           <label style="margin-right: 80px;">${msg('Create data.img')}</label> 
-          <md-switch @click="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
+          <md-switch @change="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
         <div style="margin-top: -10px;">
           <label style="margin-right: 80px;">${msg('Install for QEMU')} </label> 
-          <md-switch @click="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
+          <md-switch @change="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
         </div>
 
         <div style="margin-top: -20px; display: none;" id="c-data-img"> 
@@ -371,6 +371,7 @@ export class InstallerApp extends LitElement {
     this.dataImgSize = event.target.value;
   }
 
+  /** @override */
   firstUpdated() {
     this.dialog = this.renderRoot.querySelector('#dialog');
     this.circularProgress = this.renderRoot.querySelector('#circular-progress');
