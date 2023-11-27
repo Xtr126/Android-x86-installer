@@ -14,8 +14,8 @@ Windows Support is planned.
 ```
 git clone https://github.com/Xtr126/Android-x86-installer.git 
 cd Android-x86-installer
-yarn install 
-yarn tauri dev
+pnpm install 
+pnpm tauri dev
 ```
 ![](Screenshot.png)  
 
