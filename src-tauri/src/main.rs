@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::{File, remove_dir_all}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command};
+use std::{fs::{File, remove_dir_all}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command, sync::Arc};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
@@ -101,38 +101,38 @@ fn start_install(
   iso_file: String, 
   install_dir: String, 
 ) -> Result<String, String> {
+    let window = Arc::new(window);
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
     let filesize = source.metadata().unwrap().len();
 
     let install_dir1 = install_dir.clone();  
+    let window_ = window.clone();
     thread::spawn(move || {
       let file_path = Path::new(&install_dir1);
       let mut init_size = fs_extra::dir::get_size(file_path).unwrap();
-      let mut progress_eq = false;
-      let mut progress = 0;
+      let mut progress_before = 1;
       loop {
-        let size = fs_extra::dir::get_size(file_path).unwrap();
-        if size > init_size {
-          let new_progress = (size - init_size) * 100 / filesize;
-          
-          if progress == new_progress { 
-            if progress_eq { window.emit("new-dir-size", 100).unwrap(); break; }
-            progress_eq = true; 
-          }
-
-          progress = new_progress;  
-          window.emit("new-dir-size", progress).unwrap();
+        let current_size = fs_extra::dir::get_size(file_path).unwrap();
+        if current_size > init_size {
+          let mut new_progress = (current_size - init_size) * 100 / filesize;
+          // increment progress every 1 seconds if stuck
+          if new_progress == progress_before { new_progress = progress_before + 5 }
+          // 100 will be sent only from the other thread
+          if new_progress != 100 { window.emit("new-dir-size", new_progress).unwrap(); }
+          progress_before = new_progress;
         } else {
-          init_size = size;
+          init_size = current_size;
         }
-        thread::sleep(time::Duration::from_secs(2));
+        thread::sleep(time::Duration::from_secs(1));
       }
     });
 
+    let window = Arc::clone(&window_);
     thread::spawn(move || {
       let dest_dir = Path::new(&install_dir);
       uncompress_archive(source, dest_dir, Ownership::Preserve).unwrap();
-      
+      window.emit("new-dir-size", 100).unwrap();
+
       let fs_install_dir = get_fs_install_dir(install_dir.clone());
 
       let contents = format!(r#"

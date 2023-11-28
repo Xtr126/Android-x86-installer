@@ -67,7 +67,7 @@ async function updateProgress() {
     await listen('new-dir-size', (event) => {
       installEl.updateProgress(event.payload)
     });
-    if (installEl.progressPercent_ >= 100) {
+    if (installEl.progressPercent_ == 100) {
       createDataImg();
       
       installEl.bootloaderMsg_ = await invoke("create_grub_entry", {  
