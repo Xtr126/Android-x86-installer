@@ -1,6 +1,9 @@
 name: 'publish'
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '**.yml'
 
 jobs:
   publish-tauri:
@@ -12,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-22.04]
+        platform: [ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -22,6 +25,14 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -35,6 +46,7 @@ jobs:
         run: echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         
       - name: Cache vcpkg
+        if: matrix.platform == 'windows-latest'
         uses: actions/cache@v3
         with:
           path: |
@@ -58,8 +70,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{runner.arch}}-cargo-
 
-      - name: install frontend dependencies
-        run: pnpm install
 
       - uses: tauri-apps/tauri-action@v0
         env:

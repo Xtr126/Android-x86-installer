@@ -1,6 +1,4 @@
 use std::path::Path;
-use std::os::unix::fs::OpenOptionsExt;
-use std::fs;
 
 #[tauri::command]
 pub fn install_qemu(
@@ -70,9 +68,14 @@ fi
       "#);
 
       let script_path = Path::new(&install_dir).join("start_android.sh");
-      // make file executable 
-      fs::OpenOptions::new().create(true).write(true).mode(0o770)
-      .open(script_path.clone()).unwrap();
+      
+      // make script executable 
+      #[cfg(linux)] {
+        let mut options = fs::OpenOptions::new();
+        std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o770);
+        options.create(true).write(true).open(script_path.clone()).unwrap();
+      }
+
       std::fs::write(script_path, contents).map_err(|err| err.to_string())?;
   Ok(format!("qemu script written to {install_dir}/start_android.sh
   -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
