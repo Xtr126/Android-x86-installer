@@ -17,7 +17,7 @@ struct CustomResponse {
 
 #[tauri::command]
 async fn pick_file() -> Result<CustomResponse, String> {
-    let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap();
+    let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap_or_else(|| PathBuf::new());
 
     let is_file_found = check_iso_file(file_path.clone()).map_err(|err| err.to_string())?;
 
@@ -41,7 +41,7 @@ async fn pick_folder() -> Result<CustomResponse, String> {
 
 fn check_iso_file(file_path: PathBuf) -> Result<bool, String> {
   let mut source  = File::open(file_path).map_err(|err| err.to_string())?;
-  let file_list: Vec<String> = compress_tools::list_archive_files(&mut source).unwrap();
+  let file_list: Vec<String> = compress_tools::list_archive_files(&mut source).map_err(|err| err.to_string())?;
   
   let required_files = &["kernel", "initrd.img"];
 
@@ -61,23 +61,21 @@ fn check_install_dir(install_dir: &str) -> bool {
 }
 
 #[tauri::command]
-fn create_data_img(install_dir: String, size: u64) -> String {
+fn create_data_img(install_dir: String, size: u64) -> Result<String, String>  {
   let file_path = Path::new(&install_dir);
 
   let data_img_path = file_path.join("data.img");
-  let mut data_img_file = File::create(file_path.join("data.img")).unwrap();
-  data_img_file.seek(SeekFrom::Start(size * 1073741824)).unwrap();
+  let mut data_img_file = File::create(file_path.join("data.img")).map_err(|err| err.to_string())?;
+  data_img_file.seek(SeekFrom::Start(size * 1073741824)).map_err(|err| err.to_string())?;
   data_img_file.write(&[0]).unwrap();
 
   let output = Command::new("mkfs.ext4")
           .args(["-F", "-b", "4096", "-L", "/data", &data_img_path.display().to_string()])
           .output()
-          .map_err(|err| err.to_string())
-          .expect("failed to execute mkfs.ext4");
+          .map_err(|err| err.to_string())?;
+  remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
 
-  remove_dir(file_path.join("data")).map_err(|err| err.to_string())
-  .expect("failed to remove /data");
-  String::from_utf8_lossy(&output.stdout).into()
+  Ok(String::from_utf8_lossy(&output.stdout).into()) 
 }
 
 #[tauri::command]
@@ -153,7 +151,7 @@ fn start_install(
     let window = Arc::clone(&window_);
     thread::spawn(move || {
       let dest_dir = Path::new(&install_dir);
-      uncompress_archive(source, dest_dir, Ownership::Preserve).unwrap();
+      uncompress_archive(source, dest_dir, Ownership::Preserve).map_err(|err| err.to_string());
       window.emit("new-dir-size", 100).unwrap();
 
       let fs_install_dir = get_fs_install_dir(install_dir.clone());
