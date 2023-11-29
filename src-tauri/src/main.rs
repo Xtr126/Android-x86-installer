@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::{File, remove_dir_all}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command, sync::Arc};
+use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command, sync::Arc};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
@@ -63,7 +63,6 @@ fn check_install_dir(install_dir: &str) -> bool {
 #[tauri::command]
 fn create_data_img(install_dir: String, size: u64) -> String {
   let file_path = Path::new(&install_dir);
-  remove_dir_all(file_path.join("data")).unwrap();
 
   let data_img_path = file_path.join("data.img");
   let mut data_img_file = File::create(file_path.join("data.img")).unwrap();
@@ -72,7 +71,12 @@ fn create_data_img(install_dir: String, size: u64) -> String {
 
   let output = Command::new("mkfs.ext4")
           .args(["-F", "-b", "4096", "-L", "/data", &data_img_path.display().to_string()])
-          .output().unwrap();
+          .output()
+          .map_err(|err| err.to_string())
+          .expect("failed to execute mkfs.ext4");
+
+  remove_dir(file_path.join("data")).map_err(|err| err.to_string())
+  .expect("failed to remove /data");
   String::from_utf8_lossy(&output.stdout).into()
 }
 
@@ -87,12 +91,31 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
   }}"#).into()
 }
 
+#[cfg(linux)]
 fn get_fs_install_dir(install_dir: String) -> String {
   let output = Command::new("stat")
           .args(["-c", r#"%m"#, &install_dir.to_string()])
           .output().unwrap();
   let mountpoint = String::from_utf8_lossy(&output.stdout).strip_suffix("\n").unwrap().to_string();
   install_dir.strip_prefix(&mountpoint).unwrap().into()
+}
+
+// #[cfg(windows)]
+pub fn get_fs_install_dir(install_dir: String) -> String {
+      let components = Path::new(&install_dir).components();
+      let mut install_dir = "".to_owned();
+
+      for component in components {     
+          if component == std::path::Component::RootDir {
+            install_dir.clear();
+            continue;
+          }            
+          let component = component.as_os_str().to_str().unwrap();
+          install_dir.push_str(component);
+      }
+      if install_dir.ends_with('/') { install_dir.pop(); }
+
+      return install_dir;
 }
 
 #[tauri::command]
@@ -116,7 +139,7 @@ fn start_install(
         if current_size > init_size {
           let mut new_progress = (current_size - init_size) * 100 / filesize;
           // increment progress every 1 seconds if stuck
-          if new_progress == progress_before { new_progress = progress_before + 5 }
+          if new_progress == progress_before { new_progress = progress_before + 10 }
           // 100 will be sent only from the other thread
           if new_progress != 100 { window.emit("new-dir-size", new_progress).unwrap(); }
           progress_before = new_progress;
