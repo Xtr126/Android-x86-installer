@@ -98,7 +98,7 @@ fn get_fs_install_dir(install_dir: String) -> String {
   install_dir.strip_prefix(&mountpoint).unwrap().into()
 }
 
-// #[cfg(windows)]
+#[cfg(windows)]
 pub fn get_fs_install_dir(install_dir: String) -> String {
       let components = Path::new(&install_dir).components();
       let mut install_dir = "".to_owned();
@@ -124,29 +124,44 @@ fn start_install(
 ) -> Result<String, String> {
     let window = Arc::new(window);
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
-    let filesize = source.metadata().unwrap().len();
 
-    let install_dir1 = install_dir.clone();  
     let window_ = window.clone();
+
+    // We cant determine progress on windows by checking size
+    #[cfg(windows)]
     thread::spawn(move || {
-      let file_path = Path::new(&install_dir1);
-      let mut init_size = fs_extra::dir::get_size(file_path).unwrap();
-      let mut progress_before = 1;
+      let mut progress = 1;
       loop {
-        let current_size = fs_extra::dir::get_size(file_path).unwrap();
-        if current_size > init_size {
-          let mut new_progress = (current_size - init_size) * 100 / filesize;
-          // increment progress every 1 seconds if stuck
-          if new_progress == progress_before { new_progress = progress_before + 10 }
-          // 100 will be sent only from the other thread
-          if new_progress != 100 { window.emit("new-dir-size", new_progress).unwrap(); }
-          progress_before = new_progress;
-        } else {
-          init_size = current_size;
-        }
+        progress = progress + 1;
+        // 100 should be sent only from the other thread
+        if progress != 100 { window.emit("new-dir-size", progress).unwrap(); }
         thread::sleep(time::Duration::from_secs(1));
       }
     });
+    
+    #[cfg(linux)] {
+      let filesize = source.metadata().unwrap().len();  
+      let install_dir1 = install_dir.clone();  
+      thread::spawn(move || {
+        let file_path = Path::new(&install_dir1);
+        let mut init_size = fs_extra::dir::get_size(file_path).unwrap();
+        let mut progress_before = 1;
+        loop {
+          let current_size = fs_extra::dir::get_size(file_path).unwrap();
+          if current_size > init_size {
+            let mut new_progress = (current_size - init_size) * 100 / filesize;
+            // increment progress every 1 seconds if stuck
+            if new_progress == progress_before { new_progress = progress_before + 10 }
+            // 100 should be sent only from the other thread
+            if new_progress != 100 { window.emit("new-dir-size", new_progress).unwrap(); }
+            progress_before = new_progress;
+          } else {
+            init_size = current_size;
+          }
+          thread::sleep(time::Duration::from_secs(1));
+        }
+      });
+    }
 
     let window = Arc::clone(&window_);
     thread::spawn(move || {
