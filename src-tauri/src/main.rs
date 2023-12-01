@@ -61,7 +61,10 @@ fn check_install_dir(install_dir: &str) -> bool {
 }
 
 #[tauri::command]
-fn create_data_img(install_dir: String, size: u64) -> Result<String, String>  {
+fn create_data_img(
+  install_dir: String, 
+  size: u64
+) -> Result<String, String>  {
   let file_path = Path::new(&install_dir);
 
   let data_img_path = file_path.join("data.img");
@@ -69,13 +72,16 @@ fn create_data_img(install_dir: String, size: u64) -> Result<String, String>  {
   data_img_file.seek(SeekFrom::Start(size * 1073741824)).map_err(|err| err.to_string())?;
   data_img_file.write(&[0]).unwrap();
 
-  let output = Command::new("mkfs.ext4")
-          .args(["-F", "-b", "4096", "-L", "/data", &data_img_path.display().to_string()])
-          .output()
-          .map_err(|err| err.to_string())?;
-  remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
 
-  Ok(String::from_utf8_lossy(&output.stdout).into()) 
+  use tauri::api::process::Command;
+  let output = Command::new_sidecar("mke2fs")
+          .map_err(|err| err.to_string())?
+          .args(["-F", "-b", "4096", "-L", "/data", "-t", "ext4", &data_img_path.display().to_string()])
+          .output().map_err(|err| err.to_string())?;
+  
+  remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
+  
+  Ok(output.stdout) 
 }
 
 #[tauri::command]
@@ -166,7 +172,7 @@ fn start_install(
     let window = Arc::clone(&window_);
     thread::spawn(move || {
       let dest_dir = Path::new(&install_dir);
-      uncompress_archive(source, dest_dir, Ownership::Preserve).map_err(|err| err.to_string());
+      uncompress_archive(source, dest_dir, Ownership::Preserve).map_err(|err| err.to_string()).unwrap();
       window.emit("new-dir-size", 100).unwrap();
 
       let fs_install_dir = get_fs_install_dir(install_dir.clone());

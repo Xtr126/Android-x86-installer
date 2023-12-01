@@ -15,7 +15,25 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": true
+        "open": true,
+        "scope": [
+          {
+            "name": "mke2fs",
+            "sidecar": true,
+            "args": [
+              "-F",
+              "-b",
+              "4096",
+              "-L",
+              "/data",
+              "-t",
+              "ext4",
+              {
+                "validator": "\\S+"
+              }
+            ]
+          }
+        ]
       },
       "dialog": {
         "all": false,
@@ -39,7 +57,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
+      "externalBin": [ "mke2fs" ],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
