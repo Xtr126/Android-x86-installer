@@ -95,7 +95,7 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
   }}"#).into()
 }
 
-#[cfg(linux)]
+#[cfg(target_os = "linux")]
 fn get_fs_install_dir(install_dir: String) -> String {
   let output = Command::new("stat")
           .args(["-c", r#"%m"#, &install_dir.to_string()])
@@ -106,7 +106,7 @@ fn get_fs_install_dir(install_dir: String) -> String {
 
 #[cfg(windows)]
 pub fn get_fs_install_dir(install_dir: String) -> String {
-      let components = Path::new(&install_dir).components();
+  let components = Path::new(&install_dir).components();
       let mut install_dir = "".to_owned();
 
       for component in components {     
@@ -145,7 +145,7 @@ fn start_install(
       }
     });
     
-    #[cfg(linux)] {
+    #[cfg(target_os = "linux")] {
       let filesize = source.metadata().unwrap().len();  
       let install_dir1 = install_dir.clone();  
       thread::spawn(move || {
