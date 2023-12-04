@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, process::Command, sync::Arc};
+use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, sync::Arc};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
@@ -61,7 +61,7 @@ fn check_install_dir(install_dir: &str) -> bool {
 }
 
 #[tauri::command]
-fn create_data_img(
+async fn create_data_img(
   install_dir: String, 
   size: u64
 ) -> Result<String, String>  {
@@ -97,7 +97,7 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
 
 #[cfg(target_os = "linux")]
 fn get_fs_install_dir(install_dir: String) -> String {
-  let output = Command::new("stat")
+  let output = std::process::Command::new("stat")
           .args(["-c", r#"%m"#, &install_dir.to_string()])
           .output().unwrap();
   let mountpoint = String::from_utf8_lossy(&output.stdout).strip_suffix("\n").unwrap().to_string();

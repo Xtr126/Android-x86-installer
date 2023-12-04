@@ -100,7 +100,7 @@ export class InstallerApp extends LitElement {
     .c-progress {
       margin: auto;
       --md-circular-progress-size: 40vh;
-      --md-circular-progress-active-indicator-width: 4.33;
+      --md-circular-progress-active-indicator-width: 6;
     }
 
     .c-progress.container {
@@ -253,6 +253,13 @@ export class InstallerApp extends LitElement {
       <md-filled-button class="button-next" @click="${this.onQemuConfigDoneButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
 
+
+    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'data_img_progress'}">
+      <div class="container c-progress">
+        <md-circular-progress class="c-progress" indeterminate four-color	> </md-circular-progress>
+        <p style="margin: auto;"> ${msg('Creating data.img.. Please wait')}</p>
+      </div>
+    </section>
 
     <md-dialog id="dialog">
       <div slot="headline">

@@ -52,14 +52,13 @@ async function startInstall() {
   });
 }
 
-async function createDataImg() {
-  if (installEl.useDataImg) {
-    invoke("create_data_img", {  
-      installDir: installDirTextFieldEl.value,
-      size: installEl.dataImgSize,
-    }).then((res) => installEl.showDialog('Create data.img success', res))
-    .catch((error) => installEl.showDialog('Create data.img failed', error))
-  }
+
+async function createGrubEntry() {
+  installEl.bootloaderMsg_ = await invoke("create_grub_entry", {
+    installDir: installDirTextFieldEl.value,
+    osTitle: osTitleTextFieldEl.value,
+  });
+  sidePanelEl.activateNextCategory();
 }
 
 async function updateProgress() {
@@ -68,13 +67,19 @@ async function updateProgress() {
       installEl.updateProgress(event.payload)
     });
     if (installEl.progressPercent_ == 100) {
-      createDataImg();
+      installEl.activeCategory_ = 'data_img_progress';
       
-      installEl.bootloaderMsg_ = await invoke("create_grub_entry", {  
-        installDir: installDirTextFieldEl.value,
-        osTitle: osTitleTextFieldEl.value,
-      })
-      sidePanelEl.activateNextCategory();
+      if (!installEl.useDataImg) {
+        await createGrubEntry();
+      } else {
+        invoke("create_data_img", {  
+          installDir: installDirTextFieldEl.value,
+          size: installEl.dataImgSize,
+        }).then(async (res) => {
+          installEl.showDialog('Create data.img success', res)
+          await createGrubEntry();
+        }).catch((error) => installEl.showDialog('Create data.img failed', error));
+      }
       break;
     }
   }
