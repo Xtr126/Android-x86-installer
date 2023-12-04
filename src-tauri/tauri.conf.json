@@ -13,6 +13,9 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "fs": {
+        "scope": ["$RESOURCE/*"]
+      },
       "shell": {
         "all": false,
         "open": true,
@@ -28,9 +31,8 @@
               "/data",
               "-t",
               "ext4",
-              {
-                "validator": "\\S+"
-              }
+              { "validator": "\\S+" },
+              { "validator": "\\S+" }
             ]
           }
         ]
@@ -74,7 +76,7 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": ["mke2fs.conf"],
       "shortDescription": "",
       "targets": "all",
       "windows": {

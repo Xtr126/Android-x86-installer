@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, io::{Write, Seek, SeekFrom}, sync::Arc};
+use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, sync::Arc};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
@@ -68,15 +68,15 @@ async fn create_data_img(
   let file_path = Path::new(&install_dir);
 
   let data_img_path = file_path.join("data.img");
-  let mut data_img_file = File::create(file_path.join("data.img")).map_err(|err| err.to_string())?;
-  data_img_file.seek(SeekFrom::Start(size * 1073741824)).map_err(|err| err.to_string())?;
-  data_img_file.write(&[0]).unwrap();
-
 
   use tauri::api::process::Command;
   let output = Command::new_sidecar("mke2fs")
           .map_err(|err| err.to_string())?
-          .args(["-F", "-b", "4096", "-L", "/data", "-t", "ext4", &data_img_path.display().to_string()])
+          .args([
+          "-F", "-b", "4096", "-L", "/data", "-t", "ext4", 
+          &data_img_path.display().to_string(),
+          format!("{size}G").as_str() 
+          ])
           .output().map_err(|err| err.to_string())?;
   
   remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
