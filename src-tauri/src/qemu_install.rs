@@ -1,3 +1,5 @@
+use std::path::Path;
+
 #[cfg(target_os = "linux")]
 #[tauri::command]
 pub fn install_qemu(
@@ -66,7 +68,7 @@ fi
       -initrd "{install_dir}/initrd.img"
       "#);
 
-      let script_path = std::path::Path::new(&install_dir).join("start_android.sh");
+      let script_path = Path::new(&install_dir).join("start_android.sh");
       
       // make script executable 
       let mut options = std::fs::OpenOptions::new();
