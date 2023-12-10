@@ -6,7 +6,6 @@ It re-uses the grub config and kernel command line parameters from the ISO.
 
 Download .deb or .AppImage for Linux: https://github.com/Xtr126/Android-x86-installer/releases  
 On the Arch Linux User repository (AUR): https://aur.archlinux.org/packages/android-x86-installer-tauri-bin   
-Windows Support is planned.
 
 ## Development
 - [Tauri Prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
