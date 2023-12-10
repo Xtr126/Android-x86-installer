@@ -13,9 +13,6 @@
   "tauri": {
     "allowlist": {
       "all": false,
-      "fs": {
-        "scope": ["$RESOURCE/*"]
-      },
       "shell": {
         "all": false,
         "open": true,
