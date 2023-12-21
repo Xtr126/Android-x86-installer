@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.7.1",
-    "@tauri-apps/cli": "^1.5.6",
+    "@tauri-apps/cli": "^1.5.9",
     "vite": "5.0.2"
   }
 }
