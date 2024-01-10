@@ -15,8 +15,8 @@ dependencies:
     specifier: ^1.5.1
     version: 1.5.1
   lit:
-    specifier: ^3.1.0
-    version: 3.1.0
+    specifier: ^3.1.1
+    version: 3.1.1
 
 devDependencies:
   '@lit/localize-tools':
@@ -242,7 +242,7 @@ packages:
       fast-glob: 3.3.2
       fs-extra: 10.1.0
       jsonschema: 1.4.1
-      lit: 3.1.0
+      lit: 3.1.1
       minimist: 1.2.8
       parse5: 7.1.2
       source-map-support: 0.5.21
@@ -252,7 +252,7 @@ packages:
   /@lit/localize@0.12.1:
     resolution: {integrity: sha512-uuF6OO6fjqomCf3jXsJ5cTGf1APYuN88S4Gvo/fjt9YkG4OMaMvpEUqd5oWhyzrJfY+HcenAbLJNi2Cq3H7gdg==}
     dependencies:
-      lit: 3.1.0
+      lit: 3.1.1
 
   /@lit/reactive-element@2.0.2:
     resolution: {integrity: sha512-SVOwLAWUQg3Ji1egtOt1UiFe4zdDpnWHyc5qctSceJ5XIu0Uc76YmGpIjZgx9YJ0XtdW0Jm507sDvjOu+HnB8w==}
@@ -262,7 +262,7 @@ packages:
   /@material/web@1.0.1:
     resolution: {integrity: sha512-AilQTWdp+lgPzoUGNj/CyrMsULLdzhHiiYs6XXSIpX/t/eGQkiPP4CAwvjqANuV+YZC0hLIo+s64BIgZo8Ghkw==}
     dependencies:
-      lit: 3.1.0
+      lit: 3.1.1
       tslib: 2.6.2
     dev: false
 
@@ -648,8 +648,8 @@ packages:
     dependencies:
       '@types/trusted-types': 2.0.7
 
-  /lit@3.1.0:
-    resolution: {integrity: sha512-rzo/hmUqX8zmOdamDAeydfjsGXbbdtAFqMhmocnh2j9aDYqbu0fjXygjCa0T99Od9VQ/2itwaGrjZz/ZELVl7w==}
+  /lit@3.1.1:
+    resolution: {integrity: sha512-hF1y4K58+Gqrz+aAPS0DNBwPqPrg6P04DuWK52eMkt/SM9Qe9keWLcFgRcEKOLuDlRZlDsDbNL37Vr7ew1VCuw==}
     dependencies:
       '@lit/reactive-element': 2.0.2
       lit-element: 4.0.2
