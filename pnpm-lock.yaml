@@ -9,8 +9,8 @@ dependencies:
     specifier: ^0.12.1
     version: 0.12.1
   '@material/web':
-    specifier: 1.0.1
-    version: 1.0.1
+    specifier: 1.2.0
+    version: 1.2.0
   '@tauri-apps/api':
     specifier: ^1.5.1
     version: 1.5.1
@@ -259,8 +259,8 @@ packages:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.1.2
 
-  /@material/web@1.0.1:
-    resolution: {integrity: sha512-AilQTWdp+lgPzoUGNj/CyrMsULLdzhHiiYs6XXSIpX/t/eGQkiPP4CAwvjqANuV+YZC0hLIo+s64BIgZo8Ghkw==}
+  /@material/web@1.2.0:
+    resolution: {integrity: sha512-1+s9J7K2wtZid8HpNstGoFwNFE0/4bXgSYZx2Hy01aZL/8oOMZ6rN733onTJMgf3zz9xKizDQUscxB28ZtkDFQ==}
     dependencies:
       lit: 3.1.0
       tslib: 2.6.2
