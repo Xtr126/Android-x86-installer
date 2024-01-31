@@ -4,7 +4,7 @@ You can see a preview of the user interface right now on your browser: https://x
 The installer can function without root access. For safety, it was designed not to mess with the bootloader.  
 It re-uses the grub config and kernel command line parameters from the ISO.  
 
-Download .deb or .AppImage for Linux: https://github.com/Xtr126/Android-x86-installer/releases  
+Download .deb or .AppImage for Linux: https://github.com/Xtr126/Android-x86-installer/releases/latest  
 On the Arch Linux User repository (AUR): https://aur.archlinux.org/packages/android-x86-installer-tauri-bin   
 
 ## Development
