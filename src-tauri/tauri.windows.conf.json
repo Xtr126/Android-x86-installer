@@ -1,8 +1,33 @@
 {
     "tauri": {
+        "allowlist": {
+            "shell": {
+                "all": false,
+                "execute": false,
+                "open": false,
+                "scope": [
+                    {
+                      "name": "mke2fs",
+                      "sidecar": true,
+                      "args": [
+                        "-F",
+                        "-b",
+                        "4096",
+                        "-L",
+                        "/data",
+                        "-t",
+                        "ext4",
+                        { "validator": "\\S+" },
+                        { "validator": "\\S+" }
+                      ]
+                    }
+                ]
+            }
+        },
        "bundle": {
         "resources": ["mke2fs.conf",
-                    "*.dll"]
+                    "*.dll"],
+        "externalBin": [ "mke2fs" ]
        }
     }
 }
