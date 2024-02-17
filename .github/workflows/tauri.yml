@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
     
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v3
         with:
           version: 8
           
@@ -48,7 +48,7 @@ jobs:
         
       - name: Cache vcpkg
         if: matrix.platform == 'windows-latest'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ${{ env.VCPKG_ROOT }}/installed
@@ -61,7 +61,7 @@ jobs:
         run:  "'${{env.VCPKG_ROOT}}/vcpkg' install libarchive:x64-windows-static-md"
 
       - name: Cache Rust / Cargo
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
