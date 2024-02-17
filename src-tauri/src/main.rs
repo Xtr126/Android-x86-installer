@@ -72,10 +72,10 @@ async fn create_data_img(
   use tauri::api::process::Command;
 
   #[cfg(windows)]  
-  let output = Command::new_sidecar("mke2fs")
+  let output = Command::new_sidecar("mkfs.ext4")
           .map_err(|err| err.to_string())?
           .args([
-          "-F", "-b", "4096", "-L", "/data", "-t", "ext4", 
+          "-F", "-b", "4096", "-L", "/data",
           &data_img_path.display().to_string(),
           format!("{size}G").as_str() 
           ])
@@ -84,7 +84,7 @@ async fn create_data_img(
   #[cfg(target_os = "linux")]  
   let output = Command::new("mkfs.ext4")
           .args([
-          "-F", "-b", "4096", "-L", "/data", "-t", "ext4", 
+          "-F", "-b", "4096", "-L", "/data",
           &data_img_path.display().to_string(),
           format!("{size}G").as_str() 
           ])

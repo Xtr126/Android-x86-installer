@@ -7,7 +7,7 @@
                 "open": false,
                 "scope": [
                     {
-                      "name": "mke2fs",
+                      "name": "mkfs.ext4",
                       "sidecar": true,
                       "args": [
                         "-F",
@@ -15,8 +15,6 @@
                         "4096",
                         "-L",
                         "/data",
-                        "-t",
-                        "ext4",
                         { "validator": "\\S+" },
                         { "validator": "\\S+" }
                       ]
@@ -27,7 +25,7 @@
        "bundle": {
         "resources": ["mke2fs.conf",
                     "*.dll"],
-        "externalBin": [ "mke2fs" ]
+        "externalBin": [ "mkfs.ext4" ]
        }
     }
 }
