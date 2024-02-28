@@ -31,7 +31,7 @@ export class InstallerApp extends LitElement {
 
   constructor() {
     super();
-    this.activeCategory_ = 'settings';
+    this.activeCategory_ = 'install';
     this.progressPercent_ = 0;
     this.dataImgSize = 8;
     this.qemuConfigDone = false;
