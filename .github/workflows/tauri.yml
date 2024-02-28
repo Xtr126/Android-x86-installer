@@ -56,6 +56,12 @@ jobs:
             ${{ env.VCPKG_ROOT }}/packages
           key: ${{ runner.os }}-vcpkg-libarchive
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vcpkg
+          path: ${{ env.VCPKG_ROOT }}/installed
+
+
       - name: Install Vcpkg
         if: matrix.platform == 'windows-latest'
         run:  "'${{env.VCPKG_ROOT}}/vcpkg' install libarchive:x64-windows-static-md"
