@@ -31,7 +31,7 @@ export class InstallerApp extends LitElement {
 
   constructor() {
     super();
-    this.activeCategory_ = 'install';
+    this.activeCategory_ = 'settings';
     this.progressPercent_ = 0;
     this.dataImgSize = 8;
     this.qemuConfigDone = false;
@@ -83,14 +83,13 @@ export class InstallerApp extends LitElement {
     }
 
     .button-back {
-      position: absolute;
+      position: fixed;
       bottom: 0;
-      margin-left: 50px;
       margin-bottom: 20px;
     }
 
     .button-next {
-      position: absolute;
+      position: fixed;
       bottom: 0;
       right: 0;
       margin-right: 20px;
@@ -244,6 +243,40 @@ export class InstallerApp extends LitElement {
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
+
+    <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader-windows'}">
+      <div class="display-small" style="margin-left: 50px;">
+        <div>${msg('Only Bliss OS Grub can read from NTFS partitions.')}</div>
+        <div>${msg('Compression should be disabled in properties for the partition.')}</div><br>
+        <div>${msg('Press Win+X and select Windows Terminal (Admin)')}</div>
+        <div>${msg('Open PowerShell by typing in below command and press enter key.')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  powershell.exe</code></pre>
+        </div>
+        <div>${msg('Right click to paste text into the terminal.')}</div><br>
+      <div>${msg('Mount EFI System partition')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  mountvol X: /s</code></pre>
+        </div>
+      <div>${msg('Copy Android bootloader files')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  Copy-Item -Path D:\z\boot -Destination X:\ -Recurse</code></pre>
+          <pre><code>  Copy-Item -Path D:\z\efi\boot -Destination X:\EFI\ -Recurse</code></pre>
+        </div>
+
+        <div>${msg('Create bootloader entry for Android')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\EFI\Microsoft\Boot\BCD</code></pre>
+        </div>
+
+        <div>${msg('Use x-x-xxxx-xxxxx from identifier {x-x-xxxx-xxxxx} in output from previous command.')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  Set-BcdElement -Element path -Id x-x-xxxx-xxxxx -Type String -Value \EFI\boot\BOOTx64.EFI</code></pre>
+        </div>
+      </div>
+      <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
+    </section>
+
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'qemu_settings'}">
     <div class="column settings-form">
