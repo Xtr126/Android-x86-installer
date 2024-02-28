@@ -17,5 +17,6 @@ pnpm tauri dev
 ```
 ![](Screenshot.png)  
 
-The installer also supports generating a script to boot the same physical Android install in qemu: ![](https://cdn.discordapp.com/attachments/642035838305435698/1139920587792322630/image.png)
+The installer also supports generating a script to boot the same physical Android install in qemu:
+![image](https://github.com/Xtr126/Android-x86-installer/assets/80520774/4849d563-2057-4104-8997-6fe62c6606a9)
 [User interface preview](https://xtr126.github.io/Android-x86-installer)   
