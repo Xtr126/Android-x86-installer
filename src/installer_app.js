@@ -24,6 +24,7 @@ export class InstallerApp extends LitElement {
     dialogMsg_: {type: String},
     progressPercent_: {type: Number},
     bootloaderMsg_: {type: String},
+    installDir: {type: String},
     useDataImg: {type: Boolean},
     dataImgSize: {type: Number},
     dataImgScale: {type: Number},
@@ -32,7 +33,7 @@ export class InstallerApp extends LitElement {
 
   constructor() {
     super();
-    this.activeCategory_ = 'settings';
+    this.activeCategory_ = 'install';
     this.progressPercent_ = 0;
     this.dataImgSize = 4;
     this.dataImgScale = 2;
@@ -251,30 +252,31 @@ export class InstallerApp extends LitElement {
       <div class="display-small" style="margin-left: 50px;">
         <div>${msg('Only Bliss OS Grub can read from NTFS partitions.')}</div>
         <div>${msg('Compression should be disabled in properties for the partition.')}</div><br>
+
         <div>${msg('Press Win+X and select Windows Terminal (Admin)')}</div>
         <div>${msg('Open PowerShell by typing in below command and press enter key.')}</div>
         <div class="codeblock-surface" > 
           <pre><code>  powershell.exe</code></pre>
         </div>
         <div>${msg('Right click to paste text into the terminal.')}</div><br>
-      <div>${msg('Mount EFI System partition')}</div>
-        <div class="codeblock-surface" > 
-          <pre><code>  mountvol X: /s</code></pre>
-        </div>
-      <div>${msg('Copy Android bootloader files')}</div>
-        <div class="codeblock-surface" > 
-          <pre><code>  Copy-Item -Path D:\z\boot -Destination X:\ -Recurse</code></pre>
-          <pre><code>  Copy-Item -Path D:\z\efi\boot -Destination X:\EFI\ -Recurse</code></pre>
-        </div>
+        <div>${msg('Mount EFI System partition')}</div>
+          <div class="codeblock-surface" > 
+            <pre><code>  mountvol X: /s</code></pre>
+          </div>
+        <div>${msg('Copy Android bootloader files')}</div>
+          <div class="codeblock-surface" > 
+            <pre><code>  Copy-Item -Path ${this.installDir}\\boot -Destination X:\\ -Recurse</code></pre>
+            <pre><code>  Copy-Item -Path ${this.installDir}\\efi\\boot -Destination X:\EFI\\ -Recurse</code></pre>
+          </div>
 
         <div>${msg('Create bootloader entry for Android')}</div>
         <div class="codeblock-surface" > 
-          <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\EFI\Microsoft\Boot\BCD</code></pre>
+          <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\\EFI\\Microsoft\\Boot\\BCD</code></pre>
         </div>
 
         <div>${msg('Use x-x-xxxx-xxxxx from identifier {x-x-xxxx-xxxxx} in output from previous command.')}</div>
         <div class="codeblock-surface" > 
-          <pre><code>  Set-BcdElement -Element path -Id x-x-xxxx-xxxxx -Type String -Value \EFI\boot\BOOTx64.EFI</code></pre>
+          <pre><code>  Set-BcdElement -Element path -Id x-x-xxxx-xxxxx -Type String -Value \\EFI\\boot\\BOOTx64.EFI</code></pre>
         </div>
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
@@ -347,7 +349,7 @@ export class InstallerApp extends LitElement {
   }
 
   async onFinishButtonClicked() {
-    await exit(1);
+    await exit(0);
   }
 
   closeDialog() {

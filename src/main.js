@@ -55,10 +55,11 @@ async function startInstall() {
 
 async function createGrubEntry() {
   installEl.bootloaderMsg_ = await invoke("create_grub_entry", {
-    installDir: installDirTextFieldEl.value,
+    installDir: _installDir,
     osTitle: osTitleTextFieldEl.value,
   });
-  sidePanelEl.activateNextCategory();
+  installEl.installDir = _installDir;
+  installEl.activateNextCategory();
 }
 
 async function updateProgress() {
