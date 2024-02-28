@@ -26,14 +26,16 @@ export class InstallerApp extends LitElement {
     bootloaderMsg_: {type: String},
     useDataImg: {type: Boolean},
     dataImgSize: {type: Number},
+    dataImgScale: {type: Number},
     qemuConfigDone: {type: Boolean},
   };
 
   constructor() {
     super();
-    this.activeCategory_ = 'install';
+    this.activeCategory_ = 'settings';
     this.progressPercent_ = 0;
-    this.dataImgSize = 8;
+    this.dataImgSize = 4;
+    this.dataImgScale = 2;
     this.qemuConfigDone = false;
     this.bootloaderMsg_ = 
 `  menuentry "Android" --class android-x86 {
@@ -194,14 +196,15 @@ export class InstallerApp extends LitElement {
           <md-switch @change="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
+        <div style="margin-top: -40px; display: none;" id="c-data-img"> 
+          <label>Size: ${this.dataImgSize} GB</label> 
+          <md-slider @change=${this.handleDataImgSize_Change} step=${this.dataImgScale} min=4 max=${this.dataImgScale * 16} value=8 ticks labeled style="width: 300px;"></md-slider>
+          <md-outlined-text-field @change=${this.handleDataImgScale_Change} onKeyDown="return false" label="Scale" min="1" type="number" style="width:80px" value=2></md-outlined-text-field>
+        </div>
+
         <div style="margin-top: -10px;">
           <label style="margin-right: 80px;">${msg('Install for QEMU')} </label> 
           <md-switch @change="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
-        </div>
-
-        <div style="margin-top: -20px; display: none;" id="c-data-img"> 
-          <label>Size: ${this.dataImgSize} GB</label> 
-          <md-slider @change=${this.handleDataImgSize_Change} step=2 min=4 max=32 value=8 ticks labeled style="width: 300px;"></md-slider> 
         </div>
 
       </div>
@@ -409,6 +412,10 @@ export class InstallerApp extends LitElement {
 
   handleDataImgSize_Change(event) {
     this.dataImgSize = event.target.value;
+  }
+
+  handleDataImgScale_Change(event) {
+    this.dataImgScale = event.target.value;
   }
 
   /** @override */
