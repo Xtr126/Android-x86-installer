@@ -14,6 +14,7 @@ import { msg } from '@lit/localize'
 import { exit } from '@tauri-apps/api/process';
 
 import androidLogo from './assets/android.svg'
+import { type } from '@tauri-apps/api/os';
 
 export class InstallerApp extends LitElement {
 
@@ -29,6 +30,7 @@ export class InstallerApp extends LitElement {
     dataImgSize: {type: Number},
     dataImgScale: {type: Number},
     qemuConfigDone: {type: Boolean},
+    osType: {type: String},
   };
 
   constructor() {
@@ -199,7 +201,7 @@ export class InstallerApp extends LitElement {
 
         <div style="margin-top: -40px; display: none;" id="c-data-img"> 
           <label>Size: ${this.dataImgSize} GB</label> 
-          <md-slider @change=${this.handleDataImgSize_Change} step=${this.dataImgScale} min=4 max=${this.dataImgScale * 16} value=8 ticks labeled style="width: 300px;"></md-slider>
+          <md-slider @change=${this.handleDataImgSize_Change} step=${this.dataImgScale} min=4 max=${this.dataImgScale * 16} value=4 ticks labeled style="width: 300px;"></md-slider>
           <md-outlined-text-field @change=${this.handleDataImgScale_Change} onKeyDown="return false" label="Scale" min="1" type="number" style="width:80px" value=2></md-outlined-text-field>
         </div>
 
@@ -384,7 +386,8 @@ export class InstallerApp extends LitElement {
       this.dataDirSwitchEl.selected = false;  
       this.dataImgSwitchState();
     }
-    this.dataDirSwitchEl.disabled = this.dataImgSwitchEl.disabled = installForQemu;
+    if (this.osType != 'Windows_NT')
+      this.dataDirSwitchEl.disabled = this.dataImgSwitchEl.disabled = installForQemu;
   }
 
   onQemuConfigDoneButtonClicked() {
@@ -429,6 +432,15 @@ export class InstallerApp extends LitElement {
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
     this.qemuInstallSwitchEl = this.renderRoot.querySelector('#qemu-install-switch'); 
     this.showDialog('', '"The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."');
+    type().then((osType) => {
+      this.osType = osType;
+      if (this.osType == 'Windows_NT') {
+        this.dataImgSwitchEl.selected = true;  
+        this.dataDirSwitchEl.selected = false;  
+        this.dataDirSwitchEl.disabled = true;
+        this.dataImgSwitchState();
+      }
+    })
   }  
 }
 

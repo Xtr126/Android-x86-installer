@@ -52,16 +52,6 @@ async function startInstall() {
   });
 }
 
-
-async function createGrubEntry() {
-  installEl.bootloaderMsg_ = await invoke("create_grub_entry", {
-    installDir: _installDir,
-    osTitle: osTitleTextFieldEl.value,
-  });
-  installEl.installDir = _installDir;
-  installEl.activateNextCategory();
-}
-
 async function updateProgress() {
   while(true) {
     await listen('new-dir-size', (event) => {
@@ -70,6 +60,8 @@ async function updateProgress() {
     if (installEl.progressPercent_ == 100) {
       installEl.activeCategory_ = 'data_img_progress';
       
+      if (installEl.osType == 'Windows_NT')  installEl.useDataImg = true;
+
       if (!installEl.useDataImg) {
         await createGrubEntry();
       } else {
@@ -84,6 +76,18 @@ async function updateProgress() {
       break;
     }
   }
+}
+
+async function createGrubEntry() {
+  const _installDir = installDirTextFieldEl.value;
+    installEl.bootloaderMsg_ = await invoke("create_grub_entry", {
+      installDir: _installDir,
+      osTitle: osTitleTextFieldEl.value,
+    });
+    installEl.installDir = _installDir;
+    sidePanelEl.activateNextCategory();
+    if (installEl.osType == 'Windows_NT') 
+      installEl.activeCategory_ = 'bootloader-windows';
 }
 
 function toggleDarkMode() {
