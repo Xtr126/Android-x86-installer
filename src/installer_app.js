@@ -280,6 +280,16 @@ export class InstallerApp extends LitElement {
         <div class="codeblock-surface" > 
           <pre><code>  Set-BcdElement -Element path -Id x-x-xxxx-xxxxx -Type String -Value \\EFI\\boot\\BOOTx64.EFI</code></pre>
         </div>
+
+        <div>${msg('Disable hibernation using PowerShell to avoid bootloop.')}</div>
+        <div>${msg('If turning off hibernation is undesirable, hold down shift key when shutting down Windows to perform a full shutdown, everytime before booting to Android.')}</div>
+        <div class="codeblock-surface" > 
+          <pre><code>  powercfg.exe /hibernate off</code></pre>
+        </div>
+
+        <div>${msg('Boot to Android from UEFI Boot Menu in BIOS.')}</div>
+        <div>${msg('Or press Ctrl+Alt+Del, click on power button and hold shift key while clicking on restart. After restarting, select "Use another device" or "Use another operating system" from the menu and select "Android".')}</div>
+
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
