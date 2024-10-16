@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use std::{fs::{File, remove_dir}, path::{PathBuf, Path}, time, thread, sync::Arc};
+use std::{fs::{remove_dir, File}, io::{Bytes, Seek, Write}, path::{Path, PathBuf}, sync::Arc, thread, time};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
@@ -133,6 +133,20 @@ pub fn get_fs_install_dir(install_dir: String) -> String {
       return install_dir;
 }
 
+// For recovery https://github.com/BlissOS/bootable_newinstaller/blob/c81bcf9d8148f3f071013161c3eb4a3ee58a1189/install/scripts/1-install#L987
+fn prepare_recovery(
+  dest_dir: &Path,
+) -> Result<(), String>  {
+  std::fs::rename(dest_dir.join("ramdisk-recovery.img"), dest_dir.join("recovery.img")).map_err(|err| err.to_string())?;
+  let misc_img_path = dest_dir.join("misc.img");
+  let mut misc_img_file = File::create(misc_img_path).map_err(|err| err.to_string())?;
+  let megabyte = 1024 << 10; // megabyte size in bytes
+  // Generate 10 MB misc.img
+  misc_img_file.seek(std::io::SeekFrom::Start(megabyte * 10)).map_err(|err| err.to_string())?;
+  misc_img_file.write(&[0]).map_err(|err| err.to_string())?;
+  Ok(())
+}
+
 #[tauri::command]
 fn start_install(
   window: tauri::Window,
@@ -182,7 +196,7 @@ fn start_install(
 
     let window = Arc::clone(&window_);
     thread::spawn(move || {
-      let dest_dir = Path::new(&install_dir);
+      let dest_dir: &Path = Path::new(&install_dir);
       uncompress_archive(source, dest_dir, Ownership::Preserve).map_err(|err| err.to_string()).unwrap();
       window.emit("new-dir-size", 100).unwrap();
 
@@ -198,6 +212,9 @@ fn start_install(
       "#);
       std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
       std::fs::create_dir(dest_dir.join("data")).unwrap();
+      
+      let _ = std::fs::remove_file(dest_dir.join("install.img"));
+      let _ = prepare_recovery(dest_dir);
     });
   Ok("Success".to_string()) 
 }

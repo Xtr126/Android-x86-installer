@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cross-compiling
+src-tauri/.cargo/config.toml
