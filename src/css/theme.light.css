@@ -1,4 +1,5 @@
 :root[light_mode] {
+    color-scheme: light;
     --md-sys-color-primary: #006A6A;
     --md-sys-color-primary-container: #6FF7F6;
     --md-sys-color-on-primary: #FFFFFF;

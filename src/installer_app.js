@@ -117,7 +117,7 @@ export class InstallerApp extends LitElement {
       border-radius: 1em;
       border-width: 1px;
       margin-bottom: 1.5rem;
-      overflow: hidden;
+      overflow-x: auto;
       color: var(--md-sys-color-on-surface-variant);
       text-shadow: 0 1px 1px var(--md-sys-color-surface);
       font-family: 'Google Sans Mono', 'Droid Sans Mono', 'Roboto Mono', Menlo, Monaco, 'Courier New', monospace;
@@ -301,7 +301,9 @@ export class InstallerApp extends LitElement {
 
         <div>${msg('Boot to Android from UEFI Boot Menu in BIOS.')}</div>
         <div>${msg('Or press Ctrl+Alt+Del, click on power button and hold shift key while clicking on restart. After restarting, select "Use another device" or "Use another operating system" from the menu and select "Android".')}</div>
-
+        <pre>
+          
+        </pre>
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
