@@ -272,13 +272,25 @@ export class InstallerApp extends LitElement {
           </div>
 
         <div>${msg('Create bootloader entry for Android')}</div>
+
         <div class="codeblock-surface" > 
+          <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
           <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\\EFI\\Microsoft\\Boot\\BCD</code></pre>
+        </div>
+        <div class="codeblock-surface" > 
+          <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
+          <pre><code>  bcdedit /copy '{bootmgr}' /d "Android"</code></pre>
         </div>
 
         <div>${msg('Use x-x-xxxx-xxxxx from identifier {x-x-xxxx-xxxxx} in output from previous command.')}</div>
+
         <div class="codeblock-surface" > 
+          <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
           <pre><code>  Set-BcdElement -Element path -Id x-x-xxxx-xxxxx -Type String -Value \\EFI\\boot\\BOOTx64.EFI</code></pre>
+        </div>
+        <div class="codeblock-surface" > 
+          <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
+          <pre><code>  bcdedit /set '{x-x-xxxx-xxxxx}' path \\EFI\\boot\\BOOTx64.EFI</code></pre>
         </div>
 
         <div>${msg('Disable hibernation using PowerShell to avoid bootloop.')}</div>
