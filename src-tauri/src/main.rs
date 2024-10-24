@@ -158,15 +158,19 @@ fn start_install(
 
     let window_ = window.clone();
 
-    // We cant determine progress on windows by checking size
+    // We can't determine progress on windows by checking size
     #[cfg(windows)]
     thread::spawn(move || {
       let mut progress = 1;
       loop {
         progress = progress + 1;
         // 100 should be sent only from the other thread
-        if progress != 100 { window.emit("new-dir-size", progress).unwrap(); }
-        thread::sleep(time::Duration::from_secs(1));
+        if progress != 100 { 
+            window.emit("new-dir-size", progress).unwrap(); 
+            thread::sleep(time::Duration::from_secs(1));
+        } else {
+            break;
+        }
       }
     });
     
