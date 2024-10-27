@@ -212,11 +212,18 @@ fn start_install(
 
 
 fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![
-          pick_file, pick_folder, check_install_dir,
-          start_install,  qemu_install::install_qemu, 
-          create_data_img, create_grub_entry])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+  #[cfg(windows)] {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 {
+      windows_install_bootloader::install(args);
+      return;
+    }
+  }
+  tauri::Builder::default()
+    .invoke_handler(tauri::generate_handler![
+      pick_file, pick_folder, check_install_dir,
+      start_install,  qemu_install::install_qemu, 
+      create_data_img, create_grub_entry])
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
 }

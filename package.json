@@ -12,12 +12,12 @@
   "dependencies": {
     "@lit/localize": "^0.12.2",
     "@material/web": "2.2.0",
-    "@tauri-apps/api": "^2.0.3",
+    "@tauri-apps/api": "^1.6",
     "lit": "^3.2.1"
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.8.0",
-    "@tauri-apps/cli": "^1.6.1",
+    "@tauri-apps/cli": "^1.6",
     "vite": "5.4.10"
   }
 }
