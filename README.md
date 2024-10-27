@@ -19,7 +19,6 @@ pnpm tauri dev
 
 The installer also supports generating a script to boot the same physical Android install in qemu:
 ![image](https://github.com/Xtr126/Android-x86-installer/assets/80520774/4849d563-2057-4104-8997-6fe62c6606a9)  
-[User interface preview](https://xtr126.github.io/Android-x86-installer)   
 
 ## Open source libraries and projects used
 - Tauri: https://github.com/tauri-apps/tauri/
