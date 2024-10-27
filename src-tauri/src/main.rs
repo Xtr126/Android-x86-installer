@@ -3,11 +3,20 @@
     windows_subsystem = "windows"
 )]
 
+use fs_extra::error::Error;
+use progress::Progress;
 use tauri::api::dialog;
-use std::{fs::{remove_dir, File}, io::{Bytes, Seek, Write}, path::{Path, PathBuf}, sync::Arc, thread, time};
+use std::time;
+use std::thread;
+use std::sync::Arc;
+use std::path::{Path, PathBuf};
+use std::io::{Seek, Write};
+use std::fs::{remove_dir, File};
 use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
+mod progress;
+#[cfg(windows)] mod windows_install_bootloader;
 
 #[derive(serde::Serialize)]
 struct CustomResponse {
@@ -136,15 +145,18 @@ pub fn get_fs_install_dir(install_dir: String) -> String {
 // For recovery https://github.com/BlissOS/bootable_newinstaller/blob/c81bcf9d8148f3f071013161c3eb4a3ee58a1189/install/scripts/1-install#L987
 fn prepare_recovery(
   dest_dir: &Path,
-) -> Result<(), String>  {
-  std::fs::rename(dest_dir.join("ramdisk-recovery.img"), dest_dir.join("recovery.img")).map_err(|err| err.to_string())?;
-  let misc_img_path = dest_dir.join("misc.img");
-  let mut misc_img_file = File::create(misc_img_path).map_err(|err| err.to_string())?;
-  let megabyte = 1024 << 10; // megabyte size in bytes
-  // Generate 10 MB misc.img
-  misc_img_file.seek(std::io::SeekFrom::Start(megabyte * 10)).map_err(|err| err.to_string())?;
-  misc_img_file.write(&[0]).map_err(|err| err.to_string())?;
-  Ok(())
+) -> Result<(), Error>  {
+    std::fs::rename(dest_dir.join("ramdisk-recovery.img"), dest_dir.join("recovery.img"))?;
+
+    let misc_img_path = dest_dir.join("misc.img");
+    let mut misc_img_file = File::create(misc_img_path)?;
+    let megabyte = 1024 << 10; // megabyte size in bytes
+
+    // Create 10 MB misc.img
+    misc_img_file.seek(std::io::SeekFrom::Start(megabyte * 10))?;
+    misc_img_file.write(&[0])?;
+    
+    Ok(())
 }
 
 #[tauri::command]
@@ -157,51 +169,26 @@ fn start_install(
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
 
     let window_ = window.clone();
+    let isofile_size_bytes = source.metadata().unwrap().len();
 
-    // We can't determine progress on windows by checking size
-    #[cfg(windows)]
     thread::spawn(move || {
-      let mut progress = 1;
+      let mut progress: Progress = Progress::new(isofile_size_bytes);
       loop {
-        progress = progress + 1;
+        let progress_percent = progress.refresh_progress();
         // 100 should be sent only from the other thread
-        if progress != 100 { 
-            window.emit("new-dir-size", progress).unwrap(); 
+        if progress_percent != 100 { 
+            window.emit("new-dir-size", progress_percent).unwrap(); 
             thread::sleep(time::Duration::from_secs(1));
         } else {
             break;
         }
       }
     });
-    
-    #[cfg(target_os = "linux")] {
-      let filesize = source.metadata().unwrap().len();  
-      let install_dir1 = install_dir.clone();  
-      thread::spawn(move || {
-        let file_path = Path::new(&install_dir1);
-        let mut init_size = fs_extra::dir::get_size(file_path).unwrap();
-        let mut progress_before = 1;
-        loop {
-          let current_size = fs_extra::dir::get_size(file_path).unwrap();
-          if current_size > init_size {
-            let mut new_progress = (current_size - init_size) * 100 / filesize;
-            // increment progress every 1 seconds if stuck
-            if new_progress == progress_before { new_progress = progress_before + 10 }
-            // 100 should be sent only from the other thread
-            if new_progress != 100 { window.emit("new-dir-size", new_progress).unwrap(); }
-            progress_before = new_progress;
-          } else {
-            init_size = current_size;
-          }
-          thread::sleep(time::Duration::from_secs(1));
-        }
-      });
-    }
 
     let window = Arc::clone(&window_);
     thread::spawn(move || {
       let dest_dir: &Path = Path::new(&install_dir);
-      uncompress_archive(source, dest_dir, Ownership::Preserve).map_err(|err| err.to_string()).unwrap();
+      let _ = uncompress_archive(source, dest_dir, Ownership::Preserve);
       window.emit("new-dir-size", 100).unwrap();
 
       let fs_install_dir = get_fs_install_dir(install_dir.clone());
@@ -222,6 +209,7 @@ fn start_install(
     });
   Ok("Success".to_string()) 
 }
+
 
 fn main() {
     tauri::Builder::default()
