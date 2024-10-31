@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{os::unix::fs::PermissionsExt, path::Path};
 
 #[tauri::command]
 pub fn install_qemu(
@@ -28,7 +28,7 @@ pub fn install_qemu(
     format!("-net user,hostfwd=tcp::{forward_port_no}-:{forward_port_no}") 
   } else { "-net user".to_string() };
   
-  let console = if enable_serial_console { "console=ttyS0" } else { "" };
+  let console = if enable_serial_console { "console=ttyS0 androidboot.enable_console=1" } else { "" };
   let serial_console = if enable_serial_console { "-serial mon:stdio \\" } else { "" };
 
   let env_vars = if override_sdl_videodriver {
@@ -63,20 +63,21 @@ fi
       -machine vmport=off -machine q35 \
       {input_devices}
       {serial_console}
-      -kernel "{install_dir}/kernel" -append "root=/dev/ram0 quiet SRC=/ DATA=/dev/vdb video={x_res}x{y_res} {console} VIRT_WIFI=1" \
+      -kernel "{install_dir}/kernel" -append "root=/dev/ram0 quiet SRC=/ DATA=/dev/vdb {console}" \
       -initrd "{install_dir}/initrd.img"
       "#);
 
-      let script_path = Path::new(&install_dir).join("start_android.sh");
-      
-      // make script executable 
-      #[cfg(target_os = "linux")] {
-        let mut options = std::fs::OpenOptions::new();
-        std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o770);
-        options.create(true).write(true).open(script_path.clone()).unwrap();
-      }
+  let script_path = Path::new(&install_dir).join("start_android.sh");
 
-      std::fs::write(script_path, contents).map_err(|err| err.to_string())?;
+  std::fs::write(script_path.clone(), contents).map_err(|err| err.to_string())?;
+
+  // Make the script executable
+  #[cfg(target_os = "linux")] {
+    let mut permissions = script_path.metadata().map_err(|err| err.to_string())?.permissions();
+    permissions.set_mode(0o755); // rwxr-xr-x
+    std::fs::set_permissions("script.sh", permissions).map_err(|err| err.to_string())?;
+  }
+
   Ok(format!("qemu script written to {install_dir}/start_android.sh
   -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
 }

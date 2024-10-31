@@ -23,20 +23,22 @@ export class InstallerApp extends LitElement {
     activeCategory_: {type: String},
     dialogTitle_: {type: String},
     dialogMsg_: {type: String},
-    progressPercent_: {type: Number},
+    circularProgressPercent: {type: Number},
     bootloaderMsg_: {type: String},
     installDir: {type: String},
     useDataImg: {type: Boolean},
     dataImgSize: {type: Number},
-    dataImgScale: {type: Number},
     qemuConfigDone: {type: Boolean},
     osType: {type: String},
+
+    bytesRead: {type: Number},
+    bytesWrite: {type: Number},
+    bytesTotal: {type: Number},
   };
 
   constructor() {
     super();
     this.activeCategory_ = 'install';
-    this.progressPercent_ = 0;
     this.dataImgSize = 4;
     this.dataImgScale = 2;
     this.qemuConfigDone = false;
@@ -46,6 +48,7 @@ export class InstallerApp extends LitElement {
     search --no-floppy --set=root --file /boot/grub/grub.cfg
     configfile /boot/grub/grub.cfg
   }`;
+    this.circularProgressPercent = this.bytesRead = this.bytesWrite = this.bytesTotal = 0;
   }
 
   /** @override */
@@ -102,16 +105,30 @@ export class InstallerApp extends LitElement {
     }
 
     .c-progress {
-      margin: auto;
-      --md-circular-progress-size: 40vh;
+      --md-circular-progress-size: 80vh;
       --md-circular-progress-active-indicator-width: 6;
     }
-
+    
     .c-progress.container {
-      height: 80vh;
-      width: 60vh;
+      align-items: center;
+      margin-bottom: -10vh;
+    }
+    
+    .c-progress.bytes {
+      width: var(--md-circular-progress-size);
+      height: var(--md-circular-progress-size);
+      font-size: 13px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: -25vh;
+      position: absolute
     }
 
+    #circular-progress {
+      rotate: -135deg;
+    }
+    
     .codeblock-surface {
       background-color: var(--md-sys-color-surface-container-high);
       border-radius: 1em;
@@ -216,10 +233,14 @@ export class InstallerApp extends LitElement {
     </section>
     
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
-      <div class="container c-progress">
-        <md-circular-progress class="c-progress" id="circular-progress"> </md-circular-progress>
-        <p style="margin: auto;"> ${msg('Extracting ISO')} ${this.progressPercent_}% </p>
+     <div class="c-progress container">
+      <code class="c-progress bytes">
+        bytes written ${this.bytesWrite}/${this.bytesTotal} B <br>
+        bytes read ${this.bytesRead}/${this.bytesTotal} B 
+      </code>
+        <md-circular-progress class="c-progress" id="circular-progress" value=${this.circularProgressPercent} max=133> </md-circular-progress>
       </div>
+      <div style="text-align: center"> ${msg('Extracting ISO.. Please wait')}</div>
     </section>  
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'bootloader'}">
@@ -382,14 +403,17 @@ export class InstallerApp extends LitElement {
     this.dialog.close();
   }
 
+
   updateProgress(progress) {
-    this.progressPercent_ = progress;
-    this.circularProgress.value = progress / 100;
+    this.circularProgressPercent = progress.progressPercent;
+    this.bytesRead = progress.readBytes;
+    this.bytesWrite = progress.writtenBytes;
+    this.bytesTotal = progress.totalSizeBytes;
+    this.circularProgress.value = this.circularProgressPercent;
   }
 
   async copyCode() {
     await navigator.clipboard.writeText(this.bootloaderMsg_);
-    this.circularProgress = this.renderRoot.querySelector('#circular-progress');
     this.showDialog('Copied to clipboard', this.bootloaderMsg_);
   }
   

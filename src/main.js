@@ -54,10 +54,10 @@ async function startInstall() {
 
 async function updateProgress() {
   while(true) {
-    await listen('new-dir-size', (event) => {
+    await listen('progress-info', (event) => {
       installEl.updateProgress(event.payload)
     });
-    if (installEl.progressPercent_ == 100) {
+    if (installEl.circularProgressPercent == 100) {
       installEl.activeCategory_ = 'data_img_progress';
       
       if (installEl.osType == 'Windows_NT')  installEl.useDataImg = true;

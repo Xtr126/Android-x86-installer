@@ -174,10 +174,10 @@ fn start_install(
     thread::spawn(move || {
       let mut progress: Progress = Progress::new(isofile_size_bytes);
       loop {
-        let progress_percent = progress.refresh_progress();
+        let progress_info = progress.refresh_progress();
         // 100 should be sent only from the other thread
-        if progress_percent != 100 { 
-            window.emit("new-dir-size", progress_percent).unwrap(); 
+        if progress_info.progress_percent != 100 { 
+            window.emit("progress-info", progress_info).unwrap(); 
             thread::sleep(time::Duration::from_secs(1));
         } else {
             break;
@@ -189,7 +189,15 @@ fn start_install(
     thread::spawn(move || {
       let dest_dir: &Path = Path::new(&install_dir);
       let _ = uncompress_archive(source, dest_dir, Ownership::Preserve);
-      window.emit("new-dir-size", 100).unwrap();
+     
+      window.emit("progress-info",
+        progress::ProgressInfo {
+          written_bytes: isofile_size_bytes,
+          read_bytes: isofile_size_bytes,
+          total_size_bytes: isofile_size_bytes,
+          progress_percent: 100,
+        }
+      ).unwrap();
 
       let fs_install_dir = get_fs_install_dir(install_dir.clone());
 
