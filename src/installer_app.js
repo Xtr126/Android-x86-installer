@@ -13,7 +13,6 @@ import { msg } from '@lit/localize'
 
 import { exit } from '@tauri-apps/api/process';
 
-import androidLogo from './assets/android.svg'
 import { type } from '@tauri-apps/api/os';
 
 export class InstallerApp extends LitElement {
@@ -62,14 +61,12 @@ export class InstallerApp extends LitElement {
     }
     
     .logo {
-      height: 6em;
-      padding: 1.5em;
+      padding: 3em;
+      padding-bottom: 3em;
       will-change: filter;
       transition: 0.75s;
-    }
-    
-    .logo.android:hover {
-      filter: drop-shadow(0 0 2em #2f8a36);
+      fill: var(--md-sys-color-primary);
+      filter: drop-shadow(0px 0px 50px var(--md-sys-color-primary));
     }
     
     .row {
@@ -122,11 +119,12 @@ export class InstallerApp extends LitElement {
       justify-content: center;
       align-items: center;
       margin-bottom: -25vh;
-      position: absolute
+      position: absolute;
     }
 
     #circular-progress {
       rotate: -135deg;
+      filter: drop-shadow(0 0 1em var(--md-sys-color-on-surface-variant));
     }
     
     .codeblock-surface {
@@ -164,6 +162,7 @@ export class InstallerApp extends LitElement {
       margin-left: 60px;
     }
 
+
     .settings-form > *:not(:last-child) {
       margin-bottom: 30px;
     }`  
@@ -175,14 +174,22 @@ export class InstallerApp extends LitElement {
       
         <div class="container on-background-text">
           <h1>Install Android™ on your PC</h1>
+
+           <!-- Based on https://github.com/BlissLabs-Infra/artwork/blob/35c35ca026fb150688c7e5978ba219922a800317/Projects/Bliss%20OS/logo/BlissOS_logo_black.svg -->
+          <span class="logo"><svg width="10em" height="6em" viewBox="0 0 291 218" xmlns="http://www.w3.org/2000/svg">
+            <path d="M150.204 218C189.689 213.228 226.854 194.735 253.735 162.986C280.614 131.236 292.537 91.7516 290.422 52.3854C250.937 57.1565 213.773 75.6496 186.892 107.399C160.012 139.149 148.089 178.633 150.204 218Z" />
+            <path d="M150.204 218C189.689 213.228 226.854 194.735 253.735 162.986C280.614 131.236 292.537 91.7516 290.422 52.3854C250.937 57.1565 213.773 75.6496 186.892 107.399C160.012 139.149 148.089 178.633 150.204 218Z" />
+            <path d="M140.456 218C142.572 178.634 130.649 139.149 103.769 107.399C76.8879 75.6499 39.7232 57.1567 0.238694 52.3856C-1.87674 91.7518 10.0459 131.237 36.9265 162.986C63.8074 194.736 100.972 213.228 140.456 218Z" />
+            <path d="M140.456 218C142.572 178.634 130.649 139.149 103.769 107.399C76.8879 75.6499 39.7232 57.1567 0.238694 52.3856C-1.87674 91.7518 10.0459 131.237 36.9265 162.986C63.8074 194.736 100.972 213.228 140.456 218Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M173.461 40.494C166.264 25.6804 156.775 12.0501 145.418 0C134.03 12.083 124.52 25.7552 117.315 40.6158C128.39 52.0504 137.877 65.1476 145.329 79.7221C152.808 65.0958 162.336 51.9574 173.461 40.494Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M173.461 40.494C166.264 25.6804 156.775 12.0501 145.418 0C134.03 12.083 124.52 25.7552 117.315 40.6158C128.39 52.0504 137.877 65.1476 145.329 79.7221C152.808 65.0958 162.336 51.9574 173.461 40.494Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M55.6857 61.1141C57.3279 44.7132 61.5455 28.6474 68.0753 13.4378C99.758 29.4034 125.919 55.0365 141.334 88.0994C139.946 91.2451 138.65 94.4531 137.449 97.7221C133.328 108.944 130.532 120.345 128.985 131.769C123.599 121.586 117.049 111.84 109.314 102.704C94.122 84.7599 75.803 70.8759 55.6857 61.1141Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M55.6857 61.1141C57.3279 44.7132 61.5455 28.6474 68.0753 13.4378C99.758 29.4034 125.919 55.0365 141.334 88.0994C139.946 91.2451 138.65 94.4531 137.449 97.7221C133.328 108.944 130.532 120.345 128.985 131.769C123.599 121.586 117.049 111.84 109.314 102.704C94.122 84.7599 75.803 70.8759 55.6857 61.1141Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M234.973 61.1151C233.33 44.7137 229.113 28.6476 222.583 13.4378C187.126 31.3053 158.585 61.2808 144.282 100.227C138.92 114.828 135.908 129.738 135.059 144.584C139.792 155.819 143.207 167.473 145.33 179.334C150.26 151.791 162.156 125.37 181.346 102.704C196.538 84.7603 214.856 70.8766 234.973 61.1151Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M234.973 61.1151C233.33 44.7137 229.113 28.6476 222.583 13.4378C187.126 31.3053 158.585 61.2808 144.282 100.227C138.92 114.828 135.908 129.738 135.059 144.584C139.792 155.819 143.207 167.473 145.33 179.334C150.26 151.791 162.156 125.37 181.346 102.704C196.538 84.7603 214.856 70.8766 234.973 61.1151Z" />
+            </svg>
+          </span>
     
-          <div class="row">
-            <a target="_blank">
-              <img src=${androidLogo} class="logo android" alt="Android logo" />
-            </a>
-          </div>
-    
-          <p class="label-large" style="margin-bottom: 15px;">${msg('Select your Android x86 Installation media or .ISO file to continue')}</p>
     
           <div class="row label">
             <div>
@@ -479,7 +486,7 @@ export class InstallerApp extends LitElement {
     this.dataDirSwitchEl = this.renderRoot.querySelector('#data-dir-switch'); 
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
     this.qemuInstallSwitchEl = this.renderRoot.querySelector('#qemu-install-switch'); 
-    this.showDialog('', '"The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."');
+
     type().then((osType) => {
       this.osType = osType;
       if (this.osType == 'Windows_NT') {
