@@ -242,8 +242,8 @@ export class InstallerApp extends LitElement {
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
      <div class="c-progress container">
       <code class="c-progress bytes">
-        bytes written ${this.bytesWrite}/${this.bytesTotal} B <br>
-        bytes read ${this.bytesRead}/${this.bytesTotal} B 
+        bytes written: ${this.bytesWrite}/${this.bytesTotal} B <br>
+        bytes read: ${this.bytesRead}/${this.bytesTotal} B 
       </code>
         <md-circular-progress class="c-progress" id="circular-progress" value=${this.circularProgressPercent} max=133> </md-circular-progress>
       </div>
