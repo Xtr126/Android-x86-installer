@@ -18,12 +18,12 @@ export class SideNavigationElement extends LitElement {
       }
 
       ::slotted(div:hover) {
-        background-color: var(--md-sys-color-secondary-container);
+        background-color: var(--md-sys-color-on-surface-variant-2);
       }
 
       ::slotted(div[active]) {
-        background-color: var(--md-sys-color-surface-tint);
-        color: var(--md-sys-color-primary-container);;
+        background-color: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
       }
 
       ::slotted(div:focus-visible) {

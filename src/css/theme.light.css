@@ -23,6 +23,7 @@
     --md-sys-color-on-surface: rgb(32 26 30);
     --md-sys-color-surface-variant: rgb(238 222 231);
     --md-sys-color-on-surface-variant: rgb(78 68 75);
+    --md-sys-color-on-surface-variant-2: rgba(78, 68, 75, 0.1);
     --md-sys-color-outline: rgb(128 116 123);
     --md-sys-color-outline-variant: rgb(209 194 203);
     --md-sys-color-shadow: rgb(0 0 0);
