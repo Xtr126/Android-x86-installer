@@ -8,7 +8,7 @@ fn write_bootloader_file_list(dest_dir: &Path) -> io::Result<()> {
     let subdirs = ["boot", "efi"];
     
     // Open the output file
-    let uninstall_file_path = dest_dir.join("uninstall.txt");
+    let uninstall_file_path = dest_dir.join("uninstall-bootloader.txt");
     let mut uninstall_file = File::create(uninstall_file_path)?;
 
     // Iterate through each subdirectory

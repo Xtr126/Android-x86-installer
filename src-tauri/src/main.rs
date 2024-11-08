@@ -218,6 +218,8 @@ fn start_install(
       
       let _ = std::fs::remove_file(dest_dir.join("install.img"));
       let _ = prepare_recovery(dest_dir);
+      
+      #[cfg(windows)]  
       let _ = uninstall::prepare_uninstall(dest_dir);
     });
   Ok("Success".to_string()) 
