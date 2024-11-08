@@ -16,6 +16,7 @@ use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
 mod progress;
+mod uninstall;
 #[cfg(windows)] mod windows_install_bootloader;
 
 #[derive(serde::Serialize)]
@@ -217,10 +218,10 @@ fn start_install(
       
       let _ = std::fs::remove_file(dest_dir.join("install.img"));
       let _ = prepare_recovery(dest_dir);
+      let _ = uninstall::prepare_uninstall(dest_dir);
     });
   Ok("Success".to_string()) 
 }
-
 
 fn main() {
   #[cfg(windows)] {
