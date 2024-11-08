@@ -30,9 +30,11 @@ export class InstallerApp extends LitElement {
     qemuConfigDone: {type: Boolean},
     osType: {type: String},
 
-    bytesRead: {type: Number},
-    bytesWrite: {type: Number},
-    bytesTotal: {type: Number},
+    megaBytesRead: {type: Number},
+    readSpeedMBps: {type: Number},
+    megaBytesWritten: {type: Number},
+    writeSpeedMBps: {type: Number},
+    megaBytesTotal: {type: Number},
   };
 
   constructor() {
@@ -47,7 +49,6 @@ export class InstallerApp extends LitElement {
     search --no-floppy --set=root --file /boot/grub/grub.cfg
     configfile /boot/grub/grub.cfg
   }`;
-    this.circularProgressPercent = this.bytesRead = this.bytesWrite = this.bytesTotal = 0;
   }
 
   /** @override */
@@ -118,7 +119,7 @@ export class InstallerApp extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: -25vh;
+      margin-bottom: -30vh;
       position: absolute;
     }
 
@@ -242,8 +243,8 @@ export class InstallerApp extends LitElement {
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'progress'}">
      <div class="c-progress container">
       <code class="c-progress bytes">
-        bytes written: ${this.bytesWrite}/${this.bytesTotal} B <br>
-        bytes read: ${this.bytesRead}/${this.bytesTotal} B 
+        write: ${this.megaBytesWritten}/${this.megaBytesTotal} MB ${this.writeSpeedMBps} MB/s <br>
+        read: ${this.megaBytesRead}/${this.megaBytesTotal} MB ${this.readSpeedMBps} MB/s
       </code>
         <md-circular-progress class="c-progress" id="circular-progress" value=${this.circularProgressPercent} max=133> </md-circular-progress>
       </div>
@@ -412,11 +413,15 @@ export class InstallerApp extends LitElement {
 
 
   updateProgress(progress) {
-    this.circularProgressPercent = progress.progressPercent;
-    this.bytesRead = progress.readBytes;
-    this.bytesWrite = progress.writtenBytes;
-    this.bytesTotal = progress.totalSizeBytes;
-    this.circularProgress.value = this.circularProgressPercent;
+    this.circularProgressPercent = progress.progress_percent;
+    
+    this.megaBytesRead = progress.mb_read;
+    this.readSpeedMBps = progress.read_speed_mbps;
+    
+    this.megaBytesWritten = progress.mb_written;
+    this.writeSpeedMBps = progress.write_speed_mbps;
+    
+    this.megaBytesTotal = progress.mb_total;
   }
 
   async copyCode() {
@@ -481,7 +486,6 @@ export class InstallerApp extends LitElement {
   /** @override */
   firstUpdated() {
     this.dialog = this.renderRoot.querySelector('#dialog');
-    this.circularProgress = this.renderRoot.querySelector('#circular-progress');
     this.dataImg = this.renderRoot.querySelector('#c-data-img');
     this.dataDirSwitchEl = this.renderRoot.querySelector('#data-dir-switch'); 
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 

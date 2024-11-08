@@ -1,5 +1,7 @@
 use sysinfo::{DiskUsage, ProcessRefreshKind, ProcessesToUpdate, RefreshKind};
 
+use crate::MEGABYTE;
+
 
 pub(crate) struct Progress {
     progress: u64,
@@ -12,11 +14,12 @@ pub(crate) struct Progress {
 }
 
 #[derive(Clone, serde::Serialize)]
-#[serde(rename_all = "camelCase")]
 pub(crate) struct ProgressInfo {
-     pub(crate) written_bytes: u64,
-     pub(crate) read_bytes: u64,
-     pub(crate) total_size_bytes: u64,
+     pub(crate) mb_written: u64,
+     pub(crate) mb_read: u64,
+     pub(crate) mb_total: u64,
+     pub(crate) read_speed_mbps: u64,
+     pub(crate) write_speed_mbps: u64,
      pub(crate) progress_percent: u64,
 }
 
@@ -35,6 +38,7 @@ impl Progress {
         };
         s.refresh_progress();
         s.total_write_bytes = 0;
+        s.total_read_bytes = 0;
         s
     }
 
@@ -49,11 +53,14 @@ impl Progress {
         self.disk_usage = process.disk_usage();
 
         self.progress = count_progress(self);
+        
         ProgressInfo {
-            written_bytes: self.total_write_bytes,
-            read_bytes: self.total_read_bytes,
-            total_size_bytes: self.isofile_size_bytes,
             progress_percent: self.progress,
+            mb_written: self.total_write_bytes / MEGABYTE,
+            mb_read: self.total_read_bytes / MEGABYTE,
+            mb_total: self.isofile_size_bytes / MEGABYTE,
+            read_speed_mbps: self.disk_usage.read_bytes / MEGABYTE,
+            write_speed_mbps: self.disk_usage.written_bytes / MEGABYTE,
         }
     }
 }

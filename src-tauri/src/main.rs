@@ -24,6 +24,8 @@ struct CustomResponse {
   is_valid: bool,
 }
 
+static MEGABYTE: u64 = 1024 << 10; // megabyte size in bytes
+
 #[tauri::command]
 async fn pick_file() -> Result<CustomResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap_or_else(|| PathBuf::new());
@@ -150,10 +152,9 @@ fn prepare_recovery(
 
     let misc_img_path = dest_dir.join("misc.img");
     let mut misc_img_file = File::create(misc_img_path)?;
-    let megabyte = 1024 << 10; // megabyte size in bytes
 
     // Create 10 MB misc.img
-    misc_img_file.seek(std::io::SeekFrom::Start(megabyte * 10))?;
+    misc_img_file.seek(std::io::SeekFrom::Start(MEGABYTE * 10))?;
     misc_img_file.write(&[0])?;
     
     Ok(())
@@ -192,10 +193,12 @@ fn start_install(
      
       window.emit("progress-info",
         progress::ProgressInfo {
-          written_bytes: isofile_size_bytes,
-          read_bytes: isofile_size_bytes,
-          total_size_bytes: isofile_size_bytes,
-          progress_percent: 100,
+            progress_percent: 100,
+            mb_written: isofile_size_bytes,
+            mb_read: isofile_size_bytes,
+            mb_total: isofile_size_bytes / MEGABYTE,
+            read_speed_mbps: 0,
+            write_speed_mbps: 0,
         }
       ).unwrap();
 
