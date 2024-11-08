@@ -22,8 +22,8 @@ export class SideNavigationElement extends LitElement {
       }
 
       ::slotted(div[active]) {
-        background-color: rgb(26, 115, 232, .1);
-        color: rgb(26, 115, 232);
+        background-color: var(--md-sys-color-surface-tint);
+        color: var(--md-sys-color-primary-container);;
       }
 
       ::slotted(div:focus-visible) {
