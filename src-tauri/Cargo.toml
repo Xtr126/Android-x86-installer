@@ -19,6 +19,8 @@ tauri = { version = "1", features = [ "shell-open", "os-all", "dialog-open", "pa
 compress-tools = "0.14.3"
 fs_extra = "1.3.0"
 sysinfo = { version = "0.32.0", features = ["system"] }
+libc = {}
+winapi = {}
 
 [features]
 # by default Tauri runs in production mode

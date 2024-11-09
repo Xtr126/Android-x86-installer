@@ -17,6 +17,8 @@ use compress_tools::{uncompress_archive, Ownership};
 mod qemu_install;
 mod progress;
 mod uninstall;
+mod fs_utils;
+
 #[cfg(windows)] mod windows_install_bootloader;
 
 #[derive(serde::Serialize)]
@@ -109,40 +111,13 @@ async fn create_data_img(
 
 #[tauri::command]
 fn create_grub_entry(install_dir: String, os_title: String) -> String {  
-  let fs_install_dir = get_fs_install_dir(install_dir);
+  let fs_install_dir = fs_utils::get_path_on_filesystem(install_dir);
 
   format!(r#"menuentry "{os_title}" --class android-x86 {{
     savedefault
     search --no-floppy --set=root --file /{fs_install_dir}/boot/grub/grub.cfg
     configfile /{fs_install_dir}/boot/grub/grub.cfg
   }}"#).into()
-}
-
-#[cfg(target_os = "linux")]
-fn get_fs_install_dir(install_dir: String) -> String {
-  let output = std::process::Command::new("stat")
-          .args(["-c", r#"%m"#, &install_dir.to_string()])
-          .output().unwrap();
-  let mountpoint = String::from_utf8_lossy(&output.stdout).strip_suffix("\n").unwrap().to_string();
-  install_dir.strip_prefix(&mountpoint).unwrap().into()
-}
-
-#[cfg(windows)]
-pub fn get_fs_install_dir(install_dir: String) -> String {
-  let components = Path::new(&install_dir).components();
-      let mut install_dir = "".to_owned();
-
-      for component in components {     
-          if component == std::path::Component::RootDir {
-            install_dir.clear();
-            continue;
-          }            
-          let component = component.as_os_str().to_str().unwrap();
-          install_dir.push_str(component);
-      }
-      if install_dir.ends_with('/') { install_dir.pop(); }
-
-      return install_dir;
 }
 
 // For recovery https://github.com/BlissOS/bootable_newinstaller/blob/c81bcf9d8148f3f071013161c3eb4a3ee58a1189/install/scripts/1-install#L987
@@ -203,7 +178,7 @@ fn start_install(
         }
       ).unwrap();
 
-      let fs_install_dir = get_fs_install_dir(install_dir.clone());
+      let fs_install_dir = fs_utils::get_path_on_filesystem(install_dir.clone());
 
       let contents = format!(r#"
           set timeout=5

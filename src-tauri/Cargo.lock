@@ -53,11 +53,13 @@ version = "0.1.7"
 dependencies = [
  "compress-tools",
  "fs_extra",
+ "libc",
  "serde",
  "serde_json",
  "sysinfo",
  "tauri",
  "tauri-build",
+ "winapi",
 ]
 
 [[package]]
