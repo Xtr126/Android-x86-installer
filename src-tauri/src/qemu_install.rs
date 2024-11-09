@@ -1,4 +1,5 @@
-use std::{os::unix::fs::PermissionsExt, path::Path};
+#[cfg(target_os = "linux")] 
+use std::os::unix::fs::PermissionsExt;
 
 #[tauri::command]
 pub fn install_qemu(
@@ -67,7 +68,7 @@ fi
       -initrd "{install_dir}/initrd.img"
       "#);
 
-  let script_path = Path::new(&install_dir).join("start_android.sh");
+  let script_path = std::path::Path::new(&install_dir).join("start_android.sh");
 
   std::fs::write(script_path.clone(), contents).map_err(|err| err.to_string())?;
 

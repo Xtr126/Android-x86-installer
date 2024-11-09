@@ -58,7 +58,7 @@ pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
 
 #[cfg(windows)]
 pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
-  let components = Path::new(&install_dir).components();
+  let components = install_dir.components();
       let mut install_dir = "".to_owned();
 
       for component in components {     
@@ -71,7 +71,7 @@ pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
       }
       if install_dir.ends_with('/') { install_dir.pop(); }
 
-      return install_dir;
+      install_dir.into()
 }
 
 #[cfg(target_os = "linux")]  
@@ -95,10 +95,9 @@ pub fn is_fat32(dir: &str) -> bool {
 #[cfg(windows)]  
 fn is_fat32(path: &str) -> bool {
     use std::ffi::OsString;
-    use std::os::windows::ffi::OsStringExt;
+    use std::os::windows::ffi::OsStrExt;
     use std::ptr;
     use winapi::um::fileapi::GetVolumeInformationW;
-    use winapi::um::winnt::LPWSTR;
 
     // Convert the path to a wide string (Windows expects wide strings for file paths)
     let path_wide: Vec<u16> = OsString::from(path)
