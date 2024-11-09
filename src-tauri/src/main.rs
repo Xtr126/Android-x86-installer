@@ -3,7 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-use fs_extra::error::Error;
 use progress::Progress;
 use tauri::api::dialog;
 use std::time;
@@ -111,7 +110,7 @@ async fn create_data_img(
 
 #[tauri::command]
 fn create_grub_entry(install_dir: String, os_title: String) -> String {  
-  let fs_install_dir = fs_utils::get_path_on_filesystem(install_dir);
+  let fs_install_dir = fs_utils::get_path_on_filesystem(Path::new(&install_dir)).display().to_string();
 
   format!(r#"menuentry "{os_title}" --class android-x86 {{
     savedefault
@@ -123,7 +122,7 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
 // For recovery https://github.com/BlissOS/bootable_newinstaller/blob/c81bcf9d8148f3f071013161c3eb4a3ee58a1189/install/scripts/1-install#L987
 fn prepare_recovery(
   dest_dir: &Path,
-) -> Result<(), Error>  {
+) -> std::io::Result<()>   {
     std::fs::rename(dest_dir.join("ramdisk-recovery.img"), dest_dir.join("recovery.img"))?;
 
     let misc_img_path = dest_dir.join("misc.img");
@@ -178,7 +177,7 @@ fn start_install(
         }
       ).unwrap();
 
-      let fs_install_dir = fs_utils::get_path_on_filesystem(install_dir.clone());
+      let fs_install_dir = fs_utils::get_path_on_filesystem(Path::new(&install_dir)).display().to_string();
 
       let contents = format!(r#"
           set timeout=5

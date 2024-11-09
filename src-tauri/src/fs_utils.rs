@@ -1,14 +1,63 @@
+use std::path::Path;
+use std::path::PathBuf;
+
 #[cfg(target_os = "linux")]
-pub fn get_path_on_filesystem(install_dir: String) -> String {
-  let output = std::process::Command::new("stat")
-          .args(["-c", r#"%m"#, &install_dir.to_string()])
-          .output().unwrap();
-  let mountpoint = String::from_utf8_lossy(&output.stdout).strip_suffix("\n").unwrap().to_string();
-  install_dir.strip_prefix(&mountpoint).unwrap().into()
+fn get_mount_point(file_path: &str) -> std::io::Result<PathBuf> {
+    use libc::stat;
+    use std::ffi::CString;
+    use std::io;
+    use std::str::FromStr;
+
+    // Get the device ID of the file
+
+    let mut stat_buf: stat = unsafe { std::mem::zeroed() };
+    let c_file_path = CString::new(file_path).unwrap();
+    if unsafe { stat(c_file_path.as_ptr(), &mut stat_buf) } != 0 {
+        return Err(io::Error::last_os_error());
+    }
+    let file_dev = stat_buf.st_dev;
+
+    // Traverse up the directory tree to find the mount point
+    let mut current_path = PathBuf::from_str(&file_path).unwrap();
+    loop {
+        // Stat the current directory
+        let c_current_path = CString::new(file_path).unwrap();
+        if unsafe { stat(c_current_path.as_ptr(), &mut stat_buf) } != 0 {
+            return Err(io::Error::last_os_error());
+        }
+
+        // Check if we've reached the root mount point by comparing device IDs
+        if stat_buf.st_dev != file_dev {
+            break;
+        }
+
+        // Check if we've reached the root directory
+        if let Some(parent) = current_path.parent() {
+            current_path = parent.to_path_buf();
+        } else {
+            // Root of the mount point found
+            return Ok(current_path);
+        }
+    }
+
+    // Move back down to the last directory that matched the device ID
+    Ok(current_path)
 }
 
+
+#[cfg(target_os = "linux")]
+pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
+    let mount_point = get_mount_point(install_dir.as_os_str().to_str().unwrap()).unwrap();
+
+    // Strip the mount point prefix from the file path
+    let relative_path = install_dir.strip_prefix(&mount_point).unwrap();
+
+    relative_path.to_path_buf()
+}
+
+
 #[cfg(windows)]
-pub fn get_path_on_filesystem(install_dir: String) -> String {
+pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
   let components = Path::new(&install_dir).components();
       let mut install_dir = "".to_owned();
 
@@ -33,7 +82,7 @@ pub fn is_fat32(dir: &str) -> bool {
     let cstr_dir = CString::new(dir).expect("CString::new failed");
     let mut stat: libc::statfs = unsafe { std::mem::zeroed() };
     let result = unsafe { statfs(cstr_dir.as_ptr(), &mut stat) };
-
+    
     if result == 0 {
         // FAT32/VFAT filesystems are usually identified by the magic number 0x4d44
         stat.f_type as u32 == 0x4d44
