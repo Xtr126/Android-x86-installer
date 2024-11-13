@@ -27,7 +27,10 @@ function pickFolder() {
     installDirIsValid = res.is_valid;
     if (!installDirIsValid) installDirTextFieldEl.value = 'Cannot use this folder' 
     else installDirTextFieldEl.value = res.file_path;
-    if (res.is_fat32) installEl.forceUseDataImg();
+    if (res.is_fat32) {
+      installEl.forceUseDataImg();
+      installEl.showDialog('Warning', "FAT32 filesystem detected<br>Disabled /data directory creation<br>Creating data.img of 4GB size only")
+    }
   }).catch((error) => installEl.showDialog('Error', error))
 }
 
