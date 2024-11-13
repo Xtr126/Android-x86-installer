@@ -15,8 +15,8 @@ use compress_tools::{uncompress_archive, Ownership};
 
 mod qemu_install;
 mod progress;
-mod uninstall;
 mod fs_utils;
+mod uninstall;
 
 #[cfg(windows)] mod windows_install_bootloader;
 
@@ -84,25 +84,34 @@ async fn create_data_img(
 
   use tauri::api::process::Command;
 
-  #[cfg(windows)]  
-  let output = Command::new_sidecar("mkfs.ext4")
-          .map_err(|err| err.to_string())?
-          .args([
-          "-F", "-b", "4096", "-L", "/data",
-          &data_img_path.display().to_string(),
-          format!("{size}G").as_str() 
-          ])
-          .output().map_err(|err| err.to_string())?;
+  let command = { // On Windows use the bundled mkfs.ext4.exe
+    #[cfg(windows)]
+    {
+        Command::new_sidecar("mkfs.ext4").map_err(|err| err.to_string())?
+    }
+    #[cfg(target_os = "linux")]
+    {
+        Command::new("mkfs.ext4")
+    }
+  };
 
-  #[cfg(target_os = "linux")]  
-  let output = Command::new("mkfs.ext4")
-          .args([
-          "-F", "-b", "4096", "-L", "/data",
-          &data_img_path.display().to_string(),
-          format!("{size}G").as_str() 
-          ])
-          .output().map_err(|err| err.to_string())?;
-  
+  let size = {
+    if fs_utils::is_fat32(&install_dir) {
+      "4000M".to_string()
+    } else {
+      format!("{size}G")
+    }
+  };
+
+  let output = command
+    .args([
+        "-F", "-b", "4096", "-L", "/data",
+        &data_img_path.display().to_string(),
+        &size
+    ])
+    .output()
+    .map_err(|err| err.to_string())?;
+
   remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
   
   Ok(output.stdout) 
@@ -114,8 +123,8 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
 
   format!(r#"menuentry "{os_title}" --class android-x86 {{
     savedefault
-    search --no-floppy --set=root --file /{fs_install_dir}/boot/grub/grub.cfg
-    configfile /{fs_install_dir}/boot/grub/grub.cfg
+    search --no-floppy --set=root --file {fs_install_dir}/boot/grub/grub.cfg
+    configfile {fs_install_dir}/boot/grub/grub.cfg
   }}"#).into()
 }
 
@@ -182,7 +191,7 @@ fn start_install(
       let contents = format!(r#"
           set timeout=5
           set debug_mode="(DEBUG mode)"
-          set kdir="/{fs_install_dir}"
+          set kdir="{fs_install_dir}"
           set autoload_old="(Old Modprobe mode)"
           search --no-floppy --set=root --file "$kdir"/kernel
           source "$kdir"/efi/boot/android.cfg
@@ -193,7 +202,7 @@ fn start_install(
       let _ = std::fs::remove_file(dest_dir.join("install.img"));
       let _ = prepare_recovery(dest_dir);
       
-      #[cfg(windows)]  
+      #[cfg(windows)]
       let _ = uninstall::prepare_uninstall(dest_dir);
     });
   Ok("Success".to_string()) 

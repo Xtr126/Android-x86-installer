@@ -2,9 +2,11 @@ use std::path::Path;
 use std::path::PathBuf;
 
 #[cfg(target_os = "linux")]
+use std::ffi::CString;
+
+#[cfg(target_os = "linux")]
 fn get_mount_point(file_path: &str) -> std::io::Result<PathBuf> {
     use libc::stat;
-    use std::ffi::CString;
     use std::io;
     use std::str::FromStr;
 
@@ -26,17 +28,17 @@ fn get_mount_point(file_path: &str) -> std::io::Result<PathBuf> {
             return Err(io::Error::last_os_error());
         }
 
-        // Check if we've reached the root mount point by comparing device IDs
+        // Check if we've crossed the actual mount point by comparing device IDs
         if stat_buf.st_dev != file_dev {
             break;
         }
 
-        // Check if we've reached the root directory
-        if let Some(parent) = current_path.parent() {
-            current_path = parent.to_path_buf();
-        } else {
-            // Root of the mount point found
-            return Ok(current_path);
+        let parent = current_path.parent();
+        match parent {
+            None => { return Ok("/".into()); }, 
+            Some(parent) => { 
+                current_path = parent.to_path_buf();
+            }
         }
     }
 
@@ -76,7 +78,6 @@ pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
 
 #[cfg(target_os = "linux")]  
 pub fn is_fat32(dir: &str) -> bool {
-    use std::ffi::CString;
     
     use libc::statfs;
     let cstr_dir = CString::new(dir).expect("CString::new failed");
@@ -93,7 +94,7 @@ pub fn is_fat32(dir: &str) -> bool {
 
 
 #[cfg(windows)]  
-fn is_fat32(path: &str) -> bool {
+pub fn is_fat32(path: &str) -> bool {
     use std::ffi::OsString;
     use std::os::windows::ffi::OsStrExt;
     use std::ptr;

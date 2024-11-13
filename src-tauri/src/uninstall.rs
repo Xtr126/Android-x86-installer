@@ -62,4 +62,3 @@ pub(crate) fn prepare_uninstall(
 ) -> io::Result<()> {
     write_bootloader_file_list(dest_dir)
 }
-
