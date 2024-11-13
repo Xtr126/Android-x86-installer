@@ -354,15 +354,15 @@ export class InstallerApp extends LitElement {
       </div>
     </section>
 
-    <md-dialog id="dialog">
+    <md-dialog id="dialog" ?quick="${false}" ?no-focus-trap="${false}">
       <div slot="headline">
         ${this.dialogTitle_}
       </div>
-      <div slot="content">
+      <form slot="content" id="form-id" method="dialog">
         ${this.dialogMsg_}  
-      </div>
+      </form>
       <div slot="actions">
-        <md-text-button @click="${this.closeDialog}" slot="footer">OK</md-text-button>
+        <md-text-button form="form-id">OK</md-text-button>
       </div>
     </md-dialog>
     `;
@@ -406,11 +406,6 @@ export class InstallerApp extends LitElement {
   async onFinishButtonClicked() {
     await exit(0);
   }
-
-  closeDialog() {
-    this.dialog.close();
-  }
-
 
   updateProgress(progress) {
     this.circularProgressPercent = progress.progress_percent;
