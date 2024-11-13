@@ -27,6 +27,7 @@ function pickFolder() {
     installDirIsValid = res.is_valid;
     if (!installDirIsValid) installDirTextFieldEl.value = 'Cannot use this folder' 
     else installDirTextFieldEl.value = res.file_path;
+    if (res.is_fat32) installEl.forceUseDataImg();
   }).catch((error) => installEl.showDialog('Error', error))
 }
 

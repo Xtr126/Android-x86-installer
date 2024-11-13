@@ -21,34 +21,42 @@ mod fs_utils;
 #[cfg(windows)] mod windows_install_bootloader;
 
 #[derive(serde::Serialize)]
-struct CustomResponse {
+struct PickFileResponse {
   file_path: String,
   is_valid: bool,
+}
+
+#[derive(serde::Serialize)]
+struct PickFolderResponse {
+  file_path: String,
+  is_valid: bool,
+  is_fat32: bool,
 }
 
 static MEGABYTE: u64 = 1024 << 10; // megabyte size in bytes
 
 #[tauri::command]
-async fn pick_file() -> Result<CustomResponse, String> {
+async fn pick_file() -> Result<PickFileResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_file().unwrap_or_else(|| PathBuf::new());
 
-    let is_file_found = check_iso_file(file_path.clone()).map_err(|err| err.to_string())?;
+    let is_file_found = check_iso_file(file_path.clone())?;
 
-    Ok(CustomResponse {
+    Ok(PickFileResponse {
         file_path: file_path.display().to_string(),
         is_valid: is_file_found,
     })
 } 
 
 #[tauri::command]
-async fn pick_folder() -> Result<CustomResponse, String> {
+async fn pick_folder() -> Result<PickFolderResponse, String> {
     let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap();
 
     let install_dir_rw = check_install_dir(file_path.clone().to_str().unwrap());
 
-    Ok(CustomResponse {
+    Ok(PickFolderResponse {
         file_path: file_path.display().to_string(),
         is_valid: install_dir_rw,
+        is_fat32: fs_utils::is_fat32(file_path.to_str().unwrap())
     })
 }
 
@@ -123,8 +131,8 @@ fn create_grub_entry(install_dir: String, os_title: String) -> String {
 
   format!(r#"menuentry "{os_title}" --class android-x86 {{
     savedefault
-    search --no-floppy --set=root --file {fs_install_dir}/boot/grub/grub.cfg
-    configfile {fs_install_dir}/boot/grub/grub.cfg
+    search --no-floppy --set=root --file /{fs_install_dir}/boot/grub/grub.cfg
+    configfile /{fs_install_dir}/boot/grub/grub.cfg
   }}"#).into()
 }
 
@@ -191,7 +199,7 @@ fn start_install(
       let contents = format!(r#"
           set timeout=5
           set debug_mode="(DEBUG mode)"
-          set kdir="{fs_install_dir}"
+          set kdir="/{fs_install_dir}"
           set autoload_old="(Old Modprobe mode)"
           search --no-floppy --set=root --file "$kdir"/kernel
           source "$kdir"/efi/boot/android.cfg

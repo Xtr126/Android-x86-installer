@@ -494,13 +494,17 @@ export class InstallerApp extends LitElement {
     type().then((osType) => {
       this.osType = osType;
       if (this.osType == 'Windows_NT') {
-        this.dataImgSwitchEl.selected = true;  
-        this.dataDirSwitchEl.selected = false;  
-        this.dataDirSwitchEl.disabled = true;
-        this.dataImgSwitchState();
+        this.forceUseDataImg();
       }
     })
   }  
+
+  forceUseDataImg() {
+    this.dataImgSwitchEl.selected = true;  
+    this.dataDirSwitchEl.selected = false;  
+    this.dataDirSwitchEl.disabled = true;
+    this.dataImgSwitchState();
+  }
 }
 
 customElements.define('installer-app', InstallerApp);
