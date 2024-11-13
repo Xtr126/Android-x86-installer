@@ -16,7 +16,7 @@ use compress_tools::{uncompress_archive, Ownership};
 mod qemu_install;
 mod progress;
 mod fs_utils;
-mod uninstall;
+#[cfg(windows)] mod uninstall;
 
 #[cfg(windows)] mod windows_install_bootloader;
 

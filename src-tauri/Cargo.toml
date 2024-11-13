@@ -20,10 +20,10 @@ compress-tools = "0.14.3"
 sysinfo = { version = "0.32.0", features = ["system"] }
 
 [target.'cfg(windows)'.dependencies]
-winapi = {}
+winapi = "0.3"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-libc = {}
+libc = "0.2"
 
 [features]
 # by default Tauri runs in production mode
