@@ -21,7 +21,7 @@ export class InstallerApp extends LitElement {
   static properties = {
     activeCategory_: {type: String},
     dialogTitle_: {type: String},
-    dialogMsg_: {type: String},
+    dialogMsg_: {type: html},
     circularProgressPercent: {type: Number},
     bootloaderMsg_: {type: String},
     installDir: {type: String},
@@ -44,7 +44,7 @@ export class InstallerApp extends LitElement {
     this.dataImgScale = 2;
     this.qemuConfigDone = false;
     this.bootloaderMsg_ = 
-`  menuentry "Android" --class android-x86 {
+  `menuentry "Android" --class android-x86 {
     savedefault
     search --no-floppy --set=root --file /boot/grub/grub.cfg
     configfile /boot/grub/grub.cfg
@@ -426,7 +426,7 @@ export class InstallerApp extends LitElement {
 
   async copyCode() {
     await navigator.clipboard.writeText(this.bootloaderMsg_);
-    this.showDialog('Copied to clipboard', this.bootloaderMsg_);
+    this.showDialog('Copied to clipboard', html`<pre>${this.bootloaderMsg_}</pre>`);
   }
   
   dataImgSwitchClicked() {

@@ -122,8 +122,7 @@ async fn create_data_img(
 
   remove_dir(file_path.join("data")).map_err(|err| err.to_string())?;
   
-  let stdout_formatted = output.stdout.replace("\n", "<br>");
-  Ok(stdout_formatted) 
+  Ok(output.stdout) 
 }
 
 #[tauri::command]

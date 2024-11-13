@@ -70,7 +70,7 @@ fi
 
   let script_path = std::path::Path::new(&install_dir).join("start_android.sh");
 
-  std::fs::write(script_path.clone(), contents).map_err(|err| err.to_string())?;
+  std::fs::write(script_path.clone(), contents.clone()).map_err(|err| err.to_string())?;
 
   // Make the script executable
   #[cfg(target_os = "linux")] {
@@ -80,5 +80,5 @@ fi
   }
 
   Ok(format!("qemu script written to {install_dir}/start_android.sh
-  -m {memsize_mb} -smp {cpus} res: {x_res}x{y_res} -display {display_type} use-gl={use_gl} input: {device_type} {input_type} serial_console: {enable_serial_console} e2fsck: {perform_e2fsck} forwardport: {forward_port} {forward_port_no} override_sdl_videodriver: {override_sdl_videodriver} {sdl_videodriver} ")) 
+              {contents}")) 
 }
