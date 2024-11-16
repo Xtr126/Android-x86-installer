@@ -77,12 +77,19 @@ fn check_install_dir(install_dir: &str) -> bool {
 
 #[tauri::command]
 async fn create_data_img(
+  window: tauri::Window,
   install_dir: String, 
   size: u64
 ) -> Result<String, String>  {
   let file_path = Path::new(&install_dir);
 
   let data_img_path = file_path.join("data.img");
+
+  match data_img_path.try_exists() {
+    Ok(false) => {},
+    Ok(true) => show_dialog(window.into(), "Warning", format!("Found existing file at {data_img_path:?}<br>Not creating data.img")),
+    Err(err) => show_dialog(window.into(), "Warning", format!("Failed to determine if file exists at {data_img_path:?}<br>Not creating data.img<br>{err}")),
+  }
 
   use tauri::api::process::Command;
 
@@ -202,9 +209,8 @@ fn start_install(
 
       match std::fs::create_dir(dest_dir.join("data"))  {
           Ok(_) => {},
-          Err(e) => { 
-            let msg = format!("Create /data failed<br>{}", e.to_string());
-            show_dialog(window, "Warning", msg); 
+          Err(err) => { 
+            show_dialog(window, "Warning", format!("Create /data failed<br>{err}")); 
           },
       }
       
