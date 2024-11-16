@@ -1,7 +1,6 @@
 use progress::Progress;
 use tauri::api::dialog;
-use std::time;
-use std::thread;
+use std::{thread, time};
 use std::sync::Arc;
 use std::path::{Path, PathBuf};
 use std::io::{Seek, Write};
@@ -200,7 +199,14 @@ fn start_install(
           source "$kdir"/efi/boot/android.cfg
       "#);
       std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
-      std::fs::create_dir(dest_dir.join("data")).unwrap();
+
+      match std::fs::create_dir(dest_dir.join("data"))  {
+          Ok(_) => {},
+          Err(e) => { 
+            let msg = format!("Create /data failed<br>{}", e.to_string());
+            show_dialog(window, "Warning", msg); 
+          },
+      }
       
       let _ = std::fs::remove_file(dest_dir.join("install.img"));
       let _ = prepare_recovery(dest_dir);
@@ -208,7 +214,20 @@ fn start_install(
       #[cfg(windows)]
       let _ = uninstall::prepare_uninstall(dest_dir);
     });
-  Ok("Success".to_string()) 
+
+    Ok("Success".to_string()) 
+}
+
+fn show_dialog( 
+  window: Arc<tauri::Window>,
+  title: &str,
+  html_content: String, 
+) {    
+    window.eval(
+      &format!(r"
+      document.getElementById('installer_app')
+              .showDialog('{title}', html`{html_content}`)")
+    ).unwrap();
 }
 
 fn main() {
