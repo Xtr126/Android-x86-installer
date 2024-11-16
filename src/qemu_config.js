@@ -69,7 +69,7 @@ export class QemuConfigElement extends LitElement {
 
 
   onCloseCpuMenu(event){
-    this.cores = event.detail.initiator.typeaheadText;
+    this.cores = parseInt(event.detail.initiator.typeaheadText);
   }
 
   invokeInstall(installEl, _installDir){
