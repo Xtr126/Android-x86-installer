@@ -44,7 +44,7 @@ async fn pick_file() -> Result<PickFileResponse, String> {
 
 #[tauri::command]
 async fn pick_folder() -> Result<PickFolderResponse, String> {
-    let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap();
+    let file_path: PathBuf = dialog::blocking::FileDialogBuilder::new().pick_folder().unwrap_or_else(|| PathBuf::new());
 
     let install_dir_rw = check_install_dir(file_path.clone().to_str().unwrap());
 

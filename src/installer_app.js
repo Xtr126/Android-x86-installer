@@ -297,7 +297,7 @@ export class InstallerApp extends LitElement {
         <div>${msg('Copy Android bootloader files')}</div>
           <div class="codeblock-surface" > 
             <pre><code>  Copy-Item -Path ${this.installDir}\\boot -Destination X:\\ -Recurse -Force -Confirm</code></pre>
-            <pre><code>  Copy-Item -Path ${this.installDir}\\efi\\boot -Destination X:\EFI\\ -Recurse -Force -Confirm</code></pre>
+            <pre><code>  Copy-Item -Path ${this.installDir}\\efi\\boot -Destination X:\\EFI\\ -Recurse -Force -Confirm</code></pre>
           </div>
 
         <div>${msg('Create bootloader entry for Android')}</div>
