@@ -64,6 +64,11 @@ pub fn install(args: Vec<String>) {
         "powercfg.exe /hibernate off",
     );
 
+    run_command(
+        "=== Step 6: Unmounting EFI system partition at X: ===",
+        "mountvol X: /d",
+    );
+
     println!("=== All commands executed successfully! ===");
     ask_to_exit();
 
