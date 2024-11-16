@@ -12,11 +12,6 @@ fn run_command(description: &str, command: &str) -> Output {
     
     eprintln!("{}", String::from_utf8_lossy(&output.stderr));
     println!("{}", String::from_utf8_lossy(&output.stdout));
-    
-    if ! output.status.success() {
-        ask_to_exit();
-        exit(1);
-    }
 
     output
 }
@@ -25,13 +20,10 @@ pub fn install(args: Vec<String>) {
     let install_dir = &args[1];
     std::fs::read_dir(install_dir).expect("No such directory");
 
-    println!("{}", "=== Step 1: Unmounting existing volume at X: ===");
-
-    Command::new("cmd")
-        .args(&["/C", "mountvol X: /d"])
-        .status()
-        .expect("Failed to execute command");
-
+    run_command(
+        "=== Step 1: Unmounting existing volume at X: ===",
+        "mountvol X: /d",
+    );
 
     run_command(
         "=== Step 2: Mounting EFI System Partition ===",
@@ -40,11 +32,11 @@ pub fn install(args: Vec<String>) {
 
     run_command(
         "=== Step 3.1: Copying Android Bootloader Files ===",
-        &format!(r"robocopy {}\boot X:\ /E", install_dir),
+        &format!(r"robocopy {}\boot X:\ /E /NFL /NDL /NJH /NJS /NC /NS /NP", install_dir),
     );
     run_command(
         "=== Step 3.2: Copying Android EFI Boot Files ===",
-        &format!(r"robocopy {}\efi\boot X:\EFI\ /E", install_dir),
+        &format!(r"robocopy {}\efi\boot X:\EFI\ /E /NFL /NDL /NJH /NJS /NC /NS /NP", install_dir),
     );
 
     let bcdedit_output = run_command(
