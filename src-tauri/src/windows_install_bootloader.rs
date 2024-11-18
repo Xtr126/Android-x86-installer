@@ -1,4 +1,6 @@
-use std::process::{exit, Command, Output};
+use std::{fs::File, path::Path, process::{Command, Output}};
+use std::io::Write;
+
 
 // Helper function to execute a command and capture its output
 fn run_command(description: &str, command: &str) -> Output {
@@ -31,32 +33,25 @@ pub fn install(args: Vec<String>) {
     );
 
     run_command(
-        "=== Step 3.1: Copying Android Bootloader Files ===",
-        &format!(r"robocopy {}\boot X:\ /E /NFL /NDL /NJH /NJS /NC /NS /NP", install_dir),
+        "=== Step 3: Copying Android Bootloader Files ===",
+        &format!(r"robocopy {install_dir}\boot X:\boot /E /NJH /NC /NS"),
     );
-    run_command(
-        "=== Step 3.2: Copying Android EFI Boot Files ===",
-        &format!(r"robocopy {}\efi\boot X:\EFI\ /E /NFL /NDL /NJH /NJS /NC /NS /NP", install_dir),
-    );
+    run_command("", &format!(r"robocopy {install_dir}\efi X:\EFI /E /NJH /NC /NS"));
 
     let bcdedit_output = run_command(
         "=== Step 4: Creating Bootloader Entry for Android ===",
         r#"bcdedit /copy {bootmgr} /d "Android""#,
     );
-
-    println!("Step 4.1: Parse GUID from bcdedit output");
-
     let output_text = String::from_utf8_lossy(&bcdedit_output.stdout);
-    let guid_regex = regex::Regex::new(r"\{[a-fA-F0-9-]+\}").expect("Failed to compile regex");
-    let guid = guid_regex
-        .find(&output_text)
-        .expect("Failed to find GUID in bcdedit output")
-        .as_str();
-    println!("Parsed GUID: {}", guid);
+
+
+    println!("=== Step 4.1: Parse GUID from bcdedit output ===");
+
+    let guid = parse_and_save_guid(&output_text, install_dir);
 
     run_command(
         "=== Step 4.2: Setting the bootloader path ===",
-        &format!(r"bcdedit /set {} path \EFI\boot\BOOTx64.EFI", guid),
+        &format!(r"bcdedit /set {guid} path \EFI\boot\BOOTx64.EFI"),
     );
 
     run_command(
@@ -81,3 +76,20 @@ fn ask_to_exit() {
     std::io::stdin().read_line(&mut input).expect("Failed to read input");
 }
 
+fn parse_and_save_guid<'a>(output_text: &'a std::borrow::Cow<'a, str>, install_dir: &String) -> &'a str {
+    
+    let guid_regex = regex::Regex::new(r"\{[a-fA-F0-9-]+\}").expect("Failed to compile regex");
+    
+    let guid = guid_regex
+        .find(&output_text)
+        .expect("Failed to find GUID in bcdedit output")
+        .as_str();
+
+    println!("Parsed GUID: {}", guid);
+
+    let guid_store_file_path = Path::new(install_dir).join("bcdedit-guid.txt");
+    let mut guid_store_file = File::create(guid_store_file_path).expect("Failed to create bcdedit-guid.txt to store guid");
+    writeln!(guid_store_file, "{guid}").expect("Failed to write to bcdedit-guid.txt");
+    
+    &guid   
+}
