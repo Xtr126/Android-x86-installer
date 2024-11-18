@@ -2,7 +2,6 @@ use progress::Progress;
 use tauri::api::dialog;
 use tauri::api::process::Encoding;
 use std::{thread, time};
-use std::sync::Arc;
 use std::path::{Path, PathBuf};
 use std::io::{Seek, Write};
 use std::fs::{remove_dir, File};
@@ -88,8 +87,8 @@ async fn create_data_img(
 
   match data_img_path.try_exists() {
     Ok(false) => {},
-    Ok(true) => show_dialog(window.into(), "Warning", format!("Found existing file at {data_img_path:?}<br>Not creating data.img")),
-    Err(err) => show_dialog(window.into(), "Warning", format!("Failed to determine if file exists at {data_img_path:?}<br>Not creating data.img<br>{err}")),
+    Ok(true) => show_dialog(window, "Warning", format!("Found existing file at {data_img_path:?}<br>Not creating data.img")),
+    Err(err) => show_dialog(window, "Warning", format!("Failed to determine if file exists at {data_img_path:?}<br>Not creating data.img<br>{err}")),
   }
 
   use tauri::api::process::Command;
@@ -160,28 +159,11 @@ fn start_install(
   window: tauri::Window,
   iso_file: String, 
   install_dir: String, 
-) -> Result<String, String> {
-    let window = Arc::new(window);
+) -> Result<(), String> {
     let source  = File::open(iso_file).map_err(|err| err.to_string())?;
 
-    let window_ = window.clone();
-    let isofile_size_bytes = source.metadata().unwrap().len();
+    let isofile_size_bytes = source.metadata().map_err(|err| err.to_string())?.len();
 
-    thread::spawn(move || {
-      let mut progress: Progress = Progress::new(isofile_size_bytes);
-      loop {
-        let progress_info = progress.refresh_progress();
-        // 100 should be sent only from the other thread
-        if progress_info.progress_percent != 100 { 
-            window.emit("progress-info", progress_info).unwrap(); 
-            thread::sleep(time::Duration::from_secs(1));
-        } else {
-            break;
-        }
-      }
-    });
-
-    let window = Arc::clone(&window_);
     thread::spawn(move || {
       let dest_dir: &Path = Path::new(&install_dir);
       let _ = uncompress_archive(source, dest_dir, Ownership::Preserve);
@@ -207,7 +189,13 @@ fn start_install(
           search --no-floppy --set=root --file "$kdir"/kernel
           source "$kdir"/efi/boot/android.cfg
       "#);
-      std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents).unwrap();
+      
+      match std::fs::write(dest_dir.join("boot/grub/grub.cfg"), contents)  {
+        Ok(_) => {},
+        Err(_) => { 
+            show_dialog(window.clone(), "Warning", format!("Create boot/grub/grub.cfg failed")); 
+        },
+      }
 
       match std::fs::create_dir(dest_dir.join("data"))  {
           Ok(_) => {},
@@ -222,12 +210,34 @@ fn start_install(
       #[cfg(windows)]
       let _ = uninstall::prepare_uninstall(dest_dir);
     });
+    
+    Ok(())
+}
 
-    Ok("Success".to_string()) 
+#[tauri::command]
+fn count_progress(
+  window: tauri::Window,
+  iso_file: String, 
+) {
+  let isofile_size_bytes = File::open(iso_file).unwrap().metadata().unwrap().len();
+
+  thread::spawn(move || {
+    let mut progress: Progress = Progress::new(isofile_size_bytes);
+    loop {
+      let progress_info = progress.refresh_progress();
+      // 100 should be sent only from the other thread
+      if progress_info.progress_percent != 100 { 
+          window.emit("progress-info", progress_info).unwrap(); 
+          thread::sleep(time::Duration::from_secs(1));
+      } else {
+          break;
+      }
+    }
+  });
 }
 
 fn show_dialog( 
-  window: Arc<tauri::Window>,
+  window: tauri::Window,
   title: &str,
   html_content: String, 
 ) {    
@@ -250,7 +260,8 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       pick_file, pick_folder, check_install_dir,
       start_install,  qemu_install::install_qemu, 
-      create_data_img, create_grub_entry])
+      create_data_img, create_grub_entry,
+      count_progress])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

@@ -58,6 +58,10 @@ async function startInstall() {
 }
 
 async function updateProgress() {
+  invoke("count_progress", {  
+    isoFile: fileNameTextFieldEl.value,
+  });
+
   while(true) {
     await listen('progress-info', (event) => {
       installEl.updateProgress(event.payload)
