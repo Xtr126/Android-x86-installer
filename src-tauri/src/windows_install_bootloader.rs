@@ -1,35 +1,14 @@
-use std::{fs::File, path::Path, process::{Command, Output}};
+use std::borrow::Cow;
+use std::{fs::File, path::Path};
 use std::io::Write;
 
-
-// Helper function to execute a command and capture its output
-fn run_command(description: &str, command: &str) -> Output {
-    println!("{}", description);
-    println!("{}", command);
-
-    let output = Command::new("cmd")
-        .args(&["/C", command])
-        .output()
-        .expect("Failed to execute command");
-    
-    eprintln!("{}", String::from_utf8_lossy(&output.stderr));
-    println!("{}", String::from_utf8_lossy(&output.stdout));
-
-    output
-}
+use crate::windows::run_command;
 
 pub fn install(install_dir: &String) {
     std::fs::read_dir(install_dir).expect("No such directory");
 
-    run_command(
-        "=== Step 1: Unmounting existing volume at X: ===",
-        "mountvol X: /d",
-    );
-
-    run_command(
-        "=== Step 2: Mounting EFI System Partition ===",
-        "mountvol X: /s",
-    );
+    let esp_drive_letter = "X:\\"; 
+    crate::windows::mount_efi_system_partition(esp_drive_letter);
 
     run_command(
         "=== Step 3: Copying Android Bootloader Files ===",
@@ -58,33 +37,15 @@ pub fn install(install_dir: &String) {
         "powercfg.exe /hibernate off",
     );
 
-    run_command(
-        "=== Step 6: Unmounting EFI system partition at X: ===",
-        "mountvol X: /d",
-    );
+    crate::windows::unmount_efi_system_partition(esp_drive_letter);
 
     println!("=== All commands executed successfully! ===");
-    ask_to_exit();
-
 }
 
-fn ask_to_exit() {
-    println!("Press enter key to exit...");
-    // Wait for user input
-    let mut input = String::new();
-    std::io::stdin().read_line(&mut input).expect("Failed to read input");
-}
 
-fn parse_and_save_guid<'a>(output_text: &'a std::borrow::Cow<'a, str>, install_dir: &String) -> &'a str {
+fn parse_and_save_guid<'a>(output_text: &'a Cow<'a, str>, install_dir: &String) -> &'a str {
     
-    let guid_regex = regex::Regex::new(r"\{[a-fA-F0-9-]+\}").expect("Failed to compile regex");
-    
-    let guid = guid_regex
-        .find(&output_text)
-        .expect("Failed to find GUID in bcdedit output")
-        .as_str();
-
-    println!("Parsed GUID: {}", guid);
+    let guid = crate::windows::parse_guid(output_text);
 
     let guid_store_file_path = Path::new(install_dir).join("bcdedit-guid.txt");
     let mut guid_store_file = File::create(guid_store_file_path).expect("Failed to create bcdedit-guid.txt to store guid");
@@ -92,3 +53,4 @@ fn parse_and_save_guid<'a>(output_text: &'a std::borrow::Cow<'a, str>, install_d
     
     &guid   
 }
+

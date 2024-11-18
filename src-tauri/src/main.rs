@@ -11,6 +11,7 @@ mod qemu_install;
 mod progress;
 mod fs_utils;
 
+#[cfg(windows)] mod windows;
 #[cfg(windows)] mod windows_uninstall;
 #[cfg(windows)] mod windows_install_bootloader;
 #[cfg(windows)] mod cli;
