@@ -58,7 +58,11 @@ fn get_files_in_dir(dir: &Path) -> io::Result<Vec<std::path::PathBuf>> {
 }
 
 pub(crate) fn prepare_uninstall(
-  dest_dir: &Path,
+  install_dir: &Path,
 ) -> io::Result<()> {
-    write_bootloader_file_list(dest_dir)
+    write_bootloader_file_list(install_dir)
+}
+
+pub(crate) fn uninstall(install_dir: &Path) {
+    std::fs::read_dir(install_dir).expect("No such directory");
 }

@@ -18,8 +18,7 @@ fn run_command(description: &str, command: &str) -> Output {
     output
 }
 
-pub fn install(args: Vec<String>) {
-    let install_dir = &args[1];
+pub fn install(install_dir: &String) {
     std::fs::read_dir(install_dir).expect("No such directory");
 
     run_command(

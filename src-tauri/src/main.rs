@@ -10,9 +10,10 @@ use compress_tools::{uncompress_archive, Ownership};
 mod qemu_install;
 mod progress;
 mod fs_utils;
-#[cfg(windows)] mod uninstall;
 
+#[cfg(windows)] mod windows_uninstall;
 #[cfg(windows)] mod windows_install_bootloader;
+#[cfg(windows)] mod cli;
 
 #[derive(serde::Serialize)]
 struct PickFileResponse {
@@ -208,7 +209,7 @@ fn start_install(
       let _ = prepare_recovery(dest_dir);
       
       #[cfg(windows)]
-      let _ = uninstall::prepare_uninstall(dest_dir);
+      let _ = windows_uninstall::prepare_uninstall(dest_dir);
     });
     
     Ok(())
@@ -252,7 +253,7 @@ fn main() {
   #[cfg(windows)] {
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 {
-      windows_install_bootloader::install(args);
+      cli::init(args);
       return;
     }
   }
