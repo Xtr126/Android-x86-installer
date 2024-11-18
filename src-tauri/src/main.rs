@@ -1,5 +1,6 @@
 use progress::Progress;
 use tauri::api::dialog;
+use tauri::api::process::Encoding;
 use std::{thread, time};
 use std::sync::Arc;
 use std::path::{Path, PathBuf};
@@ -113,6 +114,7 @@ async fn create_data_img(
   };
 
   let output = command
+    .encoding(Encoding::for_label(b"utf-8").unwrap())
     .args([
         "-F", "-b", "4096", "-L", "/data",
         &data_img_path.display().to_string(),
