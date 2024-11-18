@@ -5,6 +5,8 @@ use std::path::Path;
 
 
 pub fn init(args: Vec<String>) {
+    println!("=== This program requires administrative privileges to run ===");
+
     match args[1].as_str() {
         "install" => windows_install_bootloader::install(&args[2]),
         "uninstall" => windows_uninstall::uninstall( Path::new(&args[2])).unwrap(),
