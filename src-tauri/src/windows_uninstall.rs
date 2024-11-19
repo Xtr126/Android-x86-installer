@@ -106,6 +106,7 @@ pub(crate) fn uninstall(install_dir: &Path) -> io::Result<()> {
 
     crate::windows::unmount_efi_system_partition(esp_drive_letter);
     println!("=== Uninstallation done! ===");
+    println!("Your data was kept intact. If you wish you may delete the {} folder", install_dir);
     Ok(())
 }
 

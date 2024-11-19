@@ -232,6 +232,7 @@ fn count_progress(
           window.emit("progress-info", progress_info).unwrap(); 
           thread::sleep(time::Duration::from_secs(1));
       } else {
+          // progress::count_progress() sends 100 if no data was written/read during the interval. On recieving 100, we break the loop to end the thread.
           break;
       }
     }

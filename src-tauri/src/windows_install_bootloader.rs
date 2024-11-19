@@ -18,7 +18,7 @@ pub fn install(install_dir: &String) {
 
     let bcdedit_output = run_command(
         "=== Step 4: Creating Bootloader Entry for Android ===",
-        r#"bcdedit /copy {bootmgr} /d "Android""#,
+        r#"bcdedit /copy {bootmgr} /d Android"#,
     );
     let output_text = String::from_utf8_lossy(&bcdedit_output.stdout);
 
