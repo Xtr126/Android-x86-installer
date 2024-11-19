@@ -14,6 +14,7 @@ import { msg } from '@lit/localize'
 import { exit } from '@tauri-apps/api/process';
 
 import { type } from '@tauri-apps/api/os';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 export class InstallerApp extends LitElement {
 
@@ -399,7 +400,7 @@ export class InstallerApp extends LitElement {
 
   showDialog(dialogTitle, dialogMsg) {
     this.dialogTitle_ = dialogTitle;
-    this.dialogMsg_ = dialogMsg;
+    this.dialogMsg_ = html`${unsafeHTML(dialogMsg)}`;
     this.dialog.show();
   }
 
@@ -421,7 +422,7 @@ export class InstallerApp extends LitElement {
 
   async copyCode() {
     await navigator.clipboard.writeText(this.bootloaderMsg_);
-    this.showDialog('Copied to clipboard', html`<pre>${this.bootloaderMsg_}</pre>`);
+    this.showDialog('Copied to clipboard', `<pre>${this.bootloaderMsg_}</pre>`);
   }
   
   dataImgSwitchClicked() {

@@ -94,14 +94,13 @@ export class QemuConfigElement extends LitElement {
 
       overrideSdlVideodriver: this.sdlSwitch.selected,
       sdlVideodriver: this.sdlSelect.value,
-    }).then((res) => installEl.showDialog('Qemu install success', html`<pre>${res}</pre>`))
-    .catch((error) => installEl.showDialog('Qemu install failed', html`${error}`))
+    }).then((res) => installEl.showDialog('Qemu install success', `<pre>${res}</pre>`))
+    .catch((error) => installEl.showDialog('Qemu install failed', error))
   }
 
+  /** @override */
   render() {
     return html`
-
-          
 <li class="setting-container">
             <div style="position:relative;">
           <md-menu id="cores" @close-menu=${this.onCloseCpuMenu} anchor="cpu_expand">

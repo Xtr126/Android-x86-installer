@@ -20,7 +20,7 @@ function pickFile() {
   invoke("pick_file").then((res) => {
     fileIsValid = res.is_valid;
     fileNameTextFieldEl.value = res.file_path;
-  }).catch((error) => installEl.showDialog('Error', html`${error}`))
+  }).catch((error) => installEl.showDialog('Error', error))
 }
 
 function pickFolder() {
@@ -30,16 +30,16 @@ function pickFolder() {
     else installDirTextFieldEl.value = res.file_path;
     if (res.is_fat32) {
       installEl.forceUseDataImg();
-      installEl.showDialog('Warning', html`FAT32 filesystem detected<br>Disabled /data directory creation<br>Creating data.img of 4GB size only`)
+      installEl.showDialog('Warning', 'FAT32 filesystem detected<br>Disabled /data directory creation<br>Creating data.img of 4GB size only')
     }
-  }).catch((error) => installEl.showDialog('Error', html`${error}`))
+  }).catch((error) => installEl.showDialog('Error', error))
 }
 
 async function startInstall() {
   const _installDir = installDirTextFieldEl.value;
   invoke("check_install_dir", { installDir: _installDir, }).then((is_valid) => {
     if (!is_valid) {
-      installEl.showDialog('Installation failed', html`Select installation directory to continue`);
+      installEl.showDialog('Installation failed', 'Select installation directory to continue');
       return;
     }
     if (!installEl.qemuConfigDone) {
@@ -53,7 +53,7 @@ async function startInstall() {
       sidePanelEl.activateNextCategory();
       updateProgress();
     })
-    .catch((error) => installEl.showDialog('Installation failed', html`${error}`))
+    .catch((error) => installEl.showDialog('Installation failed', error))
   });
 }
 
@@ -78,9 +78,9 @@ async function updateProgress() {
           installDir: installDirTextFieldEl.value,
           size: installEl.dataImgSize,
         }).then(async (res) => {
-          installEl.showDialog('Create data.img success', html`<pre>${res}</pre>`)
+          installEl.showDialog('Create data.img success', `<pre>${res}</pre>`)
           await createGrubEntry();
-        }).catch((error) => installEl.showDialog('Create data.img failed', html`${error}`));
+        }).catch((error) => installEl.showDialog('Create data.img failed', error));
       }
       break;
     }
@@ -113,7 +113,7 @@ async function onNextEvent() {
     osTitleTextFieldEl.value = title.slice(0, 15);
     sidePanelEl.activateNextCategory();
   } else {
-    installEl.showDialog('Invalid ISO file', html`Select a valid ISO file to continue`);
+    installEl.showDialog('Invalid ISO file', 'Select a valid ISO file to continue');
   } 
 }
 

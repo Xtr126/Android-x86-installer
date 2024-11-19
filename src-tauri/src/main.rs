@@ -246,7 +246,7 @@ fn show_dialog(
     window.eval(
       &format!(r"
       document.getElementById('installer_app')
-              .showDialog('{title}', html`{html_content}`)")
+              .showDialog('{title}', '{html_content}')")
     ).unwrap();
 }
 
