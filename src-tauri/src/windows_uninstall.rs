@@ -61,7 +61,18 @@ fn get_files_in_dir(dir: &Path) -> io::Result<Vec<std::path::PathBuf>> {
 }
 
 pub(crate) fn prepare_uninstall(install_dir: &Path) -> io::Result<()> {
-    write_bootloader_file_list(install_dir)
+    write_bootloader_file_list(install_dir)?;
+    write_uninstall_batch_script();
+}
+
+fn write_uninstall_batch_script(install_dir: &Path) -> io::Result<()>  {
+    let args: Vec<String> = std::env::args().collect();
+
+    let script_path = install_dir.join("uninstall.bat");
+    let mut script_file = File::create(cript_path)?;
+    
+    writeln!(script_file, "{} uninstall {}", args[0], install_dir.display())?;
+
 }
 
 pub(crate) fn uninstall(install_dir: &Path) -> io::Result<()> {
