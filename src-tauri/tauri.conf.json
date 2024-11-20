@@ -49,7 +49,7 @@
         "fullscreen": false,
         "height": 500,
         "resizable": true,
-        "title": " ",
+        "title": "Installer",
         "width": 700,
         "useHttpsScheme": true
       }
