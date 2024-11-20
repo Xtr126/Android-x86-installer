@@ -1,6 +1,8 @@
 #[cfg(target_os = "linux")]
 use std::os::unix::fs::PermissionsExt;
 
+use crate::error::Error;
+
 #[tauri::command]
 pub fn install_qemu(
     install_dir: String,
@@ -23,7 +25,7 @@ pub fn install_qemu(
 
     override_sdl_videodriver: bool,
     sdl_videodriver: String,
-) -> Result<String, String> {
+) -> Result<String, Error> {
     let net_user_hostfwd: String = if forward_port {
         format!("-net user,hostfwd=tcp::{forward_port_no}-:{forward_port_no}")
     } else {
@@ -85,17 +87,15 @@ fi
 
     let script_path = std::path::Path::new(&install_dir).join("start_android.sh");
 
-    std::fs::write(script_path.clone(), contents.clone()).map_err(|err| err.to_string())?;
+    std::fs::write(script_path.clone(), contents.clone())?;
 
     // Make the script executable
     #[cfg(target_os = "linux")]
     {
-        let mut permissions = script_path
-            .metadata()
-            .map_err(|err| err.to_string())?
-            .permissions();
+        let mut permissions = script_path.metadata()?.permissions();
+        
         permissions.set_mode(0o755); // rwxr-xr-x
-        std::fs::set_permissions("script.sh", permissions).map_err(|err| err.to_string())?;
+        std::fs::set_permissions(script_path, permissions)?;
     }
 
     Ok(format!(

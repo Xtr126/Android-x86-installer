@@ -188,10 +188,10 @@ fn start_install(
     app_handle: tauri::AppHandle,
     iso_file: String,
     install_dir: String,
-) -> Result<(), String> {
-    let source = File::open(iso_file).map_err(|err| err.to_string())?;
+) -> Result<(), Error> {
+    let source = File::open(iso_file)?;
 
-    let isofile_size_bytes = source.metadata().map_err(|err| err.to_string())?.len();
+    let isofile_size_bytes = source.metadata()?.len();
 
     thread::spawn(move || {
         let dest_dir: &Path = Path::new(&install_dir);
