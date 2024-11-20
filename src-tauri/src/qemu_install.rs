@@ -43,7 +43,7 @@ pub fn install_qemu(
         ""
     };
 
-    let env_vars = if override_sdl_videodriver {
+    let env_vars = if override_sdl_videodriver && cfg!(windows) {
         format!("SDL_VIDEODRIVER={sdl_videodriver}")
     } else {
         "".to_string()
@@ -61,6 +61,18 @@ pub fn install_qemu(
         format!("-device virtio-{input_type} -device virtio-keyboard \\")
     };
 
+    let hypervisor = if cfg!(windows) {
+        "-accel whpx"
+    } else {
+        "-enable-kvm"
+    };
+
+    let cpu_model = if cfg!(windows) {
+        ""
+    } else {
+        " -cpu host"
+    };
+
     let contents = format!(
         r#"#!/bin/bash
 {e2fsck_cmd}
@@ -71,7 +83,7 @@ else
   system_img=system.sfs
 fi
 
-{env_vars} exec qemu-system-x86_64 -enable-kvm -cpu host -smp {cpus} -m {memsize_mb}M \
+{env_vars} exec qemu-system-x86_64 {hypervisor}{cpu_model} -smp {cpus} -m {memsize_mb}M \
       -drive index=0,if=virtio,id=system,file="{install_dir}"/$system_img,format=raw,readonly=on \
       -drive index=1,if=virtio,id=data,file="{install_dir}/data.img",format=raw \
       -display {display_type},gl={use_gl} \
