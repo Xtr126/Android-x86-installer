@@ -35,8 +35,10 @@ fn get_mount_point(file_path: &str) -> std::io::Result<PathBuf> {
 
         let parent = current_path.parent();
         match parent {
-            None => { return Ok("/".into()); }, 
-            Some(parent) => { 
+            None => {
+                return Ok("/".into());
+            }
+            Some(parent) => {
                 current_path = parent.to_path_buf();
             }
         }
@@ -45,7 +47,6 @@ fn get_mount_point(file_path: &str) -> std::io::Result<PathBuf> {
     // Move back down to the last directory that matched the device ID
     Ok(current_path)
 }
-
 
 #[cfg(target_os = "linux")]
 pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
@@ -57,33 +58,33 @@ pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
     relative_path.to_path_buf()
 }
 
-
 #[cfg(windows)]
 pub fn get_path_on_filesystem(install_dir: &Path) -> PathBuf {
-  let components = install_dir.components();
-      let mut install_dir = "".to_owned();
+    let components = install_dir.components();
+    let mut install_dir = "".to_owned();
 
-      for component in components {     
-          if component == std::path::Component::RootDir {
+    for component in components {
+        if component == std::path::Component::RootDir {
             install_dir.clear();
             continue;
-          }            
-          let component = component.as_os_str().to_str().unwrap();
-          install_dir.push_str(component);
-      }
-      if install_dir.ends_with('/') { install_dir.pop(); }
+        }
+        let component = component.as_os_str().to_str().unwrap();
+        install_dir.push_str(component);
+    }
+    if install_dir.ends_with('/') {
+        install_dir.pop();
+    }
 
-      install_dir.into()
+    install_dir.into()
 }
 
-#[cfg(target_os = "linux")]  
+#[cfg(target_os = "linux")]
 pub fn is_fat32(dir: &str) -> bool {
-    
     use libc::statfs;
     let cstr_dir = CString::new(dir).expect("CString::new failed");
     let mut stat: libc::statfs = unsafe { std::mem::zeroed() };
     let result = unsafe { statfs(cstr_dir.as_ptr(), &mut stat) };
-    
+
     if result == 0 {
         // FAT32/VFAT filesystems are usually identified by the magic number 0x4d44
         stat.f_type as u32 == 0x4d44
@@ -92,8 +93,7 @@ pub fn is_fat32(dir: &str) -> bool {
     }
 }
 
-
-#[cfg(windows)]  
+#[cfg(windows)]
 pub fn is_fat32(path: &str) -> bool {
     use std::ffi::OsString;
     use std::os::windows::ffi::OsStrExt;
@@ -105,10 +105,10 @@ pub fn is_fat32(path: &str) -> bool {
         .encode_wide()
         .chain(Some(0)) // null-terminate the wide string
         .collect();
-    
+
     // Prepare buffers for the volume information
     let mut fs_name_buffer: [u16; 256] = [0; 256];
-    
+
     // Call GetVolumeInformationW to get the filesystem name
     let result = unsafe {
         GetVolumeInformationW(
@@ -122,13 +122,13 @@ pub fn is_fat32(path: &str) -> bool {
             fs_name_buffer.len() as u32,
         )
     };
-    
+
     if result != 0 {
         // Convert the filesystem name to a Rust string
         let fs_name = String::from_utf16_lossy(
-            &fs_name_buffer[..fs_name_buffer.iter().position(|&c| c == 0).unwrap_or(256)]
+            &fs_name_buffer[..fs_name_buffer.iter().position(|&c| c == 0).unwrap_or(256)],
         );
-        
+
         // Check if the filesystem is FAT32
         fs_name == "FAT32"
     } else {

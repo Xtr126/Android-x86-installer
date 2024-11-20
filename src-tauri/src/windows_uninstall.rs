@@ -1,16 +1,15 @@
 use std::fs::{self, File};
+use std::io::BufRead;
 use std::io::{self, Write};
 use std::path::Path;
 use std::vec::Vec;
-use std::io::BufRead;
 
 use crate::windows::run_command;
-
 
 fn write_bootloader_file_list(dest_dir: &Path) -> io::Result<()> {
     // Define the subdirectories to search
     let subdirs = ["boot", "efi"];
-    
+
     // Open the output file
     let uninstall_file_path = dest_dir.join("uninstall-bootloader.txt");
     let mut uninstall_file = File::create(uninstall_file_path)?;
@@ -61,30 +60,30 @@ fn get_files_in_dir(dir: &Path) -> io::Result<Vec<std::path::PathBuf>> {
     Ok(files)
 }
 
-pub(crate) fn prepare_uninstall(
-  install_dir: &Path,
-) -> io::Result<()> {
+pub(crate) fn prepare_uninstall(install_dir: &Path) -> io::Result<()> {
     write_bootloader_file_list(install_dir)
 }
 
 pub(crate) fn uninstall(install_dir: &Path) -> io::Result<()> {
     std::fs::read_dir(install_dir).expect("No such directory");
-    
-    let guid_contents = std::fs::read(install_dir.join("bcdedit-guid.txt")).expect("bcdedit-guid.txt not found");
+
+    let guid_contents =
+        std::fs::read(install_dir.join("bcdedit-guid.txt")).expect("bcdedit-guid.txt not found");
     let guid_str = String::from_utf8_lossy(&guid_contents);
     let guid = crate::windows::parse_guid(&guid_str);
 
-    let esp_drive_letter = "X:"; 
+    let esp_drive_letter = "X:";
     crate::windows::mount_efi_system_partition(esp_drive_letter);
-    
+
     // Open the file containing the list of files
-    let file = std::fs::File::open(install_dir.join("uninstall-bootloader.txt")).expect("uninstall-bootloader.txt not found");
+    let file = std::fs::File::open(install_dir.join("uninstall-bootloader.txt"))
+        .expect("uninstall-bootloader.txt not found");
     let reader = io::BufReader::new(file);
 
     // Iterate through each line in the file
     for line in reader.lines() {
         let line = line?;
-        
+
         // Construct the full path to the file on the specified drive
         let file_to_remove = Path::new(esp_drive_letter).join(line);
 
@@ -106,7 +105,9 @@ pub(crate) fn uninstall(install_dir: &Path) -> io::Result<()> {
 
     crate::windows::unmount_efi_system_partition(esp_drive_letter);
     println!("=== Uninstallation done! ===");
-    println!("Your data was kept intact. If you wish you may delete the {} folder", install_dir);
+    println!(
+        "Your data was kept intact. If you wish you may delete the {} folder",
+        install_dir
+    );
     Ok(())
 }
-

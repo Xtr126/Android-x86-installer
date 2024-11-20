@@ -3,7 +3,7 @@ import '@material/web/iconbutton/icon-button.js';
 import '@material/web/textfield/filled-text-field'
 import '@material/web/textfield/outlined-text-field'
 import { path } from '@tauri-apps/api';
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { html } from 'lit';
 

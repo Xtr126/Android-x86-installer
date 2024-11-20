@@ -11,9 +11,9 @@ import '@material/web/switch/switch'
 import '@material/web/slider/slider'
 import { msg } from '@lit/localize'
 
-import { exit } from '@tauri-apps/api/process';
+import { exit } from '@tauri-apps/plugin-process';
 
-import { type } from '@tauri-apps/api/os';
+import { type } from '@tauri-apps/plugin-os';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 export class InstallerApp extends LitElement {

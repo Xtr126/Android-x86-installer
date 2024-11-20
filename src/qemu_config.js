@@ -3,7 +3,7 @@ import '@material/web/select/outlined-select.js';
 import '@material/web/select/select-option.js';
 import '@material/web/menu/menu.js';
 import '@material/web/menu/menu-item.js';
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 export class QemuConfigElement extends LitElement {
   static styles = css`
