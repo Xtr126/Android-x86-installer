@@ -107,7 +107,7 @@ pub(crate) fn uninstall(install_dir: &Path) -> io::Result<()> {
     println!("=== Uninstallation done! ===");
     println!(
         "Your data was kept intact. If you wish you may delete the {} folder",
-        install_dir
+        install_dir.display()
     );
     Ok(())
 }

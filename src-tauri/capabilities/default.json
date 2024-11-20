@@ -1,0 +1,34 @@
+{
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "default",
+    "description": "Capability for the main window",
+    "windows": ["main"],
+    "permissions": [
+      "core:path:default",
+      "core:event:default",
+      "core:window:default",
+      "core:app:default",
+      "core:resources:default",
+      "core:menu:default",
+      "core:tray:default",
+      {
+        "identifier": "shell:allow-execute",
+        "allow": [
+          {
+            "args": [
+                "-F",
+                "-b",
+                "4096",
+                "-L",
+                "/data",
+                { "validator": "\\S+" },
+                { "validator": "\\S+" }
+            ],
+            "name": "mkfs.ext4",
+            "sidecar": true
+          }
+        ]
+      },
+      "shell:allow-open"
+    ]
+  }
