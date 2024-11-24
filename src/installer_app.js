@@ -10,11 +10,10 @@ import '@material/web/elevation/elevation'
 import '@material/web/switch/switch'
 import '@material/web/slider/slider'
 import { msg } from '@lit/localize'
-
 import { exit } from '@tauri-apps/plugin-process';
-
 import { type } from '@tauri-apps/plugin-os';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { invoke } from '@tauri-apps/api/core'
 
 export class InstallerApp extends LitElement {
 
@@ -283,8 +282,13 @@ export class InstallerApp extends LitElement {
         <h4>${msg('Important')}</h4>
         <li>${msg('Only Bliss OS Grub can read from NTFS partitions.')}</li>
         <li>${msg('Compression should be disabled in drive properties for all files.')}</li>
-        <li>${msg('Fastboot/hibernation should be disabled.')}</li>
+        <li>${msg('Fastboot/hibernation should be disabled (See below).')}</li>
         <br>
+        
+        <md-filled-tonal-button @click="${this.onBootloaderButtonClicked}">
+          <md-icon slot="icon">security</md-icon>
+          ${msg(html`Click here to automatically perform the<br> below  actions using administrative rights`)}
+        </md-filled-tonal-button>
           
         <h4>${msg('Step 1 - Open PowerShell')}</h4>
         <li>${msg('Press Win+X and select Windows Terminal (Admin) or Powershell')}</li>
@@ -399,6 +403,10 @@ export class InstallerApp extends LitElement {
   onInstallButtonClicked() {
     if (!this.qemuInstallSwitchEl.selected) this.qemuConfigDone = true;
     this.dispatchEvent(new CustomEvent('install'));
+  }
+
+  onBootloaderButtonClicked() {
+    invoke("install_bootloader").catch((error) => this.showDialog('Error', error))    
   }
 
   showDialog(dialogTitle, dialogMsg) {
