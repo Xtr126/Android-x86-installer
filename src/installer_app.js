@@ -273,6 +273,9 @@ export class InstallerApp extends LitElement {
         <pre><code>  sudo grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
         </div>
         <p>${msg('The exact command to use may vary depending on your distro.')}</p>
+        <pre>
+          
+        </pre>  
       </div>
       <md-filled-button class="button-next" @click="${this.onFinishButtonClicked}">${msg('Done')}</md-filled-button>
     </section>
@@ -283,6 +286,7 @@ export class InstallerApp extends LitElement {
         <li>${msg('Only Bliss OS Grub can read from NTFS partitions.')}</li>
         <li>${msg('Compression should be disabled in drive properties for all files.')}</li>
         <li>${msg('Fastboot/hibernation should be disabled (See below).')}</li>
+        <li>${msg('Scroll down to see uninstallation instructions.')}</li>
         <br>
         
         <md-filled-tonal-button @click="${this.onBootloaderButtonClicked}">
@@ -338,6 +342,17 @@ export class InstallerApp extends LitElement {
 
         <div>${msg('Now you can boot to Android from UEFI Boot Menu in BIOS.')}</div>
         <p>${msg('Or press Ctrl+Alt+Del, click on power button and hold shift key while clicking on restart. After restarting, select "Use another device" or "Use another operating system" from the menu and select "Android".')}</p>
+        <br>
+        <h3>${msg('Uninstallation')}</h3>
+
+        <h4>${msg('Manual install:')}</h4>
+        <li>${msg('1. Run "bcdedit /enum \'{bootmgr}\'" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
+        <li>${msg('2. Mount EFI partition and delete the files listed in ')}${this.installDir}\\uninstall-bootloader.txt</li>
+        <li>${msg('3. Delete ')}${this.installDir}/li>
+
+        <h4>${msg('Automatic install:')}</h4>
+        <li>${msg('Execute uninstall.bat file in the installation folder as administrator.')}</li>
+
         <pre>
           
         </pre>
