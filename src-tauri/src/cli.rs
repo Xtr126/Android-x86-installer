@@ -16,7 +16,7 @@ pub fn init(args: Vec<String>) {
     ask_to_exit();
 }
 
-fn ask_to_exit() {
+pub fn ask_to_exit() {
     println!("Press enter key to exit...");
     // Wait for user input
     let mut input = String::new();

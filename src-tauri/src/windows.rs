@@ -7,8 +7,8 @@ use std::io::{self, Write};
 
 // Helper function to execute a command and capture its output
 pub fn run_command(description: &str, command: &str) -> Output {
-    println!(description);
-    println!(command);
+    println!("{description}");
+    println!("{command}");
 
     let output = Command::new("cmd")
         .args(&["/C", command])
@@ -31,7 +31,7 @@ pub fn mount_efi_system_partition(esp_drive_letter: &str) {
     println!("mountvol {esp_drive_letter} /s");
 
     let status = Command::new("cmd")
-        .args(&["/C", command])
+        .args(&["/C", &format!("mountvol {esp_drive_letter} /s")])
         .status()
         .expect("Failed to execute command");
 
