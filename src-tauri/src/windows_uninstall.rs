@@ -66,13 +66,18 @@ pub(crate) fn prepare_uninstall(install_dir: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn write_uninstall_batch_script(install_dir: &Path) -> io::Result<()>  {
+fn write_uninstall_batch_script(install_dir: &Path) -> io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
 
     let script_path = install_dir.join("uninstall.bat");
     let mut script_file = File::create(script_path)?;
-    
-    writeln!(script_file, "{} uninstall {}", args[0], install_dir.display())?;
+
+    writeln!(
+        script_file,
+        "{} uninstall {}",
+        args[0],
+        install_dir.display()
+    )?;
     Ok(())
 }
 

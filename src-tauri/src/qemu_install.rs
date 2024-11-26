@@ -67,11 +67,7 @@ pub fn install_qemu(
         "-enable-kvm"
     };
 
-    let cpu_model = if cfg!(windows) {
-        ""
-    } else {
-        " -cpu host"
-    };
+    let cpu_model = if cfg!(windows) { "" } else { " -cpu host" };
 
     let contents = format!(
         r#"#!/bin/bash
@@ -105,7 +101,7 @@ fi
     #[cfg(target_os = "linux")]
     {
         let mut permissions = script_path.metadata()?.permissions();
-        
+
         permissions.set_mode(0o755); // rwxr-xr-x
         std::fs::set_permissions(script_path, permissions)?;
     }
