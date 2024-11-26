@@ -39,7 +39,7 @@
   },
   "productName": "Android-x86-installer",
   "mainBinaryName": "Android-x86-installer",
-  "version": "0.1.7",
+  "version": "1.0.0",
   "identifier": "xtr.android.installer",
   "plugins": {},
   "app": {

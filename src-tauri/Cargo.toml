@@ -1,6 +1,6 @@
 [package]
 name = "android-x86-installer"
-version = "0.1.7"
+version = "1.0.0"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
