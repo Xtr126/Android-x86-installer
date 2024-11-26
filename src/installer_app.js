@@ -348,7 +348,7 @@ export class InstallerApp extends LitElement {
         <h4>${msg('Manual install:')}</h4>
         <li>${msg('1. Run "bcdedit /enum \'{bootmgr}\'" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
         <li>${msg('2. Mount EFI partition and delete the files listed in ')}${this.installDir}\\uninstall-bootloader.txt</li>
-        <li>${msg('3. Delete ')}${this.installDir}/li>
+        <li>${msg('3. Delete ')}${this.installDir}</li>
 
         <h4>${msg('Automatic install:')}</h4>
         <li>${msg('Execute uninstall.bat file in the installation folder as administrator.')}</li>
@@ -421,7 +421,8 @@ export class InstallerApp extends LitElement {
   }
 
   onBootloaderButtonClicked() {
-    invoke("install_bootloader").catch((error) => this.showDialog('Error', error))    
+    invoke("install_bootloader", { installDir: this.installDir, })
+    .catch((error) => this.showDialog('Error', error))    
   }
 
   showDialog(dialogTitle, dialogMsg) {

@@ -1,5 +1,6 @@
 use std::{
     borrow::Cow,
+    ffi::{OsStr, OsString},
     process::{Command, Output},
 };
 
@@ -11,7 +12,7 @@ pub fn run_command(description: &str, command: &str) -> Output {
     println!("{command}");
 
     let output = Command::new("cmd")
-        .args(&["/C", command])
+        .args(["/C", command])
         .output()
         .expect("Failed to execute command");
 
@@ -35,10 +36,10 @@ pub fn mount_efi_system_partition(esp_drive_letter: &str) {
         .status()
         .expect("Failed to execute command");
 
-    if ! status.success() {
-       eprintln!("Failed to mount EFI system partition");
-       crate::cli::ask_to_exit();
-    } 
+    if !status.success() {
+        eprintln!("Failed to mount EFI system partition");
+        crate::cli::ask_to_exit();
+    }
 }
 
 pub fn unmount_efi_system_partition(esp_drive_letter: &str) {
@@ -59,4 +60,37 @@ pub fn parse_guid<'a>(output_text: &'a Cow<'a, str>) -> &'a str {
     println!("Parsed GUID: {}", guid);
 
     &guid
+}
+
+pub fn run_command_as_admin<I, S>(program: S, args: I) -> io::Result<()>
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<OsStr>,
+{
+    let mut argument_list = OsString::new();
+
+    for arg in args {
+        if argument_list != OsString::new() {
+            argument_list.push(",");
+        }
+        argument_list.push("\"");
+        argument_list.push(arg);
+        argument_list.push("\"");
+    }
+
+    let mut powershell_arg = OsString::new();
+
+    powershell_arg.push("Start-Process -Wait -Verb RunAs");
+
+    powershell_arg.push(" -FilePath \"");
+    powershell_arg.push(program);
+    powershell_arg.push("\"");
+
+    powershell_arg.push(" -ArgumentList \"");
+    powershell_arg.push(argument_list);
+    powershell_arg.push("\"");
+
+    Command::new("powershell").arg(powershell_arg).output()?;
+
+    Ok(())
 }

@@ -1,18 +1,18 @@
 use compress_tools::{uncompress_archive, Ownership};
 use error::Error;
 use progress::Progress;
-use tauri::{Emitter, Manager};
-use tauri_plugin_dialog::{DialogExt, FilePath};
-use tauri_plugin_shell::ShellExt;
 use std::fs::{remove_dir, File};
 use std::io::{Seek, Write};
 use std::path::{Path, PathBuf};
 use std::{thread, time};
+use tauri::{Emitter, Manager};
+use tauri_plugin_dialog::{DialogExt, FilePath};
+use tauri_plugin_shell::ShellExt;
 
+mod error;
 mod fs_utils;
 mod progress;
 mod qemu_install;
-mod error;
 
 #[cfg(windows)]
 mod cli;
@@ -40,7 +40,11 @@ static MEGABYTE: u64 = 1024 << 10; // megabyte size in bytes
 
 #[tauri::command]
 async fn pick_file(app_handle: tauri::AppHandle) -> Result<PickFileResponse, Error> {
-    let file_path = app_handle.dialog().file().blocking_pick_file().unwrap_or_else(|| FilePath::from(Path::new("")));
+    let file_path = app_handle
+        .dialog()
+        .file()
+        .blocking_pick_file()
+        .unwrap_or_else(|| FilePath::from(Path::new("")));
 
     let file_path_buf = file_path.into_path()?;
 
@@ -54,8 +58,7 @@ async fn pick_file(app_handle: tauri::AppHandle) -> Result<PickFileResponse, Err
 
 fn check_iso_file(file_path_buf: &PathBuf) -> Result<bool, compress_tools::Error> {
     let mut source = File::open(file_path_buf)?;
-    let file_list: Vec<String> =
-        compress_tools::list_archive_files(&mut source)?;
+    let file_list: Vec<String> = compress_tools::list_archive_files(&mut source)?;
 
     let required_files = &["kernel", "initrd.img"];
 
@@ -72,10 +75,13 @@ fn check_iso_file(file_path_buf: &PathBuf) -> Result<bool, compress_tools::Error
     Ok(is_file_found)
 }
 
-
 #[tauri::command]
 async fn pick_folder(app_handle: tauri::AppHandle) -> Result<PickFolderResponse, Error> {
-    let file_path = app_handle.dialog().file().blocking_pick_folder().unwrap_or_else(|| FilePath::from(Path::new("")));
+    let file_path = app_handle
+        .dialog()
+        .file()
+        .blocking_pick_folder()
+        .unwrap_or_else(|| FilePath::from(Path::new("")));
 
     let file_path_buf = file_path.into_path()?;
 
@@ -91,7 +97,7 @@ async fn pick_folder(app_handle: tauri::AppHandle) -> Result<PickFolderResponse,
 #[tauri::command]
 fn check_install_dir(install_dir: &Path) -> bool {
     let install_dir_path = install_dir.join("kernel");
-    // Check if directory is not empty and is writable 
+    // Check if directory is not empty and is writable
     return !install_dir.eq(Path::new("")) && File::create(install_dir_path).is_ok();
 }
 
@@ -111,7 +117,6 @@ async fn create_data_img(
     Ok(true) => show_dialog(app_handle, "Warning", format!("Found existing file at {data_img_path:?}<br>Not creating data.img")),
     Err(err) => show_dialog(app_handle, "Warning", format!("Failed to determine if file exists at {data_img_path:?}<br>Not creating data.img<br>{err}")),
   }
-
 
     let command = {
         // On Windows use the bundled mkfs.ext4.exe
@@ -143,7 +148,8 @@ async fn create_data_img(
             &data_img_path.display().to_string(),
             &size,
         ])
-        .output().await?;
+        .output()
+        .await?;
 
     remove_dir(file_path.join("data"))?;
 
@@ -240,7 +246,11 @@ fn start_install(
         match std::fs::create_dir(dest_dir.join("data")) {
             Ok(_) => {}
             Err(err) => {
-                show_dialog(&app_handle, "Warning", format!("Create /data failed<br>{err}"));
+                show_dialog(
+                    &app_handle,
+                    "Warning",
+                    format!("Create /data failed<br>{err}"),
+                );
             }
         }
 
@@ -272,6 +282,14 @@ fn count_progress(app_handle: tauri::AppHandle, iso_file: String) {
             }
         }
     });
+}
+
+#[cfg(windows)]
+#[tauri::command]
+fn install_bootloader(install_dir: String) -> Result<(), Error> {
+    let args: Vec<String> = std::env::args().collect();
+    windows::run_command_as_admin(&args[0], [&"install".to_string(), &install_dir])?;
+    Ok(())
 }
 
 fn show_dialog(app_handle: &tauri::AppHandle, title: &str, html_content: String) {
@@ -307,7 +325,9 @@ fn main() {
             qemu_install::install_qemu,
             create_data_img,
             create_grub_entry,
-            count_progress
+            count_progress,
+            #[cfg(windows)]
+            install_bootloader
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
