@@ -79,6 +79,12 @@ export class InstallerApp extends LitElement {
     h1 {
       text-align: center;
     }
+
+    summary {
+      font-weight: 500;
+      font-size: 18px;
+      margin-top: 1em;
+    }
     
     .installer-app-category {
       display: none;
@@ -166,7 +172,8 @@ export class InstallerApp extends LitElement {
 
     .settings-form > *:not(:last-child) {
       margin-bottom: 30px;
-    }`  
+    }
+    `  
 
   /** @override */
   render() {
@@ -287,73 +294,95 @@ export class InstallerApp extends LitElement {
         <li>${msg('Only Bliss OS Grub can read from NTFS partitions.')}</li>
         <li>${msg('Compression should be disabled in drive properties for all files.')}</li>
         <li>${msg('Fastboot/hibernation should be disabled (See below).')}</li>
-        <li>${msg('Scroll down to see uninstallation instructions.')}</li>
         <br>
-        
-        <md-filled-tonal-button @click="${this.onBootloaderButtonClicked}">
-          <md-icon slot="icon">security</md-icon>
-          ${msg(html`Click here to automatically perform the<br> below  actions using administrative rights`)}
-        </md-filled-tonal-button>
-          
-        <h4>${msg('Step 1 - Open PowerShell')}</h4>
-        <li>${msg('Press Win+X and select Windows Terminal (Admin) or Powershell')}</li>
-        <li>${msg('Type below command and press enter key.')}</li>
-        <div class="codeblock-surface" > 
-          <pre><code>  powershell.exe</code></pre>
-        </div>
-        <li>${msg('Tip: Right click to paste text into the terminal.')}</li><br>
-        <h4>${msg('Step 2 - Mount EFI System partition')}</h4>
+
+        <details>
+          <summary>${msg('Automatic installation')}</summary>
+          <br>
+          <md-filled-tonal-button @click="${this.onBootloaderButtonClicked}">
+            <md-icon slot="icon">security</md-icon>
+            ${msg(html`Click here to automatically perform the<br> below  actions using administrative rights`)}
+          </md-filled-tonal-button>
+          <br>
+                    
+          <h4>${msg('Step 1 - Open PowerShell')}</h4>
+          <li>${msg('Press Win+X and select Windows Terminal (Admin) or Powershell')}</li>
+          <li>${msg('Type below command and press enter key.')}</li>
           <div class="codeblock-surface" > 
-            <pre><code>  mountvol X: /d</code></pre>
-            <pre><code>  mountvol X: /s</code></pre>
+            <pre><code>  powershell.exe</code></pre>
           </div>
-        <h4>${msg('Step 3 - Copy Android bootloader files')}</h4>
+          <li>${msg('Tip: Right click to paste text into the terminal.')}</li><br>
+          <h4>${msg('Step 2 - Run the installer')}</h4>
           <div class="codeblock-surface" > 
-            <pre><code>  Copy-Item -Path ${this.installDir}\\boot -Destination X:\\ -Recurse -Force -Confirm</code></pre>
-            <pre><code>  Copy-Item -Path ${this.installDir}\\efi\\boot -Destination X:\\EFI\\ -Recurse -Force -Confirm</code></pre>
+            <pre><code>${this.bootloaderInstallProgram} install ${this.installDir}</code></pre>
+          </div>
+        </details>
+
+        <details>
+          <summary>${msg('Manual installation')}</summary>
+                
+          <h4>${msg('Step 1 - Open PowerShell')}</h4>
+          <li>${msg('Press Win+X and select Windows Terminal (Admin) or Powershell')}</li>
+          <li>${msg('Type below command and press enter key.')}</li>
+          <div class="codeblock-surface" > 
+            <pre><code>  powershell.exe</code></pre>
+          </div>
+          <li>${msg('Tip: Right click to paste text into the terminal.')}</li><br>
+          <h4>${msg('Step 2 - Mount EFI System partition')}</h4>
+            <div class="codeblock-surface" > 
+              <pre><code>  mountvol X: /d</code></pre>
+              <pre><code>  mountvol X: /s</code></pre>
+            </div>
+          <h4>${msg('Step 3 - Copy Android bootloader files')}</h4>
+            <div class="codeblock-surface" > 
+              <pre><code>  Copy-Item -Path ${this.installDir}\\boot -Destination X:\\ -Recurse -Force -Confirm</code></pre>
+              <pre><code>  Copy-Item -Path ${this.installDir}\\efi\\boot -Destination X:\\EFI\\ -Recurse -Force -Confirm</code></pre>
+            </div>
+
+          <h4>${msg('Step 4 - Create bootloader entry for Android')}</h4>
+
+          <div class="codeblock-surface" > 
+            <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
+            <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\\EFI\\Microsoft\\Boot\\BCD</code></pre>
+          </div>
+          <div class="codeblock-surface" > 
+            <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
+            <pre><code>  bcdedit /copy '{bootmgr}' /d "Android"</code></pre>
           </div>
 
-        <h4>${msg('Step 4 - Create bootloader entry for Android')}</h4>
+          <li>${msg('Use xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx from identifier {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx} in output from previous command.')}</li>
 
-        <div class="codeblock-surface" > 
-          <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
-          <pre><code>  Copy-BcdEntry -Description "Android" -SourceEntryId bootmgr -TargetStore X:\\EFI\\Microsoft\\Boot\\BCD</code></pre>
-        </div>
-        <div class="codeblock-surface" > 
-          <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
-          <pre><code>  bcdedit /copy '{bootmgr}' /d "Android"</code></pre>
-        </div>
+          <div class="codeblock-surface" > 
+            <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
+            <pre><code>  Set-BcdElement -Element path -Id xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -Type String -Value \\EFI\\boot\\BOOTx64.EFI</code></pre>
+          </div>
+          <div class="codeblock-surface" > 
+            <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
+            <pre><code>  bcdedit /set '{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}' path \\EFI\\boot\\BOOTx64.EFI</code></pre>
+          </div>
 
-        <li>${msg('Use xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx from identifier {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx} in output from previous command.')}</li>
+          <h4>${msg('Step 5 - Disable hibernation using PowerShell to avoid bootloop.')}</h4>
+          <li>${msg('If turning off hibernation is undesirable, hold down shift key when shutting down Windows to perform a full shutdown, everytime before booting to Android.')}</li>
+          <div class="codeblock-surface" > 
+            <pre><code>  powercfg.exe /hibernate off</code></pre>
+          </div>
 
-        <div class="codeblock-surface" > 
-          <div style="margin-left: 10px;">${msg('Windows 11:')}</div>
-          <pre><code>  Set-BcdElement -Element path -Id xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -Type String -Value \\EFI\\boot\\BOOTx64.EFI</code></pre>
-        </div>
-        <div class="codeblock-surface" > 
-          <div style="margin-left: 10px;">${msg('Windows 10:')}</div>
-          <pre><code>  bcdedit /set '{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}' path \\EFI\\boot\\BOOTx64.EFI</code></pre>
-        </div>
+          <div>${msg('Now you can boot to Android from UEFI Boot Menu in BIOS.')}</div>
+          <p>${msg('Or press Ctrl+Alt+Del, click on power button and hold shift key while clicking on restart. After restarting, select "Use another device" or "Use another operating system" from the menu and select "Android".')}</p>
+          <br>
+        </details>
+    
+        <details>
+          <summary>${msg('Uninstallation')}</summary>
+          <h4>${msg('Manual install:')}</h4>
+          <li>${msg('1. Run "bcdedit /enum \'{bootmgr}\'" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
+          <li>${msg('2. Mount EFI partition and delete the files listed in ')}${this.installDir}\\uninstall-bootloader.txt</li>
+          <li>${msg('3. Delete ')}${this.installDir}</li>
 
-        <h4>${msg('Step 5 - Disable hibernation using PowerShell to avoid bootloop.')}</h4>
-        <li>${msg('If turning off hibernation is undesirable, hold down shift key when shutting down Windows to perform a full shutdown, everytime before booting to Android.')}</li>
-        <div class="codeblock-surface" > 
-          <pre><code>  powercfg.exe /hibernate off</code></pre>
-        </div>
-
-        <div>${msg('Now you can boot to Android from UEFI Boot Menu in BIOS.')}</div>
-        <p>${msg('Or press Ctrl+Alt+Del, click on power button and hold shift key while clicking on restart. After restarting, select "Use another device" or "Use another operating system" from the menu and select "Android".')}</p>
-        <br>
-        <h3>${msg('Uninstallation')}</h3>
-
-        <h4>${msg('Manual install:')}</h4>
-        <li>${msg('1. Run "bcdedit /enum \'{bootmgr}\'" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
-        <li>${msg('2. Mount EFI partition and delete the files listed in ')}${this.installDir}\\uninstall-bootloader.txt</li>
-        <li>${msg('3. Delete ')}${this.installDir}</li>
-
-        <h4>${msg('Automatic install:')}</h4>
-        <li>${msg('Execute uninstall.bat file in the installation folder as administrator.')}</li>
-
+          <h4>${msg('Automatic install:')}</h4>
+          <li>${msg('Execute uninstall.bat file in the installation folder as administrator.')}</li>    
+        </details>
+      
         <pre>
           
         </pre>
