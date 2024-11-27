@@ -469,7 +469,7 @@ export class InstallerApp extends LitElement {
       this.dataDirSwitchEl.selected = false;  
       this.dataImgSwitchState();
     }
-    if (this.osType != 'Windows_NT')
+    if (this.osType != 'windows')
       this.dataDirSwitchEl.disabled = this.dataImgSwitchEl.disabled = installForQemu;
   }
 
@@ -514,12 +514,10 @@ export class InstallerApp extends LitElement {
     this.dataImgSwitchEl = this.renderRoot.querySelector('#data-img-switch'); 
     this.qemuInstallSwitchEl = this.renderRoot.querySelector('#qemu-install-switch'); 
 
-    type().then((osType) => {
-      this.osType = osType;
-      if (this.osType == 'Windows_NT') {
-        this.forceUseDataImg();
-      }
-    })
+    this.osType = type();
+    if (this.osType == 'windows') {
+      this.forceUseDataImg();
+    }
   }  
 
   forceUseDataImg() {
