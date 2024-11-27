@@ -1,3 +1,8 @@
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
+
 use compress_tools::{uncompress_archive, Ownership};
 use error::Error;
 use progress::Progress;
