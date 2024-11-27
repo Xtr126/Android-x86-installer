@@ -68,7 +68,7 @@ async function updateProgress() {
     if (installEl.circularProgressPercent == 100) {
       installEl.activeCategory_ = 'data_img_progress';
       
-      if (installEl.osType == 'Windows_NT')  installEl.useDataImg = true;
+      if (installEl.osType == 'windows')  installEl.useDataImg = true;
 
       if (!installEl.useDataImg) {
         await createGrubEntry();
@@ -94,7 +94,7 @@ async function createGrubEntry() {
     });
     installEl.installDir = _installDir;
     sidePanelEl.activateNextCategory();
-    if (installEl.osType == 'Windows_NT') 
+    if (installEl.osType == 'windows') 
       installEl.activeCategory_ = 'bootloader-windows';
 }
 
