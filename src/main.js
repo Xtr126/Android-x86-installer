@@ -133,10 +133,9 @@ window.addEventListener("DOMContentLoaded", () => {
   installEl.addEventListener('pick-file', () => pickFile());
   installEl.addEventListener('pick-folder', () => pickFolder());
   installEl.addEventListener('install', () => startInstall());  
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    darkModeToggleEl.selected = true;
-  } else {
-    darkModeToggleEl.selected = false;
-  }
+  
+  
+  // Use dark theme by default
+  darkModeToggleEl.selected = true;
   toggleDarkMode();
 });
