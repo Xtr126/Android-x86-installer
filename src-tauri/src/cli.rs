@@ -24,3 +24,9 @@ pub fn ask_to_exit() {
         .read_line(&mut input)
         .expect("Failed to read input");
 }
+
+#[tauri::command]
+pub fn get_executable_name() -> String {
+    let args: Vec<String> = std::env::args().collect();
+    args[0].clone()
+}

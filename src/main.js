@@ -138,4 +138,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Use dark theme by default
   darkModeToggleEl.selected = true;
   toggleDarkMode();
+  invoke("get_executable_name").then(
+    (res) => installEl.bootloaderInstallProgram = res
+  );
 });

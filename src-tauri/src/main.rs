@@ -332,7 +332,8 @@ fn main() {
             create_grub_entry,
             count_progress,
             #[cfg(windows)]
-            install_bootloader
+            install_bootloader,
+            cli::get_executable_name
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

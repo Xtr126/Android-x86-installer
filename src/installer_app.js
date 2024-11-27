@@ -29,6 +29,7 @@ export class InstallerApp extends LitElement {
     dataImgSize: {type: Number},
     qemuConfigDone: {type: Boolean},
     osType: {type: String},
+    bootloaderInstallProgram: {type: String},
 
     megaBytesRead: {type: Number},
     readSpeedMBps: {type: Number},
