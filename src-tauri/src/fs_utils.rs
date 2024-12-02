@@ -87,7 +87,7 @@ pub fn is_fat32(dir: &str) -> bool {
 
     if result == 0 {
         // FAT32/VFAT filesystems are usually identified by the magic number 0x4d44
-        stat.f_type as u32 == 0x4d44
+        stat.f_type == libc::MSDOS_SUPER_MAGIC
     } else {
         false
     }
