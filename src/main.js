@@ -5,6 +5,7 @@ import '@material/web/textfield/outlined-text-field'
 import { path } from '@tauri-apps/api';
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
+import { type } from '@tauri-apps/plugin-os'
 
 let darkModeToggleEl;
 let fileNameTextFieldEl;
@@ -138,7 +139,10 @@ window.addEventListener("DOMContentLoaded", () => {
   // Use dark theme by default
   darkModeToggleEl.selected = true;
   toggleDarkMode();
-  invoke("get_executable_name").then(
-    (res) => installEl.bootloaderInstallProgram = res
-  );
+
+  if (type() == 'windows') {
+    invoke("get_executable_name").then(
+      (res) => installEl.bootloaderInstallProgram = res
+    );
+  }
 });

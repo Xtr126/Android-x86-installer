@@ -333,6 +333,7 @@ fn main() {
             count_progress,
             #[cfg(windows)]
             install_bootloader,
+            #[cfg(windows)]
             cli::get_executable_name
         ])
         .run(tauri::generate_context!())
