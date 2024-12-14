@@ -86,11 +86,10 @@ where
     powershell_arg.push(program);
     powershell_arg.push("\"");
 
-    powershell_arg.push(" -ArgumentList \"");
+    powershell_arg.push(" -ArgumentList ");
     powershell_arg.push(argument_list);
-    powershell_arg.push("\"");
 
-    Command::new("powershell").arg(powershell_arg).output()?;
+    Command::new("powershell").arg(powershell_arg).status()?;
 
     Ok(())
 }
