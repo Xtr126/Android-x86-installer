@@ -12,11 +12,11 @@ pub fn install(install_dir: &String) {
 
     run_command(
         "=== Step 3: Copying Android Bootloader Files ===",
-        &format!(r"robocopy {install_dir}\boot X:\boot /E /NJH /NC /NS"),
+        &format!(r"xcopy {install_dir}\boot X:\boot /E /Q /H /R"),
     );
     run_command(
         "",
-        &format!(r"robocopy {install_dir}\efi X:\EFI /E /NJH /NC /NS"),
+        &format!(r"xcopy {install_dir}\efi X:\EFI /E /Q /H /R"),
     );
 
     let bcdedit_output = run_command(
