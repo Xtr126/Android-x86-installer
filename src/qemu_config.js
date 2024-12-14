@@ -212,7 +212,10 @@ export class QemuConfigElement extends LitElement {
     </md-select-option>
   </md-outlined-select>
         </li>
-       
+          
+        <pre>
+          
+        </pre>
       `;
   }
 }
