@@ -6,8 +6,17 @@ use std::{
 
 use std::io::{self, Write};
 
-// Helper function to execute a command and capture its output
-pub fn run_command(description: &str, command: &str) -> Output {
+pub fn run_command(description: &str, command: &str) {
+    println!("{description}");
+    println!("{command}");
+
+    Command::new("cmd")
+        .args(["/C", command])
+        .status()
+        .expect("Failed to execute command");
+}
+
+pub fn run_command_capture_output(description: &str, command: &str) -> Output {
     println!("{description}");
     println!("{command}");
 
@@ -28,18 +37,10 @@ pub fn mount_efi_system_partition(esp_drive_letter: &str) {
         &format!("mountvol {esp_drive_letter} /d"),
     );
 
-    println!("=== Step 2: Mounting EFI System Partition ===");
-    println!("mountvol {esp_drive_letter} /s");
-
-    let status = Command::new("cmd")
-        .args(&["/C", &format!("mountvol {esp_drive_letter} /s")])
-        .status()
-        .expect("Failed to execute command");
-
-    if !status.success() {
-        eprintln!("Failed to mount EFI system partition");
-        crate::cli::ask_to_exit();
-    }
+    run_command(
+        &format!("=== Step 2: Mounting EFI System Partition ==="),
+        &format!("mountvol {esp_drive_letter} /s"),
+    );
 }
 
 pub fn unmount_efi_system_partition(esp_drive_letter: &str) {

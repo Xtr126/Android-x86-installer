@@ -3,6 +3,7 @@ use std::io::Write;
 use std::{fs::File, path::Path};
 
 use crate::windows::run_command;
+use crate::windows::run_command_capture_output;
 
 pub fn install(install_dir: &String) {
     std::fs::read_dir(install_dir).expect("No such directory");
@@ -19,7 +20,7 @@ pub fn install(install_dir: &String) {
         &format!(r"xcopy {install_dir}\efi X:\EFI /E /Q /H /R"),
     );
 
-    let bcdedit_output = run_command(
+    let bcdedit_output = run_command_capture_output(
         "=== Step 4: Creating Bootloader Entry for Android ===",
         r#"bcdedit /copy {bootmgr} /d Android"#,
     );
