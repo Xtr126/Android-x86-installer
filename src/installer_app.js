@@ -375,7 +375,7 @@ export class InstallerApp extends LitElement {
         <details>
           <summary>${msg('Uninstallation')}</summary>
           <h4>${msg('Manual install:')}</h4>
-          <li>${msg('1. Run "bcdedit /enum \'{bootmgr}\'" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
+          <li>${msg('1. Run "bcdedit /enum firmware" to find {guid} and "bcdedit /delete \'{guid}\'"')}</li>
           <li>${msg('2. Mount EFI partition and delete the files listed in ')}${this.installDir}\\uninstall-bootloader.txt</li>
           <li>${msg('3. Delete ')}${this.installDir}</li>
 
