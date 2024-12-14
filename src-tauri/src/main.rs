@@ -127,7 +127,7 @@ async fn create_data_img(
         // On Windows use the bundled mkfs.ext4.exe
         #[cfg(windows)]
         {
-            app_handle.shell().sidecar("mkfs.ext4")?
+            app_handle.shell().sidecar("mkfs.ext4.exe")?
         }
         #[cfg(target_os = "linux")]
         {
