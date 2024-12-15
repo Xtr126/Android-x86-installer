@@ -237,11 +237,6 @@ export class InstallerApp extends LitElement {
           <md-outlined-text-field @change=${this.handleDataImgScale_Change} onKeyDown="return false" label="Scale" min="1" type="number" style="width:80px" value=2></md-outlined-text-field>
         </div>
 
-        <div style="margin-top: -10px;">
-          <label style="margin-right: 80px;">${msg('Install for QEMU')} </label> 
-          <md-switch @change="${this.qemuInstallSwitchClicked}" id="qemu-install-switch"></md-switch>
-        </div>
-
       </div>
       <md-outlined-button class="button-back" @click="${this.onBackButtonClicked}">${msg('Back')}</md-outlined-button>
       <md-filled-button class="button-next" @click="${this.onInstallButtonClicked}">Install</md-filled-button>

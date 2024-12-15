@@ -33,12 +33,12 @@ pub fn install_qemu(
     };
 
     let console = if enable_serial_console {
-        "console=ttyS0 androidboot.enable_console=1"
+        " console=ttyS0 androidboot.enable_console=1"
     } else {
         ""
     };
     let serial_console = if enable_serial_console {
-        "-serial mon:stdio \\"
+        "\n-serial mon:stdio \\"
     } else {
         ""
     };
@@ -56,9 +56,9 @@ pub fn install_qemu(
     };
 
     let input_devices = if device_type == "usb" {
-        format!("-usb -device usb-{input_type} -device usb-kbd \\")
+        format!("-usb -device usb-{input_type} -device usb-kbd")
     } else {
-        format!("-device virtio-{input_type} -device virtio-keyboard \\")
+        format!("-device virtio-{input_type} -device virtio-keyboard")
     };
 
     let hypervisor = if cfg!(windows) {
@@ -86,9 +86,8 @@ fi
       -device virtio-vga-gl,xres={x_res},yres={y_res} \
       -net nic,model=virtio-net-pci {net_user_hostfwd} \
       -machine vmport=off -machine q35 \
-      {input_devices}
-      {serial_console}
-      -kernel "{install_dir}/kernel" -append "root=/dev/ram0 quiet SRC=/ DATA=/dev/vdb {console}" \
+      {input_devices} \{serial_console}
+      -kernel "{install_dir}/kernel" -append "root=/dev/ram0 quiet SRC=/ DATA=/dev/vdb{console}" \
       -initrd "{install_dir}/initrd.img"
       "#
     );
@@ -107,7 +106,6 @@ fi
     }
 
     Ok(format!(
-        "qemu script written to {install_dir}/start_android.sh
-              {contents}"
+        "qemu script written to {install_dir}/start_android.sh\n{contents}"
     ))
 }
