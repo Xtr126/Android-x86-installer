@@ -443,7 +443,8 @@ export class InstallerApp extends LitElement {
   }
 
   onInstallButtonClicked() {
-    if (!this.qemuInstallSwitchEl.selected) this.qemuConfigDone = true;
+    // if (!this.qemuInstallSwitchEl.selected) this.qemuConfigDone = true;
+    this.qemuConfigDone = true;
     this.dispatchEvent(new CustomEvent('install'));
   }
 
