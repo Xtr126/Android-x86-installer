@@ -231,6 +231,8 @@ export class InstallerApp extends LitElement {
           <md-switch @change="${this.dataImgSwitchClicked}" id="data-img-switch"></md-switch>
         </div>
 
+        <br>
+
         <div style="margin-top: -40px; display: none;" id="c-data-img"> 
           <label>Size: ${this.dataImgSize} GB</label> 
           <md-slider @change=${this.handleDataImgSize_Change} step=${this.dataImgScale} min=4 max=${this.dataImgScale * 16} value=4 ticks labeled style="width: 300px;"></md-slider>
