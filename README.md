@@ -7,7 +7,7 @@ Download for Linux and Windows: https://github.com/Xtr126/Android-x86-installer/
 Arch linux: https://aur.archlinux.org/packages/android-x86-installer-tauri-bin   
 
 ## Development
-- [Tauri Prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
+- [Tauri Prerequisites](https://v2.tauri.app/start/prerequisites/#_top)
 - It might take a while to compile the rust dependencies.
 ```
 git clone https://github.com/Xtr126/Android-x86-installer.git 
@@ -15,10 +15,12 @@ cd Android-x86-installer
 pnpm install 
 pnpm tauri dev
 ```
-![](Screenshot.png)  
 
-The installer also supports generating a script to boot the same physical Android install in qemu:
-![image](https://github.com/Xtr126/Android-x86-installer/assets/80520774/4849d563-2057-4104-8997-6fe62c6606a9)  
+# Gallery
+![Screenshot (4)](https://github.com/user-attachments/assets/3ed5e996-db53-4524-a796-a026d3c9f644)
+![Screenshot (5)](https://github.com/user-attachments/assets/b2736298-6095-4461-990d-208513ce326c)
+![Screenshot (1)](https://github.com/user-attachments/assets/c8f02afd-a7b2-42aa-84b3-02a4127f3154)
+
 
 ## Open source libraries and projects used
 - Tauri: https://github.com/tauri-apps/tauri/
@@ -31,3 +33,5 @@ The installer also supports generating a script to boot the same physical Androi
 ### data.img creation
 - e2fsprogs (mke2fs/mkfs.ext4)
 - Cygwin - mkfs.ext4.exe for Windows
+### Disk I/O statistics 
+- sysinfo: https://github.com/GuillaumeGomez/sysinfo
