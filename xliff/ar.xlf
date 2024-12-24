@@ -8,39 +8,51 @@
 </trans-unit>
 <trans-unit id="sae1c7f13b7c0c47f">
   <source>Start</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s78e51a17af6607c3">
   <source>Create /data directory</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s877c918c3f399cba">
   <source>Create data.img</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s26bf81a54b3c98fd">
   <source>Install for QEMU</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="sc16e00a7a8b2fde2">
   <source>Back</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="sff3418011f0f7a2f">
   <source>Extracting ISO</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s4396b8c2cb0d7d78">
   <source>Open /etc/grub.d/40_custom or /boot/grub/grub.cfg in a text editor</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="sc27dc998602cdc61">
   <source>Example:</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="sb746ace08dc971f5">
   <source>Create a new grub entry with the following code: </source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="sbc8741ff143d32f6">
   <source> After editing /etc/grub.d/40_custom, re-generate grub config with command:</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s701c80c5e6ceabf2">
   <source>The exact command to use may vary depending on your distro.</source>
+  <target>translated text</target>
 </trans-unit>
 <trans-unit id="s0379fc73608ab971">
   <source>Done</source>
+  <target>translated text</target>
 </trans-unit>
 </body>
 </file>

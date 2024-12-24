@@ -169,9 +169,31 @@ export class InstallerApp extends LitElement {
       margin-left: 60px;
     }
 
-
     .settings-form > *:not(:last-child) {
       margin-bottom: 30px;
+    }
+
+    .locale-select {
+      background-color: transparent;
+      border: 1px;
+      border-radius: 4px; 
+      width: auto;
+      white-space: nowrap;
+      font-size: 16px; 
+      cursor: pointer;
+      outline: none; 
+      margin-left: 60px;
+      color: inherit;
+      position: absolute;
+      right: 5%;
+      bottom: 0%;
+      margin-bottom: 32px;
+
+    }
+
+    .locale-select option {
+      background-color: var(--md-sys-color-surface-container-high); 
+      color: var(--md-sys-color-on-surface-variant); /* Set text color */
     }
     `  
 
@@ -180,8 +202,10 @@ export class InstallerApp extends LitElement {
     return html`
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'install'}">
       
-        <div class="container on-background-text">
+         
+      <div class="container on-background-text">
           <h1>Install Android™ on your PC</h1>
+          
 
            <!-- Based on https://github.com/BlissLabs-Infra/artwork/blob/35c35ca026fb150688c7e5978ba219922a800317/Projects/Bliss%20OS/logo/BlissOS_logo_black.svg -->
           <span class="logo"><svg width="10em" height="6em" viewBox="0 0 291 218" xmlns="http://www.w3.org/2000/svg">
@@ -208,6 +232,9 @@ export class InstallerApp extends LitElement {
           </div>
     
         </div>
+        <select class="locale-select">
+            <option value="en">English</option>
+        </select>
     </section>
 
     <section class="installer-app-category" ?active-category="${this.activeCategory_ === 'settings'}">
