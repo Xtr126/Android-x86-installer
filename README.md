@@ -5,7 +5,7 @@ It re-uses the grub config and kernel command line parameters from the ISO.
 
 Download for Linux and Windows: https://github.com/Xtr126/Android-x86-installer/releases/latest  
 Arch linux: https://aur.archlinux.org/packages/android-x86-installer-tauri-bin   
-
+Documentation: https://xtr126.github.io/Documentation/installation/using-android-x86-installer/#linux
 ## Development
 - [Tauri Prerequisites](https://v2.tauri.app/start/prerequisites/#_top)
 - It might take a while to compile the rust dependencies.
